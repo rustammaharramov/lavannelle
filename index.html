@@ -333,11 +333,14 @@ const S = {
 };
 
 function set(patch) {
+  const wasPage = S.page;
+  const wasAtirSub = S.atirSub;
   Object.assign(S, patch);
-  // Push history state so Android back button works
-  const state = { page: S.page, atirSub: S.atirSub };
-  if (patch.page || patch.atirSub !== undefined) {
-    history.pushState(state, '');
+  // Only push history when page or sub-page changes
+  if (patch.page !== undefined && patch.page !== wasPage) {
+    history.pushState({ page: S.page, atirSub: S.atirSub }, '');
+  } else if (patch.atirSub !== undefined && patch.atirSub !== wasAtirSub) {
+    history.pushState({ page: S.page, atirSub: S.atirSub }, '');
   }
   render();
 }
@@ -389,6 +392,7 @@ async function init() {
   // Əgər local data varsa dərhal göstər
   if (data && data.length) {
     set({ anbar: data, loading: false });
+  history.replaceState({ page: 'home', atirSub: null }, '');
   } else {
     // Local yoxdur — INIT-i göstər
     set({ anbar: INIT, loading: false });
