@@ -332,6 +332,7 @@ const S = {
   aBlend: '', aMiqdar: '', aFaiz: '',
   atirSub: null,
   bfInput: '', bfResult: null, bfLoading: false, bfMode: '', bfMehsul: 'Ümumi',
+  hbKat: 'Hamısı', hbCins: 'Hamısı', hbSearch: '',
   atirAnbar: [], atirSearch: '', atirEditId: null, atirEditBuf: {}, atirSyncSt: ''
 };
 
@@ -1146,6 +1147,7 @@ function mkAtirDunyasi() {
   if (S.atirSub === 'fabrika') return mkBlendFabrikaPage();
   if (S.atirSub === 'fabrika-movzu') return mkBlendMovzuPage();
   if (S.atirSub === 'fabrika-ozal') return mkBlendOzalPage();
+  if (S.atirSub === 'fabrika-hazir') return mkHazirBlendlerPage();
 
   const page = ce('div', 'page');
 
@@ -1346,7 +1348,7 @@ function mkBlendFabrikaPage() {
   const cards = [
     { icon: '🎯', title: 'Mövzuya Uyğun', desc: '"Dəniz", "Romantik", "Meşə"... mövzu verin, blend alın', sub: 'fabrika-movzu' },
     { icon: '🌿', title: 'Özəl Ətir', desc: 'Bir ətiri mərkəzə alıb tamamlayıcı blend yaradın', sub: 'fabrika-ozal' },
-    { icon: '📋', title: 'Hazır Blendlər', desc: 'Hazır tövsiyə olunan reseptlər', sub: 'fabrika-hazir', soon: true },
+    { icon: '📋', title: 'Hazır Blendlər', desc: 'Hazır tövsiyə olunan reseptlər', sub: 'fabrika-hazir' },
   ];
 
   cards.forEach(c => {
@@ -1590,6 +1592,235 @@ function mkBlendResult() {
   wrap.appendChild(useBtn);
 
   return wrap;
+}
+
+// ── HAZIR BLENDLƏr DATA ──────────────────────────────────────────────────────
+const HAZIR_BLENDLER = [
+  // M&P SABUN — QADIN
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Meyvə',ad:'Blossom Garden / Çiçəklənən Bağ',atirlər:'Jasmine FO FR 40% + Peony FO FR 35% + Strawberry FO FR 25%',izah:'Bahar çiçəklərinin romantikası, şirin çiyələklə.'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Oduncaq',ad:'Sakura Night / Sakura Gecəsi',atirlər:'Japan Cherry Blossom FO USA 55% + Palo Santo & Sandalwood FO USA 35% + Mimosa FO FR 10%',izah:'Yapon albalı çiçəyi, zərif oduncaq bazası.'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Şərq',ad:'Tropical Nights / Tropik Gecələr',atirlər:'Ylang-Ylang FO FR 55% + Bergamot FO USA 30% + Patchouli FO USA 15%',izah:'Ekzotik ylang-ylang, torpaq patchouli aksentli.'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Çiçək',ad:'Rose Symphony / Gül Simfoniyası',atirlər:'Japan Cherry Blossom FO USA 35% + Rose Petals FO USA 30% + Peony FO FR 20% + Jasmine FO FR 15%',izah:'Dörd çiçəyin harmoniyası. Klassik, zərif.'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Çiçək',ad:'Cherry Blossom Bouquet / Albalı Çiçəyi Buketi',atirlər:'Japan Cherry Blossom FO USA 50% + Peony FO FR 30% + Rose Petals FO USA 20%',izah:'Üç çiçəyin incə buketi.'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Meyvə-Tropik',ad:'Island Cream / Ada Kremi',atirlər:'Coconut FO FR 50% + Mango Garden FO FR 30% + Ylang-Ylang FO FR 20%',izah:'Tropik ada hissi. Kokos, manqo, ekzotik çiçək.'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Çiçək',ad:'Spring Mimosa / Bahar Mimozası',atirlər:'Jasmine FO FR 40% + Peony FO FR 35% + Mimosa FO FR 25%',izah:'Yumşaq, romantik bahar.'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Spa',ad:'Lotus Ritual / Lotos Ayini',atirlər:'Lotos FO FR 40% + White Tea FO USA 35% + Mimosa FO FR 25%',izah:'Spa atmosferi. Lotos, ağ çay, mimoza.'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Meyvə-Çiçək',ad:'Cherry Lotus Dream / Albalı Lotos',atirlər:'Cherry FO FR 50% + Lotos FO FR 40% + Phatoil White Musk FO CN 10%',izah:'Şirin albalı, mistik lotos, yüngül müşk.'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Müşk',ad:'Cherry Blossom Musk / Albalı Çiçəyi Müşk',atirlər:'Japan Cherry Blossom FO USA 55% + Cherry FO FR 30% + Phatoil White Musk FO CN 15%',izah:'Yapon çiçəyi, şirin albalı, təmiz müşk.'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Dəniz-Çiçək',ad:'Ocean Blossom / Okean Çiçəyi',atirlər:'Ocean Breeze FO USA 50% + Japan Cherry Blossom FO USA 30% + Peony FO FR 20%',izah:'Dəniz küləyi, albalı çiçəyi, pion.'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Sitrus-Çiçək',ad:'Agave Blossom / Kaktus Çiçəyi',atirlər:'Citrus Agave FO USA 45% + Jasmine FO FR 35% + White Tea FO USA 20%',izah:'Egzotik kaktus sitrusu, yasəmən, ağ çay.'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Meyvə-Çiçək',ad:'Raspberry Garden / Moruq Bağçası',atirlər:'Raspberry FO FR 50% + Rose Petals FO USA 30% + Mimosa FO FR 20%',izah:'Şirin moruq, qızılgül, mimoza.'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Bal-Çiçək',ad:'Honey Garden / Bal Bağçası',atirlər:'Jasmine FO FR 40% + Rose Petals FO USA 35% + Rozino Honey EO CN 25%',izah:'Yasəmən, qızılgül, natural bal. İsti, romantik.'},
+  // M&P SABUN — UNİSEX
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Dəniz-Oduncaq',ad:'Ocean Forest / Okean Meşə',atirlər:'Black Sea FO USA 45% + Palo Santo & Sandalwood FO USA 35% + Cypress & Bayberry FO USA 20%',izah:'Dəniz təravəti, dağ meşəsinin oduncağı.'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Sitrus-Çiçək',ad:'Bergamot Lavender / Berqamot Lavanda',atirlər:'Bergamot FO USA 60% + Lavender FO FR 40%',izah:'Sitrus, lavandanın sakitliyi. Klassik.'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Sitrus-Təravət',ad:'Citrus Burst / Sitrus Partlayışı',atirlər:'Bergamot FO USA 40% + Orange FO FR 30% + Lemon FO FR 20% + White Tea FO USA 10%',izah:'Üç sitrusun enerjisi. Səhər sabunu.'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Çiçək-Spa',ad:'Lavender Spa / Lavanda Spa',atirlər:'Lavender FO FR 55% + White Tea FO USA 30% + Ylang-Ylang FO FR 15%',izah:'Lavanda, ağ çay. Spa rahatlığı.'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Qourmet',ad:'Mocha Cream / Moka Krem',atirlər:'Coffee FO USA 50% + Chocolate FO FR 35% + Coconut FO FR 15%',izah:'Qəhvə, şokolad, kokos.'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Oduncaq-Spa',ad:'Sandalwood Calm / Səndəl Sakitliyi',atirlər:'Palo Santo & Sandalwood FO USA 50% + Lotos FO FR 30% + Phatoil White Musk FO CN 20%',izah:'Güclü səndəl, lotos. Spa.'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Meyvə-Müşk',ad:'Cotton Breeze / Pambıq Küləyi',atirlər:'Apple Element FO USA 50% + Coconut FO FR 35% + Phatoil White Musk FO CN 15%',izah:'Alma, kokos, müşk. Təmiz paltar effekti.'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Şərq-Sitrus',ad:'Amber Citrus / Kəhrəba Sitrus',atirlər:'Amber FO FR 45% + Bergamot FO USA 35% + Orange FO FR 20%',izah:'İsti kəhrəba, sitrus.'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Meyvə-Sitrus',ad:'Berry Citrus / Giləmeyvə Sitrus',atirlər:'Raspberry FO FR 45% + Citrus Agave FO USA 35% + Lemon FO FR 20%',izah:'Moruq, sitrus, limon.'},
+  // M&P SABUN — UŞAQ
+  {kateqoriya:'M&P Sabun',cins:'Uşaq',profil:'Meyvə-Sitrus',ad:'Berry Lemon / Giləmeyvə Limon',atirlər:'Strawberry FO FR 65% + Lemon FO FR 35%',izah:'Çiyələk, sitrus. Xoş, enerjili.'},
+  {kateqoriya:'M&P Sabun',cins:'Uşaq',profil:'Meyvə-Sitrus',ad:'Sunny Fruit / Günəşli Meyvə',atirlər:'Mango Garden FO FR 50% + Strawberry FO FR 35% + White Tea FO USA 15%',izah:'Manqo, çiyələk. Şirin, təmiz.'},
+  {kateqoriya:'M&P Sabun',cins:'Uşaq',profil:'Meyvə-Şirin',ad:'Coconut Mango / Kokos Manqo',atirlər:'Coconut FO FR 60% + Mango Garden FO FR 40%',izah:'Tropik, şirin. Uşaqlar üçün sevimli.'},
+  // M&P SABUN — KİŞİ
+  {kateqoriya:'M&P Sabun',cins:'Kişi',profil:'Oduncaq-Maskulin',ad:'Gentleman Wood / Centlmen Ağac',atirlər:'Palo Santo & Sandalwood FO USA 45% + Patchouli FO USA 30% + Cypress & Bayberry FO USA 25%',izah:'Klassik kişi sabunu. Güclü oduncaq bazası.'},
+  {kateqoriya:'M&P Sabun',cins:'Kişi',profil:'Sitrus-Ədviyyat',ad:'Spiced Citrus / Ədviyyatlı Sitrus',atirlər:'Bergamot FO USA 35% + Lemon FO FR 25% + Ginger & Spice FO USA 25% + Cypress & Bayberry FO USA 15%',izah:'Sitrus, ədviyyat istilik.'},
+  {kateqoriya:'M&P Sabun',cins:'Kişi',profil:'Dəniz-Oduncaq',ad:'Ocean Wood / Okean Ağac',atirlər:'Palo Santo & Sandalwood FO USA 40% + Black Sea FO USA 40% + Patchouli FO USA 20%',izah:'Dəniz, oduncaq. Barberxana.'},
+  {kateqoriya:'M&P Sabun',cins:'Kişi',profil:'Şərq-Dəniz',ad:'Black Amber / Qara Kəhrəba',atirlər:'Amber FO FR 45% + Black Sea FO USA 35% + Cypress & Bayberry FO USA 20%',izah:'Qaranlıq kəhrəba, dəniz.'},
+  {kateqoriya:'M&P Sabun',cins:'Kişi',profil:'Dəniz-Sitrus',ad:'Ocean Citrus / Okean Sitrus',atirlər:'Ocean Breeze FO USA 50% + Citrus Agave FO USA 30% + Bergamot FO USA 20%',izah:'Dəniz, kaktus sitrusu, berqamot.'},
+  {kateqoriya:'M&P Sabun',cins:'Kişi',profil:'Şərq-Qaranlıq',ad:'Noir Amber / Qara Kəhrəba',atirlər:'Amber Noir FO USA 50% + Patchouli FO USA 30% + Cypress & Bayberry FO USA 20%',izah:'Qaranlıq kəhrəba, patchouli, şam ağacı.'},
+  // ƏRİYƏN MUM — QADIN
+  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Çiçək-Meyvə',ad:'Flower Meadow / Çiçək Çəmənliyi',atirlər:'Japan Cherry Blossom FO USA 25% + Peony FO FR 25% + Mango Garden FO FR 25% + Citrus Agave FO USA 15% + Ylang-Ylang FO FR 10%',izah:'Beş çiçək-meyvə notunun yaz şənliyi.'},
+  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Çiçək-Sitrus',ad:'Soft Floral Breeze / Yumşaq Çiçək Meh',atirlər:'Jasmine FO FR 40% + Peony FO FR 40% + Bergamot FO USA 20%',izah:'Yasəmən, pion, berqamot.'},
+  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Çiçək-Çiçək',ad:'Yellow Tulip Dream / Sarı Lalə Arzusu',atirlər:'Yellow Tulips FO RU 50% + Jasmine FO FR 30% + White Tea FO USA 20%',izah:'Lalə, yasəmən, ağ çay.'},
+  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Spa-Təmiz',ad:'Hotel Linen Ritual / Otel Lineni Ayini',atirlər:'White Tea FO USA 55% + Lotos FO FR 30% + Phatoil White Musk FO CN 15%',izah:'Lüks otel spa. Təmiz, zen.'},
+  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Meyvə-Çiçək',ad:'Cherry Lotus Breeze / Albalı Lotos',atirlər:'Cherry FO FR 50% + Lotos FO FR 40% + Phatoil White Musk FO CN 10%',izah:'Şirin albalı, mistik lotos.'},
+  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Oduncaq-Çiçək',ad:'Mystic Amber Silk / Mistik Kəhrəba',atirlər:'Palo Santo & Sandalwood FO USA 40% + Ylang-Ylang FO FR 35% + Amber FO FR 25%',izah:'Səndəl, ekzotik çiçək, kəhrəba.'},
+  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Şirin-Çiçək',ad:'Honey Blossom / Bal Çiçək',atirlər:'Jasmine FO FR 35% + Mimosa FO FR 30% + Rozino Honey EO CN 35%',izah:'Yasəmən, mimoza, bal.'},
+  // ƏRİYƏN MUM — UNİSEX
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Spa-Sakitlik',ad:'Spa Relaxation / Spa Rahatlığı',atirlər:'Lavender FO FR 45% + White Tea FO USA 35% + Bergamot FO USA 20%',izah:'Lavanda, ağ çay, berqamot.'},
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Qourmet-Ədviyyat',ad:'Winter Coffee / Qış Qəhvəsi',atirlər:'Coffee FO USA 50% + Ginger & Spice FO USA 30% + Patchouli FO USA 20%',izah:'Qəhvə, zəncəfil. Qış komfortu.'},
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Dəniz-Oduncaq',ad:'Coastal Woods / Sahil Meşəsi',atirlər:'Black Sea FO USA 50% + Cypress & Bayberry FO USA 35% + White Tea FO USA 15%',izah:'Dəniz, meşə oduncağı.'},
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Qourmet-Darçın',ad:'Cinnamon Mocha / Darçınlı Moka',atirlər:'Coffee FO USA 45% + Chocolate FO FR 35% + Apple Cinnamon EO CN 20%',izah:'Qəhvə, şokolad, darçın.'},
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Meyvə-Ədviyyat',ad:'Holiday Apple / Bayram Alması',atirlər:'Apple Element FO USA 45% + Ginger & Spice FO USA 35% + Apple Cinnamon EO CN 20%',izah:'Alma, darçın. Yeni il ruhu.'},
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Çiçək-Spa',ad:'Lotus White Spa / Lotos Spa',atirlər:'White Tea FO USA 50% + Lotos FO FR 35% + Phatoil White Musk FO CN 15%',izah:'Ağ çay, lotos, müşk.'},
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Qourmet-Kafe',ad:'Cafe Mocha / Kafe Moka',atirlər:'Coffee FO USA 55% + Chocolate FO FR 30% + Coconut FO FR 15%',izah:'Qəhvə, şokolad, kokos.'},
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Oduncaq-Oduncaq',ad:'Rustic Cabin / Kənd Daxması',atirlər:'EUQEE Warm Rustic Wood FO CN 45% + EUQEE Forest Pine FO CN 35% + Patchouli FO USA 20%',izah:'Köhnə ağac, şam, torpaq.'},
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Meyvə-Meyvə',ad:'Apple Orchard / Alma Bağı',atirlər:'Apple Element FO USA 65% + Cherry FO FR 35%',izah:'Alma, albalı. Payız bağı.'},
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Ədviyyat-Sitrus',ad:'Spiced Orange / Ədviyyatlı Portağal',atirlər:'Ginger & Spice FO USA 45% + Orange FO FR 35% + Apple Cinnamon EO CN 20%',izah:'Zəncəfil, portağal, darçın.'},
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Tüstü-Şərq',ad:'Smoke Amber / Tüstü Kəhrəba',atirlər:'Smoke and Amber FO RU 50% + Amber FO FR 30% + Patchouli FO USA 20%',izah:'Tüstü, kəhrəba, torpaq. Mistik.'},
+  // ƏRİYƏN MUM — KİŞİ
+  {kateqoriya:'Əriyən Mum',cins:'Kişi',profil:'Dəniz-Oduncaq',ad:'Deep Ocean Wood / Dərin Okean',atirlər:'Black Sea FO USA 45% + Palo Santo & Sandalwood FO USA 35% + Patchouli FO USA 20%',izah:'Dəniz, oduncaq. Lüks barberxana.'},
+  {kateqoriya:'Əriyən Mum',cins:'Kişi',profil:'Dəri-Tütün',ad:'Vintage Leather / Vintage Dəri',atirlər:'EUQEE Leather FO CN 45% + EUQEE Sweet Tobacco FO CN 35% + EUQEE Bamboo & Teak FO CN 20%',izah:'Dəri, tütün, bambu.'},
+  {kateqoriya:'Əriyən Mum',cins:'Kişi',profil:'Ədviyyat-Dəri',ad:'Bay Rum Classic / Klassik Bay Rom',atirlər:'EUQEE Bay Rum Premium FO CN 50% + EUQEE Sweet Tobacco FO CN 30% + EUQEE Leather FO CN 20%',izah:'Bay rom, tütün, dəri.'},
+  {kateqoriya:'Əriyən Mum',cins:'Kişi',profil:'Tütün-Qəhvə',ad:'Tobacco Coffee / Tütün Qəhvə',atirlər:'EUQEE Sweet Tobacco FO CN 50% + Coffee FO USA 35% + EUQEE Cedarwood FO CN 15%',izah:'Tütün, qəhvə, sidr.'},
+  {kateqoriya:'Əriyən Mum',cins:'Kişi',profil:'Şərq-Oduncaq',ad:'Amber Woods / Kəhrəba Meşəsi',atirlər:'Amber FO FR 45% + Palo Santo & Sandalwood FO USA 35% + Patchouli FO USA 20%',izah:'Kəhrəba, mistik ağaclar.'},
+  {kateqoriya:'Əriyən Mum',cins:'Kişi',profil:'Tüstü-Oduncaq',ad:'Dark Smoke / Qaranlıq Tüstü',atirlər:'Smoke and Amber FO RU 50% + Palo Santo & Sandalwood FO USA 30% + EUQEE Leather FO CN 20%',izah:'Tüstü, mistik ağac, dəri.'},
+  // ƏTİRLİ TABLET — QADIN
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Çiçək-Sitrus',ad:'Japanese Elegance / Yapon Zərifliyi',atirlər:'Japan Cherry Blossom FO USA 65% + Bergamot FO USA 35%',izah:'Albalı çiçəyi, berqamot. Minimalist.'},
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Çiçək-Çiçək',ad:'Rose Garden / Gül Bağçası',atirlər:'Japan Cherry Blossom FO USA 50% + Rose Petals FO USA 35% + Mimosa FO FR 15%',izah:'Üç çiçək buketi.'},
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Meyvə-Tropik',ad:'Mango Paradise / Manqo Cənnəti',atirlər:'Mango Garden FO FR 55% + Coconut FO FR 45%',izah:'Manqo, kokos. Tropik.'},
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Çiçək-Çiçək',ad:'Yellow Tulip / Sarı Lalə',atirlər:'Yellow Tulips FO RU 55% + White Tea FO USA 30% + Citrus Agave FO USA 15%',izah:'Lalə, ağ çay, sitrus.'},
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Şərq-Çiçək',ad:'Rose Amber / Gül Kəhrəbası',atirlər:'Rose Petals FO USA 40% + Jasmine FO FR 25% + Amber FO FR 20% + Peony FO FR 15%',izah:'Kəhrəba, üç çiçək.'},
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Spa-Çiçək',ad:'White Tea Spa / Ağ Çay Spa',atirlər:'White Tea FO USA 50% + Mimosa FO FR 30% + Lotos FO FR 20%',izah:'Ağ çay, mimoza, lotos.'},
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Çiçək-Ədviyyat',ad:'Violet Rose / Bənövşə Gül',atirlər:'Black Violet & Saffron FO USA 50% + Rose Petals FO USA 30% + Amber FO FR 20%',izah:'Bənövşə, zəfəran, qızılgül.'},
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Çiçək-Ekzotik',ad:'Black Orchid / Qara Saxsı',atirlər:'Towatap Black Orchid EO CN 40% + Jasmine FO FR 35% + Palo Santo & Sandalwood FO USA 25%',izah:'Saxsı, yasəmən, səndəl.'},
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Meyvə-Çiçək',ad:'Berry Bouquet / Giləmeyvə Buketi',atirlər:'Raspberry FO FR 45% + Rose Petals FO USA 30% + Peony FO FR 25%',izah:'Moruq, qızılgül, pion.'},
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Oduncaq-Çiçək',ad:'Vanilla Woods / Vanil Meşəsi',atirlər:'Palo Santo & Sandalwood FO USA 45% + Ylang-Ylang FO FR 30% + Towatap Vanilla EO CN 25%',izah:'Səndəl, ylang-ylang, vanil.'},
+  // ƏTİRLİ TABLET — UNİSEX
+  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Sitrus-Sitrus',ad:'Citrus Burst / Sitrus Partlayış',atirlər:'Lemon FO FR 40% + Orange FO FR 35% + Bergamot FO USA 25%',izah:'Üç sitrus enerjisi.'},
+  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Çiçək-Spa',ad:'Lavender Spa / Lavanda Spa',atirlər:'Lavender FO FR 55% + Bergamot FO USA 25% + White Tea FO USA 20%',izah:'Lavanda, berqamot, ağ çay.'},
+  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Şərq-Şirin',ad:'Amber Cream / Kəhrəba Kremi',atirlər:'Amber FO FR 55% + Towatap Vanilla EO CN 30% + Phatoil White Musk FO CN 15%',izah:'Kəhrəba, vanil, müşk.'},
+  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Oduncaq-Çiçək',ad:'Sandalwood Zen / Səndəl Zen',atirlər:'Palo Santo & Sandalwood FO USA 55% + Lotos FO FR 25% + Phatoil White Musk FO CN 20%',izah:'Səndəl, lotos, müşk.'},
+  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Dəniz-Təravət',ad:'Ocean Fresh / Okean Təravət',atirlər:'Ocean Breeze FO USA 55% + White Tea FO USA 30% + Bergamot FO USA 15%',izah:'Dəniz, ağ çay, berqamot.'},
+  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Şərq-Qaranlıq',ad:'Dark Amber / Qaranlıq Kəhrəba',atirlər:'Amber Noir FO USA 50% + Amber FO FR 30% + Patchouli FO USA 20%',izah:'İkili kəhrəba, patchouli.'},
+  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Nanə-Təravət',ad:'Mint Fresh / Nanə Təravət',atirlər:'Towatap Peppermint EO CN 45% + Towatap Eucalyptus EO CN 30% + White Tea FO USA 25%',izah:'Nanə, evkalipt, ağ çay.'},
+  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Tüstü-Şərq',ad:'Smoke Noir / Tüstü Gecəsi',atirlər:'Smoke and Amber FO RU 50% + Amber Noir FO USA 30% + Patchouli FO USA 20%',izah:'Tüstü, qaranlıq kəhrəba.'},
+  // ƏTİRLİ TABLET — UŞAQ
+  {kateqoriya:'Ətirli Tablet',cins:'Uşaq',profil:'Meyvə-Sitrus',ad:'Apple Citrus / Alma Sitrus',atirlər:'Apple Element FO USA 55% + Citrus Agave FO USA 30% + Bergamot FO USA 15%',izah:'Alma, sitrus.'},
+  {kateqoriya:'Ətirli Tablet',cins:'Uşaq',profil:'Meyvə-Şirin',ad:'Berry Vanilla / Giləmeyvə Vanil',atirlər:'Raspberry FO FR 50% + Strawberry FO FR 35% + Towatap Vanilla EO CN 15%',izah:'Moruq, çiyələk, vanil.'},
+  // ƏTİRLİ TABLET — KİŞİ
+  {kateqoriya:'Ətirli Tablet',cins:'Kişi',profil:'Oduncaq-Oduncaq',ad:'Forest Deep / Dərin Meşə',atirlər:'Cypress & Bayberry FO USA 50% + Patchouli FO USA 30% + Palo Santo & Sandalwood FO USA 20%',izah:'Şam, patchouli, səndəl.'},
+  {kateqoriya:'Ətirli Tablet',cins:'Kişi',profil:'Dəniz-Oduncaq',ad:'Ocean Wood / Okean Ağac',atirlər:'Black Sea FO USA 45% + Palo Santo & Sandalwood FO USA 35% + Patchouli FO USA 20%',izah:'Dəniz, səndəl, patchouli.'},
+  {kateqoriya:'Ətirli Tablet',cins:'Kişi',profil:'Dəniz-Qaranlıq',ad:'Dark Ocean / Qaranlıq Okean',atirlər:'Ocean Breeze FO USA 45% + Amber Noir FO USA 35% + Black Sea FO USA 20%',izah:'İki dəniz, qaranlıq kəhrəba.'},
+  {kateqoriya:'Ətirli Tablet',cins:'Kişi',profil:'Tüstü-Oduncaq',ad:'Forest Smoke / Meşə Tüstüsü',atirlər:'Smoke and Amber FO RU 50% + Cypress & Bayberry FO USA 30% + Palo Santo & Sandalwood FO USA 20%',izah:'Tüstü, şam, səndəl.'},
+];
+
+// ── HAZIR BLENDLƏr SƏHİFƏSİ ─────────────────────────────────────────────────
+function mkHazirBlendlerPage() {
+  const page = ce('div', 'page');
+
+  const hdr = ce('div', 'topbar');
+  const title = ce('span', 'topbar-title'); title.textContent = '📋 Hazır Blendlər';
+  const back = ce('button', 'sec-btn'); back.textContent = '← Geri';
+  back.style.cssText = 'padding:8px 14px;font-size:13px';
+  back.onclick = () => set({ atirSub: 'fabrika' });
+  hdr.appendChild(back); hdr.appendChild(title);
+  page.appendChild(hdr);
+
+  // Filters
+  const filterWrap = ce('div');
+  filterWrap.style.cssText = 'display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap';
+
+  const katSel = ce('select', 'form-inp');
+  katSel.style.cssText = 'flex:1;min-width:120px;font-size:13px;padding:8px';
+  ['Hamısı','M&P Sabun','Əriyən Mum','Ətirli Tablet'].forEach(k => {
+    const o = ce('option'); o.value = k; o.textContent = k;
+    if ((S.hbKat||'Hamısı') === k) o.selected = true;
+    katSel.appendChild(o);
+  });
+  katSel.onchange = e => { S.hbKat = e.target.value; render(); };
+
+  const cinsSel = ce('select', 'form-inp');
+  cinsSel.style.cssText = 'flex:1;min-width:100px;font-size:13px;padding:8px';
+  ['Hamısı','Qadın','Unisex','Uşaq','Kişi'].forEach(c => {
+    const o = ce('option'); o.value = c; o.textContent = c;
+    if ((S.hbCins||'Hamısı') === c) o.selected = true;
+    cinsSel.appendChild(o);
+  });
+  cinsSel.onchange = e => { S.hbCins = e.target.value; render(); };
+
+  filterWrap.appendChild(katSel);
+  filterWrap.appendChild(cinsSel);
+  page.appendChild(filterWrap);
+
+  // Search
+  const srch = ce('input', 'form-inp');
+  srch.type = 'text';
+  srch.placeholder = '🔍 Blend adı və ya ətir axtar...';
+  srch.style.cssText = 'margin-bottom:12px;font-size:13px';
+  srch.value = S.hbSearch || '';
+  srch.oninput = e => { S.hbSearch = e.target.value; render(); };
+  page.appendChild(srch);
+
+  // Filter blends
+  let filtered = HAZIR_BLENDLER;
+  if (S.hbKat && S.hbKat !== 'Hamısı') filtered = filtered.filter(b => b.kateqoriya === S.hbKat);
+  if (S.hbCins && S.hbCins !== 'Hamısı') filtered = filtered.filter(b => b.cins === S.hbCins);
+  if (S.hbSearch) {
+    const q = S.hbSearch.toLowerCase();
+    filtered = filtered.filter(b => b.ad.toLowerCase().includes(q) || b.atirlər.toLowerCase().includes(q) || b.profil.toLowerCase().includes(q));
+  }
+
+  const count = ce('div');
+  count.style.cssText = 'font-size:12px;color:#666;margin-bottom:10px';
+  count.textContent = filtered.length + ' blend tapıldı';
+  page.appendChild(count);
+
+  if (filtered.length === 0) {
+    const empty = ce('div');
+    empty.style.cssText = 'text-align:center;padding:40px;color:#666;font-size:14px';
+    empty.textContent = 'Heç bir blend tapılmadı';
+    page.appendChild(empty);
+    return page;
+  }
+
+  filtered.forEach(b => {
+    const card = ce('div', 'result-box');
+    card.style.cssText = 'margin-bottom:10px;cursor:pointer';
+
+    const topRow = ce('div');
+    topRow.style.cssText = 'display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px';
+
+    const nameEl = ce('div', 'res-name');
+    nameEl.style.cssText = 'font-size:14px;font-weight:700;color:#fff;flex:1';
+    nameEl.textContent = b.ad;
+
+    const katBadge = ce('span');
+    katBadge.style.cssText = 'font-size:10px;padding:2px 7px;border-radius:8px;white-space:nowrap;background:rgba(255,255,255,.12);color:#aaa';
+    katBadge.textContent = b.kateqoriya === 'M&P Sabun' ? '🧼' : b.kateqoriya === 'Əriyən Mum' ? '🕯️' : '🌸';
+
+    topRow.appendChild(nameEl);
+    topRow.appendChild(katBadge);
+    card.appendChild(topRow);
+
+    const meta = ce('div');
+    meta.style.cssText = 'font-size:11px;color:#6c7a99;margin-bottom:8px';
+    meta.textContent = b.cins + ' · ' + b.profil;
+    card.appendChild(meta);
+
+    // Ingredients
+    const parts = b.atirlər.split('+').map(p => p.trim());
+    parts.forEach(p => {
+      const m = p.match(/^(.+?)\s+(\d+)%$/);
+      if (!m) return;
+      const row = ce('div');
+      row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:3px';
+      const nm = ce('span');
+      nm.style.cssText = 'font-size:12px;color:#9aa0b0;flex:1';
+      nm.textContent = m[1];
+      const pct = ce('span');
+      pct.style.cssText = 'font-family:monospace;font-weight:700;font-size:13px;color:#fff';
+      pct.textContent = m[2] + '%';
+      row.appendChild(nm); row.appendChild(pct);
+      card.appendChild(row);
+    });
+
+    if (b.izah) {
+      const iz = ce('div');
+      iz.style.cssText = 'font-size:11px;color:#6c7a99;margin-top:6px;border-top:1px solid rgba(255,255,255,.08);padding-top:6px';
+      iz.textContent = b.izah;
+      card.appendChild(iz);
+    }
+
+    // Use button
+    const useBtn = ce('button', 'sec-btn');
+    useBtn.style.cssText = 'margin-top:8px;width:100%;font-size:12px;padding:7px';
+    useBtn.textContent = '🧪 Blend Hesablayıcıya köçür';
+    useBtn.onclick = e => {
+      e.stopPropagation();
+      S.aBlend = b.atirlər;
+      set({ atirSub: 'blend' });
+    };
+    card.appendChild(useBtn);
+
+    page.appendChild(card);
+  });
+
+  return page;
 }
 
 init();
