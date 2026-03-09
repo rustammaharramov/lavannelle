@@ -168,7 +168,61 @@ const INIT = [
   {id:55,name:"Su",qty:1,unit:"L",price:1,note:""}
 ];
 
-let nextId = 400;
+
+const INIT_ATIR = [
+  {id:1,name:"Black Violet and Saffron FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:""},
+  {id:2,name:"Ocean Breeze FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:""},
+  {id:3,name:"Amber Noir FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:""},
+  {id:4,name:"Citrus Agave FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:""},
+  {id:5,name:"White Tea FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:""},
+  {id:6,name:"Japan Cherry Blossom FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:""},
+  {id:7,name:"Coffee FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:""},
+  {id:8,name:"Black Sea FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:""},
+  {id:9,name:"Palo Santo And Sandalwood FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:""},
+  {id:10,name:"Cypress And Bayberry FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:""},
+  {id:11,name:"Rose Petals FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:""},
+  {id:12,name:"Patchouli FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:""},
+  {id:13,name:"Ginger And Spice FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:""},
+  {id:14,name:"Apple Element FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:""},
+  {id:15,name:"Ylang-Ylang FO",country:"Fransa",brand:"Kemaclub",usage:"Sabun, Mum",note:""},
+  {id:16,name:"Jasmine (Yasəmən) FO",country:"Fransa",brand:"Kemaclub",usage:"Sabun, Mum",note:""},
+  {id:17,name:"Strawberry (Çiyələk) FO",country:"Fransa",brand:"Kemaclub",usage:"Sabun, Mum",note:""},
+  {id:18,name:"Bergamot FO",country:"Fransa",brand:"Kemaclub",usage:"Sabun, Mum",note:""},
+  {id:19,name:"Coconut (Kokos) FO",country:"Fransa",brand:"Kemaclub",usage:"Sabun, Mum",note:""},
+  {id:20,name:"Mango Garden FO",country:"Fransa",brand:"Kemaclub",usage:"Sabun, Mum",note:""},
+  {id:21,name:"Lemon (Limon) FO",country:"Fransa",brand:"Kemaclub",usage:"Sabun, Mum",note:""},
+  {id:22,name:"Orange (Portağal) FO",country:"Fransa",brand:"Kemaclub",usage:"Sabun, Mum",note:""},
+  {id:23,name:"Raspberry (Moruq) FO",country:"Fransa",brand:"Kemaclub",usage:"Sabun, Mum",note:""},
+  {id:24,name:"Peony (Pion) FO",country:"Fransa",brand:"Kemaclub",usage:"Sabun, Mum",note:""},
+  {id:25,name:"Jasmine (Jasmin) FO",country:"Fransa",brand:"Kemaclub",usage:"Sabun, Mum",note:""},
+  {id:26,name:"Mimosa FO",country:"Fransa",brand:"Kemaclub",usage:"Sabun, Mum",note:""},
+  {id:27,name:"Lavender (Lavanda) FO",country:"Fransa",brand:"Kemaclub",usage:"Sabun, Mum",note:""},
+  {id:28,name:"Lotos FO",country:"Fransa",brand:"Kemaclub",usage:"Sabun, Mum",note:""},
+  {id:29,name:"Chocolate (Şokolad) FO",country:"Fransa",brand:"Kemaclub",usage:"Sabun, Mum",note:""},
+  {id:30,name:"Cherry (Albalı) FO",country:"Fransa",brand:"Kemaclub",usage:"Sabun, Mum",note:""},
+  {id:31,name:"Amber FO",country:"Fransa",brand:"Kemaclub",usage:"Sabun, Mum",note:""},
+  {id:32,name:"Phatoil White Musk FO",country:"Çin",brand:"Phatoil",usage:"Mum",note:""},
+  {id:33,name:"Phatoil Sandalwood Sanctuary FO",country:"Çin",brand:"Phatoil",usage:"Mum",note:""},
+  {id:34,name:"Towatap Black Orchid EO",country:"Çin",brand:"Towatap",usage:"Mum",note:""},
+  {id:35,name:"Towatap Vanilla EO",country:"Çin",brand:"Towatap",usage:"Mum",note:""},
+  {id:36,name:"Towatap Eucalyptus EO",country:"Çin",brand:"Towatap",usage:"Mum",note:""},
+  {id:37,name:"Towatap Peppermint EO",country:"Çin",brand:"Towatap",usage:"Mum",note:""},
+  {id:38,name:"Forest Pine EO",country:"Çin",brand:"",usage:"Mum",note:""},
+  {id:39,name:"Apple Cinnamon EO",country:"Çin",brand:"",usage:"Mum",note:""},
+  {id:40,name:"Hllozzi Chamomile EO",country:"Çin",brand:"Hllozzi",usage:"Mum",note:""},
+  {id:41,name:"Hllozzi Ylang-Ylang EO",country:"Çin",brand:"Hllozzi",usage:"Mum",note:""},
+  {id:42,name:"Rozino Honey EO",country:"Çin",brand:"Rozino",usage:"Mum",note:""},
+  {id:43,name:"EUQEE Bay Rum Premium FO",country:"Çin",brand:"EUQEE",usage:"Mum",note:"Grandpa's Woodshop"},
+  {id:44,name:"EUQEE Bamboo & Teak FO",country:"Çin",brand:"EUQEE",usage:"Mum",note:"Grandpa's Woodshop"},
+  {id:45,name:"EUQEE Warm Rustic Wood FO",country:"Çin",brand:"EUQEE",usage:"Mum",note:"Grandpa's Woodshop"},
+  {id:46,name:"EUQEE Leather FO",country:"Çin",brand:"EUQEE",usage:"Mum",note:"Grandpa's Woodshop"},
+  {id:47,name:"EUQEE Forest Pine FO",country:"Çin",brand:"EUQEE",usage:"Mum",note:"Grandpa's Woodshop"},
+  {id:48,name:"EUQEE Cedarwood FO",country:"Çin",brand:"EUQEE",usage:"Mum",note:"Grandpa's Woodshop"},
+  {id:49,name:"EUQEE Sweet Tobacco FO",country:"Çin",brand:"EUQEE",usage:"Mum",note:"Grandpa's Woodshop"},
+  {id:50,name:"Yellow Tulips FO",country:"Rusiya",brand:"Fon-tan",usage:"Mum",note:"Отдушка Желтые тюльпаны"},
+  {id:51,name:"Smoke and Amber FO",country:"Rusiya",brand:"Fon-tan",usage:"Mum",note:"Отдушка Дым и Амбра"}
+];
+let nextId = 400; // will be updated after data loads
 
 // ── UTILS ─────────────────────────────────────────────────────
 function showToast(msg) {
@@ -247,11 +301,29 @@ function parseRecipe(text) {
   return results;
 }
 
+// ── ATİR ANBAR GS ────────────────────────────────────────────
+async function gsLoadAtir() {
+  const r = await fetch(GS_URL + '?action=atiranbari&t=' + Date.now());
+  if (!r.ok) throw new Error('fail');
+  const d = await r.json();
+  return Array.isArray(d) && d.length > 0 ? d : null;
+}
+
+async function gsSaveAtir(items) {
+  const r = await fetch(GS_URL, { method: 'POST', body: JSON.stringify({ action: 'atiranbari', items }) });
+  if (!r.ok) throw new Error('fail');
+}
+
 // ── STATE ─────────────────────────────────────────────────────
 const S = {
   page: 'home', anbar: [], loading: true,
   search: '', editId: null, editBuf: {}, syncSt: '',
-  kStep: 1, kText: '', kWeight: '', kUnit: 'ml', kRows: [], kName: ''
+  kStep: 1, kText: '', kWeight: '', kUnit: 'g', kRows: [], kName: '',
+  kUmumi: false, kUmumiVal: '1',
+  kQab: false, kQabVal: '2',
+  aBlend: '', aMiqdar: '', aFaiz: '',
+  atirSub: null,
+  atirAnbar: [], atirSearch: '', atirEditId: null, atirEditBuf: {}, atirSyncSt: ''
 };
 
 function set(patch) {
@@ -295,11 +367,20 @@ async function init() {
     try { localStorage.setItem('lav', JSON.stringify(INIT)); } catch(e) {}
   }
 
+  // nextId-ni yenilə
+  nextId = Math.max(...S.anbar.map(i => parseInt(i.id)||0)) + 1;
+  if (nextId < 100) nextId = 100;
+
+  // Ətir anbarını da yüklə
+  initAtir();
+
   // Sonra arxa planda Google Sheets-dən yüklə
   try {
     const gsData = await gsLoad();
     if (gsData && gsData.length) {
       set({ anbar: gsData });
+      nextId = Math.max(...gsData.map(i => parseInt(i.id)||0)) + 1;
+      if (nextId < 100) nextId = 100;
       try { localStorage.setItem('lav', JSON.stringify(gsData)); } catch(e) {}
     } else if (!data || !data.length) {
       // GS boşdur, INIT-i yaz
@@ -308,6 +389,74 @@ async function init() {
   } catch(e) {
     // GS işləmir — problem yoxdur, local ilə davam et
   }
+}
+
+// ── ATİR ANBAR PERSIST ───────────────────────────────────────
+async function persistAtir(items) {
+  set({ atirAnbar: items, atirSyncSt: 'saving' });
+  try {
+    await gsSaveAtir(items);
+    try { localStorage.setItem('lavAtir', JSON.stringify(items)); } catch(e) {}
+    set({ atirSyncSt: 'sync' });
+    showToast('✓ Saxlanıldı');
+  } catch(e) {
+    try { localStorage.setItem('lavAtir', JSON.stringify(items)); } catch(e2) {}
+    set({ atirSyncSt: 'local' });
+    showToast('⚠ Yalnız bu cihazda saxlanıldı');
+  }
+  setTimeout(() => set({ atirSyncSt: '' }), 3000);
+}
+
+async function initAtir() {
+  let data = null;
+  try { const s = localStorage.getItem('lavAtir'); if (s) data = JSON.parse(s); } catch(e) {}
+  if (data && data.length) {
+    set({ atirAnbar: data });
+  } else {
+    set({ atirAnbar: INIT_ATIR });
+    try { localStorage.setItem('lavAtir', JSON.stringify(INIT_ATIR)); } catch(e) {}
+  }
+  try {
+    const gsData = await gsLoadAtir();
+    if (gsData && gsData.length) {
+      set({ atirAnbar: gsData });
+      try { localStorage.setItem('lavAtir', JSON.stringify(gsData)); } catch(e) {}
+    } else {
+      try { await gsSaveAtir(INIT_ATIR); } catch(e) {}
+    }
+  } catch(e) {}
+}
+
+function startAtirEdit(item) {
+  set({ atirEditId: item.id, atirEditBuf: { name: item.name, country: item.country, brand: item.brand, usage: item.usage, note: item.note || '' } });
+}
+
+function cancelAtirEdit() {
+  const i = S.atirAnbar.find(x => x.id === S.atirEditId);
+  if (i && !i.name) set({ atirAnbar: S.atirAnbar.filter(x => x.id !== S.atirEditId) });
+  set({ atirEditId: null, atirEditBuf: {} });
+}
+
+async function saveAtirItem() {
+  const b = S.atirEditBuf;
+  const items = S.atirAnbar.map(i => i.id === S.atirEditId
+    ? { ...i, name: b.name, country: b.country, brand: b.brand, usage: b.usage, note: b.note }
+    : i
+  );
+  set({ atirEditId: null, atirEditBuf: {} });
+  await persistAtir(items);
+}
+
+async function delAtirItem(id) {
+  await persistAtir(S.atirAnbar.filter(i => i.id !== id));
+}
+
+function addAtirItem() {
+  const maxId = Math.max(0, ...S.atirAnbar.map(i => parseInt(i.id) || 0));
+  const n = { id: maxId + 1, name: '', country: '', brand: '', usage: '', note: '' };
+  S.atirAnbar.push(n);
+  set({ atirAnbar: S.atirAnbar });
+  startAtirEdit(n);
 }
 
 // ── ANBAR ─────────────────────────────────────────────────────
@@ -362,7 +511,8 @@ function kDelRow(id) {
 }
 
 function kReset() {
-  set({ kStep: 1, kText: '', kWeight: '', kUnit: 'ml', kRows: [], kName: '' });
+  set({ kStep: 1, kText: '', kWeight: '', kUnit: 'g', kRows: [], kName: '',
+    kUmumi: false, kUmumiVal: '1', kQab: false, kQabVal: '2' });
 }
 
 // ── RENDER ────────────────────────────────────────────────────
@@ -385,6 +535,7 @@ function render() {
   root.appendChild(mkNav());
   if (S.page === 'anbar') root.appendChild(mkAnbar());
   if (S.page === 'kalkulyator') root.appendChild(mkKalkulyator());
+  if (S.page === 'atirdunyasi') root.appendChild(mkAtirDunyasi());
 }
 
 function mkHome() {
@@ -409,11 +560,16 @@ function mkHome() {
   c2.innerHTML = '<div class="hc-icon">🧪</div><div class="hc-body"><div class="hc-title">Kalkulyator</div><div class="hc-desc">Resept əsasında xərc hesabla</div></div><div class="hc-arrow">→</div>';
   c2.onclick = () => set({ page: 'kalkulyator' });
 
+  const c3 = ce('button', 'home-card');
+  c3.innerHTML = '<div class="hc-icon">🌸</div><div class="hc-body"><div class="hc-title">Ətir Dünyası</div><div class="hc-desc">Blend hesablama, arxiv və tövsiyələr</div></div><div class="hc-arrow">→</div>';
+  c3.onclick = () => set({ page: 'atirdunyasi', atirSub: null });
+
   d.appendChild(logo);
   d.appendChild(h1);
   d.appendChild(sub);
   d.appendChild(c1);
   d.appendChild(c2);
+  d.appendChild(c3);
   return d;
 }
 
@@ -422,13 +578,13 @@ function mkNav() {
 
   const brand = ce('button', 'nav-brand');
   brand.innerHTML = '🌿 <span>Lavannelle</span>';
-  brand.onclick = () => set({ page: 'home' });
+  brand.onclick = () => set({ page: 'home', atirSub: null });
 
   const tabs = ce('div', 'nav-tabs');
-  [['anbar', '📦 Anbar'], ['kalkulyator', '🧪 Kalkul.']].forEach(([k, l]) => {
+  [['anbar', '📦 Anbar'], ['kalkulyator', '🧪 Kalkul.'], ['atirdunyasi', '🌸 Ətir']].forEach(([k, l]) => {
     const b = ce('button', 'nav-tab' + (S.page === k ? ' active' : ''));
     b.textContent = l;
-    b.onclick = () => set({ page: k });
+    b.onclick = () => set({ page: k, atirSub: null });
     tabs.appendChild(b);
   });
 
@@ -667,10 +823,10 @@ function mkKStep2() {
 
   const h2 = ce('h2');
   h2.style.cssText = 'font-size:17px;font-weight:700;color:#1a1a2e;margin-bottom:6px';
-  h2.textContent = 'Həcm / Ağırlıq';
+  h2.textContent = 'Miqdar / Ağırlıq';
   const p2 = ce('p');
   p2.style.cssText = 'font-size:13px;color:#666;margin-bottom:16px';
-  p2.textContent = 'Bu resept neçə ml / g üçündür?';
+  p2.textContent = 'Bu resept neçə g / ml üçündür?';
 
   const row = ce('div');
   row.style.cssText = 'display:flex;gap:10px;align-items:center;margin-bottom:14px';
@@ -680,7 +836,7 @@ function mkKStep2() {
   wi.oninput = e => { S.kWeight = e.target.value; };
   const us = ce('select', 'form-inp');
   us.style.cssText = 'width:80px;font-size:18px;font-weight:600';
-  ['ml', 'g'].forEach(u => {
+  ['g', 'ml'].forEach(u => {
     const o = ce('option'); o.value = u; o.textContent = u;
     if (S.kUnit === u) o.selected = true;
     us.appendChild(o);
@@ -718,7 +874,10 @@ function mkKStep3() {
   });
 
   const totPct = rowResults.reduce((s, r) => s + (r.pct || 0), 0);
-  const totCost = rowResults.reduce((s, r) => s + (r.cost || 0), 0);
+  const matCost = rowResults.reduce((s, r) => s + (r.cost || 0), 0);
+  const umumiExtra = S.kUmumi ? (parseFloat(S.kUmumiVal) || 0) : 0;
+  const qabExtra = S.kQab ? (parseFloat(S.kQabVal) || 0) : 0;
+  const totCost = matCost + umumiExtra + qabExtra;
   const pctOk = Math.abs(totPct - 100) < 0.01;
   const unm = S.kRows.filter(r => !r.materialId).length;
 
@@ -728,6 +887,29 @@ function mkKStep3() {
   ni.style.cssText = 'margin-bottom:12px;width:100%';
   ni.oninput = e => { S.kName = e.target.value; };
   wrap.appendChild(ni);
+
+  // Ümumi xərclər checkbox
+  function mkExtraRow(label, activeKey, valKey) {
+    const row = ce('div');
+    row.style.cssText = 'background:#fff;border:1.5px solid #e0dbd4;border-radius:12px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px';
+    const cb = ce('input');
+    cb.type = 'checkbox'; cb.checked = S[activeKey];
+    cb.style.cssText = 'width:20px;height:20px;cursor:pointer;accent-color:#1a1a2e;flex-shrink:0';
+    cb.onchange = e => { const p = {}; p[activeKey] = e.target.checked; set(p); };
+    const lbl = ce('div');
+    lbl.style.cssText = 'flex:1;font-size:14px;font-weight:600;color:' + (S[activeKey] ? '#1a1a2e' : '#aaa');
+    lbl.textContent = label;
+    const inp2 = ce('input', 'form-inp');
+    inp2.type = 'number'; inp2.value = S[valKey]; inp2.min = '0'; inp2.step = '0.01';
+    inp2.style.cssText = 'width:90px;text-align:right;' + (S[activeKey] ? '' : 'opacity:.4');
+    inp2.disabled = !S[activeKey];
+    inp2.oninput = e => { const p = {}; p[valKey] = e.target.value; S[valKey] = e.target.value; };
+    const sym = ce('span');
+    sym.style.cssText = 'font-size:13px;color:#aaa;flex-shrink:0';
+    sym.textContent = '₼';
+    row.appendChild(cb); row.appendChild(lbl); row.appendChild(inp2); row.appendChild(sym);
+    return row;
+  }
 
   // chips
   const chips = ce('div', 'chips');
@@ -747,12 +929,23 @@ function mkKStep3() {
   const res = ce('div', 'result-box');
   if (S.kName) { const rn = ce('div', 'res-name'); rn.textContent = S.kName; res.appendChild(rn); }
   const rsub = ce('div', 'res-sub'); rsub.textContent = tw + ' ' + S.kUnit + ' · ' + S.kRows.length + ' ingredient';
-  const rlbl = ce('div', 'res-label'); rlbl.textContent = 'Birbaşa xərc';
-  const rprice = ce('div', 'res-price'); rprice.textContent = '₼ ' + totCost.toFixed(4);
-  const rapprox = ce('div', 'res-approx'); rapprox.textContent = '≈ ₼ ' + totCost.toFixed(2);
-  res.appendChild(rsub); res.appendChild(rlbl); res.appendChild(rprice); res.appendChild(rapprox);
-  wrap.appendChild(res);
-
+  const rlbl = ce('div', 'res-label'); rlbl.textContent = 'Ümumi xərc';
+  const rprice = ce('div', 'res-price'); rprice.textContent = '₼ ' + totCost.toFixed(2);
+  // breakdown
+  const breakdown = ce('div');
+  breakdown.style.cssText = 'margin-top:12px;border-top:1px solid rgba(255,255,255,.1);padding-top:10px;display:flex;flex-direction:column;gap:4px';
+  const addLine = (label, val) => {
+    const l = ce('div'); l.style.cssText = 'display:flex;justify-content:space-between;font-size:12px;color:#6c7a99';
+    const lt = ce('span'); lt.textContent = label;
+    const lv = ce('span'); lv.style.fontFamily = 'monospace'; lv.textContent = '₼ ' + val.toFixed(2);
+    l.appendChild(lt); l.appendChild(lv); breakdown.appendChild(l);
+  };
+  addLine('Material xərci', matCost);
+  if (umumiExtra > 0) addLine('Ümumi xərclər', umumiExtra);
+  if (qabExtra > 0) addLine('Qablaşdırma', qabExtra);
+  res.appendChild(rsub);
+  res.appendChild(rlbl); res.appendChild(rprice);
+  if (umumiExtra > 0 || qabExtra > 0) res.appendChild(breakdown);
   // ingredient cards
   rowResults.forEach(r => {
     const ic = ce('div', 'ing-card' + (r.materialId ? '' : ' unmatched'));
@@ -797,11 +990,295 @@ function mkKStep3() {
     wrap.appendChild(ic);
   });
 
-  const nb = ce('button', 'new-kal-btn');
-  nb.textContent = '+ Yeni resept';
-  nb.onclick = kReset;
-  wrap.appendChild(nb);
+  // extra costs
+  wrap.appendChild(mkExtraRow('Ümumi xərclər', 'kUmumi', 'kUmumiVal'));
+  wrap.appendChild(mkExtraRow('Qablaşdırma', 'kQab', 'kQabVal'));
+
+  // result
+  wrap.appendChild(res);
   return wrap;
+}
+
+
+// ── ƏTİR ANBARI ──────────────────────────────────────────────
+function mkAtirAnbar() {
+  const page = ce('div', 'page');
+  const filtered = S.atirAnbar.filter(i => (i.name||'').toLowerCase().includes(S.atirSearch.toLowerCase()) ||
+    (i.brand||'').toLowerCase().includes(S.atirSearch.toLowerCase()) ||
+    (i.country||'').toLowerCase().includes(S.atirSearch.toLowerCase()));
+
+  // Topbar
+  const tb = ce('div', 'topbar');
+  const si = ce('input', 'search-inp');
+  si.type = 'text'; si.placeholder = '🔍 Axtar...'; si.value = S.atirSearch;
+  si.oninput = e => { S.atirSearch = e.target.value; render(); };
+  const ab = ce('button', 'add-btn');
+  ab.textContent = '+ Əlavə'; ab.onclick = addAtirItem;
+  tb.appendChild(si); tb.appendChild(ab);
+
+  // Statusbar
+  const sb = ce('div', 'statusbar');
+  const info = ce('span', 'st-info');
+  info.textContent = S.atirAnbar.length + ' ətir';
+  sb.appendChild(info);
+  if (S.atirSyncSt === 'sync') {
+    const b = ce('span', 'st-badge st-sync'); b.textContent = '✓ Sinxron'; sb.appendChild(b);
+  } else if (S.atirSyncSt === 'local' || S.atirSyncSt === 'saving') {
+    const b = ce('span', 'st-badge st-local'); b.textContent = S.atirSyncSt === 'saving' ? '...' : '⚠ Bu cihaz'; sb.appendChild(b);
+  }
+
+  const list = ce('div', 'mat-list');
+
+  if (!filtered.length) {
+    const em = ce('div', 'empty-msg'); em.textContent = S.atirSearch ? 'Nəticə tapılmadı.' : 'Anbar boşdur.';
+    list.appendChild(em);
+  }
+
+  filtered.forEach((item, idx) => {
+    const card = ce('div', 'mat-card');
+    const row = ce('div', 'mat-row');
+
+    const num = ce('span', 'mat-num'); num.textContent = String(idx + 1);
+    const info2 = ce('div', 'mat-info');
+    const nm = ce('div', 'mat-name'); nm.textContent = item.name || '—';
+    const meta = ce('div', 'mat-meta');
+    meta.textContent = [item.brand, item.country].filter(Boolean).join(' · ');
+    info2.appendChild(nm); info2.appendChild(meta);
+    if (item.usage) {
+      const us = ce('div'); us.style.cssText = 'font-size:11px;color:#3b5bdb;margin-top:2px'; us.textContent = item.usage;
+      info2.appendChild(us);
+    }
+    if (item.note) {
+      const nt = ce('div', 'mat-note'); nt.textContent = item.note; info2.appendChild(nt);
+    }
+
+    const chev = ce('span', 'mat-chevron'); chev.textContent = S.atirEditId === item.id ? '▲' : '▼';
+    row.appendChild(num); row.appendChild(info2); row.appendChild(chev);
+    row.onclick = () => { if (S.atirEditId === item.id) cancelAtirEdit(); else startAtirEdit(item); };
+
+    card.appendChild(row);
+    if (S.atirEditId === item.id) card.appendChild(mkAtirEditForm());
+    list.appendChild(card);
+  });
+
+  page.appendChild(tb); page.appendChild(sb); page.appendChild(list);
+  return page;
+}
+
+function mkAtirEditForm() {
+  const b = S.atirEditBuf;
+  const form = ce('div', 'edit-form');
+
+  const fields = [
+    ['Ad', 'name', 'text', 'Ətir adı'],
+    ['Ölkə', 'country', 'text', 'USA, Fransa, Çin...'],
+    ['Brend', 'brand', 'text', 'CandleScience, Kemaclub...'],
+    ['İstifadə yeri', 'usage', 'text', 'Sabun, Mum, Balzam...'],
+    ['Qeyd', 'note', 'text', 'İxtiyari'],
+  ];
+
+  fields.forEach((f, fi) => {
+    const g = ce('div', 'form-full form-group');
+    const l = ce('label', 'form-label'); l.textContent = f[0];
+    const i = ce('input', 'form-inp');
+    i.type = f[2]; i.value = b[f[1]] || ''; i.placeholder = f[3];
+    i.oninput = e => { S.atirEditBuf[f[1]] = e.target.value; };
+    if (fi === 0) setTimeout(() => i.focus(), 50);
+    g.appendChild(l); g.appendChild(i); form.appendChild(g);
+  });
+
+  const btns = ce('div', 'form-btns');
+  const sv = ce('button', 'btn-save'); sv.textContent = '✓ Saxla'; sv.onclick = saveAtirItem;
+  const cc = ce('button', 'btn-cancel'); cc.textContent = 'Ləğv'; cc.onclick = cancelAtirEdit;
+  btns.appendChild(sv); btns.appendChild(cc);
+  const del = ce('button', 'btn-delete'); del.textContent = '🗑 Sil'; del.onclick = () => delAtirItem(S.atirEditId);
+
+  form.appendChild(btns); form.appendChild(del);
+  return form;
+}
+
+// ── ƏTİR DÜNYASI HUB ──────────────────────────────────────────
+function mkAtirDunyasi() {
+  // If sub-page selected, show it
+  if (S.atirSub === 'blend') return mkAtirBlendPage();
+  if (S.atirSub === 'atiranbari') return mkAtirAnbarPage();
+
+  const page = ce('div', 'page');
+
+  const hdr = ce('div', 'topbar');
+  const title = ce('span', 'topbar-title');
+  title.textContent = '🌸 Ətir Dünyası';
+  hdr.appendChild(title);
+  page.appendChild(hdr);
+
+  const sub = ce('p');
+  sub.style.cssText = 'font-size:13px;color:#999;margin-bottom:20px';
+  sub.textContent = 'Ətirlərlə bağlı bütün alətlər';
+  page.appendChild(sub);
+
+  const cards = [
+    { icon: '📚', title: 'Ətir Anbarı', desc: 'Əlinizdəki bütün ətirlərin siyahısı', sub: 'atiranbari' },
+    { icon: '✨', title: 'Blend Tövsiyəsi', desc: 'AI əsaslı ətir blend təklifi', sub: 'tovsiye', soon: true },
+    { icon: '🧪', title: 'Blend Hesablama', desc: 'Blend faizlərini qramlara çevir', sub: 'blend' },
+  ];
+
+  cards.forEach(c => {
+    const card = ce('button', 'home-card');
+    card.style.cssText = 'margin-bottom:10px;' + (c.soon ? 'opacity:.5' : '');
+    card.disabled = !!c.soon;
+    card.innerHTML = `<div class="hc-icon">${c.icon}</div><div class="hc-body"><div class="hc-title">${c.title}${c.soon ? ' <span style="font-size:10px;color:#aaa;font-weight:400">tezliklə</span>' : ''}</div><div class="hc-desc">${c.desc}</div></div><div class="hc-arrow">→</div>`;
+    if (!c.soon) card.onclick = () => set({ atirSub: c.sub });
+    page.appendChild(card);
+  });
+
+  return page;
+}
+
+function mkAtirBlendPage() {
+  const pg = mkAtir();
+  // Add back button to topbar
+  const hdr = pg.querySelector('.topbar');
+  const backBtn = ce('button', 'sec-btn');
+  backBtn.textContent = '← Geri';
+  backBtn.style.cssText = 'padding:8px 14px;font-size:13px';
+  backBtn.onclick = () => set({ atirSub: null });
+  hdr.appendChild(backBtn);
+  return pg;
+}
+
+function mkAtirAnbarPage() {
+  const pg = mkAtirAnbar();
+  const hdr = pg.querySelector('.topbar');
+  const backBtn = ce('button', 'sec-btn');
+  backBtn.textContent = '← Geri';
+  backBtn.style.cssText = 'padding:8px 14px;font-size:13px';
+  backBtn.onclick = () => set({ atirSub: null, atirEditId: null });
+  hdr.insertBefore(backBtn, hdr.firstChild);
+  return pg;
+}
+
+// ── ATİR BLEND ────────────────────────────────────────────────
+function mkAtir() {
+  const page = ce('div', 'page');
+
+  // Header
+  const hdr = ce('div', 'topbar');
+  const title = ce('span', 'topbar-title');
+  title.textContent = '🌸 Blend Hesablama';
+  const clearBtn = ce('button', 'sec-btn');
+  clearBtn.textContent = '🗑 Təmizlə';
+  clearBtn.style.cssText = 'padding:8px 14px;font-size:13px';
+  clearBtn.onclick = () => { S.aBlend = ''; render(); };
+  hdr.appendChild(title);
+  hdr.appendChild(clearBtn);
+  page.appendChild(hdr);
+
+  // Blend textarea
+  const s1 = ce('div', 'kal-card');
+  const s1b = ce('div', 'kal-body');
+  const s1l = ce('div', 'form-label'); s1l.textContent = 'Ətir Blendi'; s1l.style.marginBottom = '8px';
+  const ta = ce('textarea', 'recipe-ta');
+  ta.style.minHeight = '90px';
+  ta.placeholder = 'White Tea FO USA 50% + Japan Cherry Blossom FO USA 30% + Bergamot FO USA 20%';
+  ta.value = S.aBlend;
+  ta.oninput = e => { S.aBlend = e.target.value; updateAtirResult(); };
+  s1b.appendChild(s1l); s1b.appendChild(ta);
+  s1.appendChild(s1b);
+  page.appendChild(s1);
+
+  // Miqdar
+  const s2 = ce('div', 'kal-card');
+  const s2b = ce('div', 'kal-body');
+  const s2l = ce('div', 'form-label'); s2l.textContent = 'Miqdar (qr / ml)'; s2l.style.marginBottom = '8px';
+  const s2i = ce('input', 'form-inp');
+  s2i.type = 'number'; s2i.placeholder = '100'; s2i.value = S.aMiqdar;
+  s2i.min = '0'; s2i.step = '0.1';
+  s2i.style.cssText = 'font-size:22px;font-weight:700;width:150px';
+  s2i.oninput = e => { S.aMiqdar = e.target.value; updateAtirResult(); };
+  s2b.appendChild(s2l); s2b.appendChild(s2i);
+  s2.appendChild(s2b);
+  page.appendChild(s2);
+
+  // Faiz
+  const s3 = ce('div', 'kal-card');
+  const s3b = ce('div', 'kal-body');
+  const s3l = ce('div', 'form-label'); s3l.textContent = 'Ətir Faizi (%)'; s3l.style.marginBottom = '8px';
+  const s3row = ce('div'); s3row.style.cssText = 'display:flex;align-items:center;gap:8px';
+  const s3i = ce('input', 'form-inp');
+  s3i.type = 'number'; s3i.placeholder = '15'; s3i.value = S.aFaiz;
+  s3i.min = '0'; s3i.max = '100'; s3i.step = '0.1';
+  s3i.style.cssText = 'font-size:22px;font-weight:700;width:130px';
+  s3i.oninput = e => { S.aFaiz = e.target.value; updateAtirResult(); };
+  const s3sym = ce('span'); s3sym.style.cssText = 'font-size:20px;color:#aaa;font-weight:700'; s3sym.textContent = '%';
+  s3row.appendChild(s3i); s3row.appendChild(s3sym);
+  s3b.appendChild(s3l); s3b.appendChild(s3row);
+  s3.appendChild(s3b);
+  page.appendChild(s3);
+
+  // Nəticə container
+  const resWrap = ce('div');
+  resWrap.id = 'atir-result';
+  page.appendChild(resWrap);
+  drawAtirResult(resWrap);
+
+  return page;
+}
+
+function updateAtirResult() {
+  const wrap = document.getElementById('atir-result');
+  if (wrap) drawAtirResult(wrap);
+}
+
+function parseBlend(text) {
+  const parts = text.split('+').map(p => p.trim()).filter(Boolean);
+  const results = [];
+  for (const part of parts) {
+    const m = part.match(/^(.*?)\s+(\d+(?:\.\d+)?)%\s*$/);
+    if (!m) continue;
+    results.push({ name: m[1].trim(), pct: parseFloat(m[2]) });
+  }
+  return results;
+}
+
+function drawAtirResult(wrap) {
+  wrap.innerHTML = '';
+  const miqdar = parseFloat(S.aMiqdar) || 0;
+  const faiz = parseFloat(S.aFaiz) || 0;
+  const blend = parseBlend(S.aBlend);
+  if (miqdar <= 0 || faiz <= 0 || blend.length === 0) return;
+
+  const totalAtir = (miqdar * faiz) / 100;
+  const totalPct = blend.reduce((s, b) => s + b.pct, 0);
+
+  const res = ce('div', 'result-box');
+  const rsub = ce('div', 'res-sub');
+  rsub.textContent = miqdar + ' qr · ' + faiz + '% ətir = ' + totalAtir.toFixed(2) + ' qr ətir';
+  const rlbl = ce('div', 'res-label'); rlbl.textContent = 'Bölünüş';
+  res.appendChild(rsub); res.appendChild(rlbl);
+
+  const breakdown = ce('div');
+  breakdown.style.cssText = 'margin-top:8px;display:flex;flex-direction:column;gap:8px';
+
+  blend.forEach(b => {
+    const grams = (totalAtir * b.pct) / totalPct;
+    const row = ce('div');
+    row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:8px';
+    const nameEl = ce('span'); nameEl.style.cssText = 'color:#9aa0b0;font-size:13px;flex:1'; nameEl.textContent = b.name;
+    const pctEl = ce('span'); pctEl.style.cssText = 'color:#6c7a99;font-size:12px;white-space:nowrap'; pctEl.textContent = b.pct + '%';
+    const grEl = ce('span'); grEl.style.cssText = 'color:#fff;font-family:monospace;font-weight:700;font-size:16px;white-space:nowrap'; grEl.textContent = grams.toFixed(2) + ' qr';
+    row.appendChild(nameEl); row.appendChild(pctEl); row.appendChild(grEl);
+    breakdown.appendChild(row);
+  });
+
+  if (Math.abs(totalPct - 100) > 0.1) {
+    const warn = ce('div');
+    warn.style.cssText = 'margin-top:6px;font-size:12px;color:#e67e22;background:rgba(230,126,34,.15);padding:8px 10px;border-radius:8px';
+    warn.textContent = '⚠ Faizlər cəmi ' + totalPct.toFixed(1) + '% (100% olmalıdır)';
+    breakdown.appendChild(warn);
+  }
+
+  res.appendChild(breakdown);
+  wrap.appendChild(res);
 }
 
 init();
