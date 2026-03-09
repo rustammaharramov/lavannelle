@@ -334,8 +334,30 @@ const S = {
 
 function set(patch) {
   Object.assign(S, patch);
+  // Push history state so Android back button works
+  const state = { page: S.page, atirSub: S.atirSub };
+  if (patch.page || patch.atirSub !== undefined) {
+    history.pushState(state, '');
+  }
   render();
 }
+
+// Android back button handler
+window.addEventListener('popstate', e => {
+  if (e.state) {
+    S.page = e.state.page || 'home';
+    S.atirSub = e.state.atirSub || null;
+    S.editId = null;
+    S.atirEditId = null;
+    render();
+  } else {
+    S.page = 'home';
+    S.atirSub = null;
+    S.editId = null;
+    S.atirEditId = null;
+    render();
+  }
+});
 
 // ── PERSIST ───────────────────────────────────────────────────
 async function persist(items) {
