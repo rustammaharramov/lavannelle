@@ -1401,7 +1401,7 @@ function mkBlendAIPage(mode) {
 
   const mehsulSel = ce('select', 'form-inp');
   mehsulSel.style.marginBottom = '14px';
-  ['Mum', 'Sabun', 'Balzam', 'Saç yağı', 'Ümumi'].forEach(m => {
+  ['M&P Sabun', 'Ətirli Mum Tablet', 'Ətirli Əriyən Mum'].forEach(m => {
     const o = ce('option'); o.value = m; o.textContent = m;
     if (S.bfMehsul === m) o.selected = true;
     mehsulSel.appendChild(o);
@@ -1445,66 +1445,24 @@ async function runBlendAI(mode) {
 
   set({ bfLoading: true, bfResult: null });
 
-  // Build fragrance list from anbar
+  // Build fragrance list from anbar with guc
   const atirList = S.atirAnbar.map(a =>
-    `${a.name} (${a.country}${a.brand ? ', ' + a.brand : ''}${a.usage ? ', istifadə: ' + a.usage : ''})`
+    `${a.name} | ${a.country}${a.brand ? ', ' + a.brand : ''} | istifadə: ${a.usage || '-'} | güc: ${a.guc || '-'}`
   ).join('\n');
 
-  const mehsul = S.bfMehsul || 'Ümumi';
+  const mehsul = S.bfMehsul || 'M&P Sabun';
+
+  const mehsulQayda = {
+    'M&P Sabun': 'MƏHSUL: M&P Sabun. Dəriyə birbaşa təmas var. Yumşaq, gözəl, yüngül-orta intensivlikdə qoxular seç. Ağır qoxulardan çəkin. Ümumi faiz 1-3%.',
+    'Ətirli Mum Tablet': 'MƏHSUL: Ətirli Mum Tablet — garderopda passiv yayılır. Dərin, sabit qoxular: müşk, amber, odunsu, lavanda. Baza notlara üstünlük ver. Ümumi faiz 6-10%.',
+    'Ətirli Əriyən Mum': 'MƏHSUL: Ətirli Əriyən Mum — aroma lampada, istilik ilə otağa yayılır. Uçucu, canlı qoxular: çiçəkli, sitrus, meyvəli. Flash point 65C+ üstün tut. Ümumi faiz 8-12%.'
+  };
+
+  const gucQayda = 'ƏTİR GÜCU BALANSI — faiz qoyarkən mütləq nəzərə al: Güclü: 10-20%, Yaxşı: 20-35%, Orta: 30-45%, Zəif: 40-55%, Çox Zəif: 50-65%';
 
   const prompt = mode === 'movzu'
-    ? `Sən peşəkar parfümer və kosmetik formulyatorsən. Aşağıda müştərinin ətir anbarındakı ətirlərin siyahısı var.
-
-Müştərinin tələbi: "${input}" mövzusuna uyğun ${mehsul} üçün ətir blendi yarat.
-
-Anbar siyahısı:
-${atirList}
-
-Qaydalar:
-- Əgər mövzuya uyğun ətir anbarında varsa onları istifadə et
-- Anbarında olmayan ama tövsiyə etdiyin ətirlər varsa "(anbar xaricində)" qeyd et
-- 3-5 ətirdən ibarət blend yarat
-- Hər ətirin faizini göstər, cəmi 100% olsun
-- Qısa izahat ver niyə bu blend bu mövzuya uyğundur
-- Cavabı yalnız JSON formatında ver, heç bir əlavə mətn olmadan:
-{
-  "blend_adi": "Blend adı",
-  "movzu": "mövzu",
-  "mehsul": "${mehsul}",
-  "izah": "Qısa izahat",
-  "atirlər": [
-    {"ad": "Ətir adı", "faiz": 40, "anbar": true, "qeyd": "qısa qeyd"},
-    ...
-  ]
-}`
-    : `Sən peşəkar parfümer və kosmetik formulyatorsən. Aşağıda müştərinin ətir anbarındakı ətirlərin siyahısı var.
-
-Müştərinin tələbi: "${input}" ətirini mərkəzə alaraq ${mehsul} üçün blend yarat. Bu ətirin varlığı hiss olunsun amma narahat etməsin.
-
-Anbar siyahısı:
-${atirList}
-
-Qaydalar:
-- "${input}" ətiri blendde dominant olsun (30-50%)
-- Tamamlayıcı ətirləri anbardan seç
-- Anbarında olmayan amma tövsiyə etdiklərin varsa "(anbar xaricinde)" qeyd et
-- 3-5 ətirdən ibarət 2-3 fərqli variant yarat
-- Hər variantda faizlər cəmi 100% olsun
-- Cavabı yalnız JSON formatında ver:
-{
-  "əsas_ətir": "${input}",
-  "mehsul": "${mehsul}",
-  "variantlar": [
-    {
-      "ad": "Variant adı",
-      "izah": "Qısa izahat",
-      "atirlər": [
-        {"ad": "Ətir adı", "faiz": 45, "anbar": true, "qeyd": "qısa qeyd"},
-        ...
-      ]
-    }
-  ]
-}`;
+    ? `Sən peşəkar parfümer və kosmetik formulyatorsən.\n\n${mehsulQayda[mehsul] || ''}\n\n${gucQayda}\n\nMüştərinin tələbi: "${input}" mövzusuna uyğun ${mehsul} üçün blend yarat.\n\nAnbar siyahısı:\n${atirList}\n\nQAYDALAR:\n- Mövzuya uyğun ətirləri anbardan seç\n- Anbarında olmayan lazım olan varsa anbar: false qeyd et\n- 3-5 ətirdən ibarət blend, faizlər cəmi dəqiq 100%\n- Azərbaycan adı gözəl, mənalı olsun (məs. Dəniz Küləyi, Gecə Bağçası)\n- YALNIZ JSON ver:\n{"blend_adi_az":"Azərbaycanca ad","blend_adi_en":"English name","movzu":"${input}","mehsul":"${mehsul}","izah":"1-2 cümlə izahat","atirlər":[{"ad":"Ətir adı","faiz":40,"anbar":true,"qeyd":"rolu"}]}`
+    : `Sən peşəkar parfümer və kosmetik formulyatorsən.\n\n${mehsulQayda[mehsul] || ''}\n\n${gucQayda}\n\nMüştərinin tələbi: "${input}" ətirini mərkəzə alaraq ${mehsul} üçün blend yarat.\n\nAnbar siyahısı:\n${atirList}\n\nQAYDALAR:\n- "${input}" ətiri dominant olsun (30-50%), zəifdirsə faizini artır\n- Tamamlayıcı ətirləri anbardan seç, yoxdursa anbar: false\n- 3-5 ətirdən ibarət 2-3 variant, hər birinin faizləri cəmi dəqiq 100%\n- Hər variantın adı gözəl, mənalı olsun\n- YALNIZ JSON ver:\n{"əsas_ətir":"${input}","mehsul":"${mehsul}","variantlar":[{"ad_az":"Azərbaycanca ad","ad_en":"English name","izah":"1-2 cümlə","atirlər":[{"ad":"Ətir adı","faiz":45,"anbar":true,"qeyd":"rolu"}]}]}`;
 
   try {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
@@ -1536,10 +1494,11 @@ function mkBlendResult() {
   if (mode === 'movzu') {
     // Single blend result
     const res = ce('div', 'result-box');
-    const rname = ce('div', 'res-name'); rname.textContent = r.blend_adi || '';
+    const rname = ce('div', 'res-name'); rname.textContent = r.blend_adi_en || r.blend_adi || '';
+    const rnameaz = ce('div'); rnameaz.style.cssText = 'font-size:13px;color:#9b7acc;margin-top:2px;margin-bottom:4px'; rnameaz.textContent = r.blend_adi_az || '';
     const rsub = ce('div', 'res-sub'); rsub.textContent = (r.movzu || '') + ' · ' + (r.mehsul || '');
     const rlbl = ce('div', 'res-label'); rlbl.textContent = 'Blend';
-    res.appendChild(rname); res.appendChild(rsub); res.appendChild(rlbl);
+    res.appendChild(rname); if (r.blend_adi_az) res.appendChild(rnameaz); res.appendChild(rsub); res.appendChild(rlbl);
 
     const breakdown = ce('div');
     breakdown.style.cssText = 'margin-top:8px;display:flex;flex-direction:column;gap:6px';
