@@ -1,0 +1,25 @@
+{
+  "name": "Lavannelle",
+  "short_name": "Lavannelle",
+  "description": "Xammal anbarı və kalkulyator",
+  "start_url": "/lavannelle/",
+  "scope": "/lavannelle/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F7F4EF",
+  "theme_color": "#1a1a2e",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
