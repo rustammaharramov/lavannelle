@@ -1760,7 +1760,7 @@ function mkCPPage() {
 
   // ── CƏDVƏL ──
   const tblTitle = ce('div');
-  tblTitle.style.cssText = 'font-size:13px;font-weight:700;color:#f5f5f5;margin-bottom:10px';
+  tblTitle.style.cssText = 'font-size:13px;font-weight:700;color:#f0f0f0;margin-bottom:10px';
   tblTitle.textContent = '📊 CP Test Cədvəli';
   page.appendChild(tblTitle);
 
@@ -1816,7 +1816,7 @@ function mkCPPage() {
 
     // Name
     const nameTd = document.createElement('td');
-    nameTd.style.cssText = 'padding:7px 8px;color:' + (r.cp?'#d0d0d0':'#555') + ';line-height:1.3';
+    nameTd.style.cssText = 'padding:7px 8px;color:' + (r.cp?'#f0f0f0':'#6a7080') + ';line-height:1.3';
     const nameShort = r.ad.replace(' FO USA','');
     // Level badge for CP+ rows
     if (r.cp && r.level !== 'none') {
@@ -1873,7 +1873,7 @@ function mkCPPage() {
 
   // ── BLENDLƏR ──
   const blTitle = ce('div');
-  blTitle.style.cssText = 'font-size:13px;font-weight:700;color:#f5f5f5;margin-bottom:4px';
+  blTitle.style.cssText = 'font-size:13px;font-weight:700;color:#f0f0f0;margin-bottom:4px';
   blTitle.textContent = '🧴 CP Blendlər (3 ətirli)';
   page.appendChild(blTitle);
 
@@ -1893,11 +1893,11 @@ function mkCPPage() {
   });
   page.appendChild(leg);
 
-  const levelColors = { green:'rgba(39,174,96,.1)', yellow:'rgba(243,156,18,.1)', red:'rgba(231,76,60,.1)' };
-  const levelBorder = { green:'rgba(39,174,96,.25)', yellow:'rgba(243,156,18,.25)', red:'rgba(231,76,60,.25)' };
+  const levelColors = { green:'#1a3a2a', yellow:'#3a2e10', red:'#3a1515' };
+  const levelBorder = { green:'#2d6e45', yellow:'#7a5e18', red:'#7a2828' };
   const levelIcon   = { green:'🟢', yellow:'🟡', red:'🔴' };
   const levelLabel  = { green:'Əlverişli', yellow:'Diqqətli', red:'Çətin' };
-  const levelTextC  = { green:'#4caf50', yellow:'#f39c12', red:'#e74c3c' };
+  const levelTextC  = { green:'#5dcc8a', yellow:'#f5bc40', red:'#f07070' };
 
   CP_BLENDLER.forEach(b => {
     const card = ce('div');
@@ -1906,7 +1906,7 @@ function mkCPPage() {
     const topRow = ce('div');
     topRow.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:8px';
     const icon = ce('span'); icon.textContent = levelIcon[b.level];
-    const name = ce('div'); name.style.cssText = 'font-size:13px;font-weight:700;color:#f5f5f5;flex:1'; name.textContent = b.ad;
+    const name = ce('div'); name.style.cssText = 'font-size:13px;font-weight:700;color:#f0f0f0;flex:1'; name.textContent = b.ad;
     const lvlBadge = ce('span');
     lvlBadge.style.cssText = 'font-size:9px;color:'+levelTextC[b.level]+';font-weight:700;border:1px solid '+levelBorder[b.level]+';border-radius:6px;padding:1px 6px';
     lvlBadge.textContent = levelLabel[b.level];
@@ -1919,14 +1919,14 @@ function mkCPPage() {
       if (!m) return;
       const row = ce('div');
       row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:4px';
-      const nm = ce('span'); nm.style.cssText = 'font-size:12px;color:#9aa0b0'; nm.textContent = m[1];
-      const pct = ce('span'); pct.style.cssText = 'font-size:13px;font-weight:700;color:#f5f5f5;font-family:monospace'; pct.textContent = m[2]+'%';
+      const nm = ce('span'); nm.style.cssText = 'font-size:12px;color:#b8c0cc'; nm.textContent = m[1];
+      const pct = ce('span'); pct.style.cssText = 'font-size:13px;font-weight:700;color:#f0f0f0;font-family:monospace'; pct.textContent = m[2]+'%';
       row.appendChild(nm); row.appendChild(pct);
       card.appendChild(row);
     });
 
     const iz = ce('div');
-    iz.style.cssText = 'font-size:11px;color:#9aa0b0;margin-top:8px;border-top:1px solid rgba(255,255,255,.08);padding-top:8px;line-height:1.5';
+    iz.style.cssText = 'font-size:11px;color:#b8c0cc;margin-top:8px;border-top:1px solid rgba(255,255,255,.12);padding-top:8px;line-height:1.5';
     iz.textContent = b.izah;
     card.appendChild(iz);
 
