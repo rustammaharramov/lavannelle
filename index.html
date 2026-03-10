@@ -114,6 +114,19 @@ button{font-family:inherit;cursor:pointer}
 <div class="toast" id="toast"></div>
 <script>
 const GS_URL = "https://script.google.com/macros/s/AKfycbxhy9DyHpzm1-xY-K-g9uGSq8AoG4U0XtB38C8w5fPALBdydsCAw1eVIElb_5X3FnLK/exec";
+const APP_VERSION = 30;
+const ADMIN_CODE = '1234';
+
+// ── ADMIN/GUEST ───────────────────────────────────────────────
+function isAdmin() {
+  try { return localStorage.getItem('lav_admin') === ADMIN_CODE; } catch(e) { return false; }
+}
+function setAdmin(code) {
+  try { localStorage.setItem('lav_admin', code); } catch(e) {}
+}
+function clearAdmin() {
+  try { localStorage.removeItem('lav_admin'); } catch(e) {}
+}
 
 const INIT = [
   {id:1,name:"Şi yağı",qty:1,unit:"kg",price:40,note:""},
@@ -343,6 +356,7 @@ const S = {
   rengSub: null, rengSeçim: null, rengAI: '', rengAIResult: null, rengAILoading: false,
   hbKat: 'Hamısı', hbCins: 'Hamısı', hbSearch: '', hbHideZero: false,
   savedBlends: [],
+  ratings: {}, ratingsLoaded: false,
   atirAnbar: [], atirSearch: '', atirEditId: null, atirEditBuf: {}, atirSyncSt: ''
 };
 
@@ -392,6 +406,46 @@ function saveBlendToStorage() {
 }
 loadSavedBlends();
 
+// ── RATINGS (Google Sheets) ───────────────────────────────────────────────────
+async function loadRatings() {
+  if (S.ratingsLoaded) return;
+  try {
+    const r = await fetch(GS_URL + '?action=ratings');
+    const data = await r.json();
+    S.ratings = data || {};
+    S.ratingsLoaded = true;
+    render();
+  } catch(e) { S.ratings = {}; }
+}
+
+async function saveRating(key, value) {
+  // Optimistic local update
+  S.ratings[key] = String(value);
+  render();
+  try {
+    await fetch(GS_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'rating_save', key, value: String(value) })
+    });
+  } catch(e) { showToast('Reytinq saxlanmadı ⚠'); }
+}
+
+async function deleteRating(key) {
+  delete S.ratings[key];
+  render();
+  try {
+    await fetch(GS_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'rating_delete', key })
+    });
+  } catch(e) { showToast('Silmə xətası ⚠'); }
+}
+
+function getRating(key) {
+  const v = S.ratings[key];
+  return v === undefined ? null : v === 'null' ? null : v;
+}
+
 // ── PERSIST ───────────────────────────────────────────────────
 async function persist(items) {
   set({ anbar: items, syncSt: 'saving' });
@@ -435,6 +489,9 @@ async function init() {
 
   // Ətir anbarını da yüklə
   initAtir();
+
+  // Reytinqləri Sheets-dən yüklə
+  loadRatings();
 
   // Sonra arxa planda Google Sheets-dən yüklə
   try {
@@ -500,6 +557,7 @@ function cancelAtirEdit() {
 }
 
 async function saveAtirItem() {
+  if (!isAdmin()) { showToast('⛔ Yalnız Admin edə bilər'); return; }
   const b = S.atirEditBuf;
   const items = S.atirAnbar.map(i => i.id === S.atirEditId
     ? { ...i, name: b.name, country: b.country, brand: b.brand, usage: b.usage, guc: b.guc, note: b.note }
@@ -510,10 +568,12 @@ async function saveAtirItem() {
 }
 
 async function delAtirItem(id) {
+  if (!isAdmin()) { showToast('⛔ Yalnız Admin edə bilər'); return; }
   await persistAtir(S.atirAnbar.filter(i => i.id !== id));
 }
 
 function addAtirItem() {
+  if (!isAdmin()) { showToast('⛔ Yalnız Admin edə bilər'); return; }
   const maxId = Math.max(0, ...S.atirAnbar.map(i => parseInt(i.id) || 0));
   const n = { id: maxId + 1, name: '', country: '', brand: '', usage: '', note: '' };
   S.atirAnbar.push(n);
@@ -527,6 +587,7 @@ function startEdit(item) {
 }
 
 function addItem() {
+  if (!isAdmin()) { showToast('⛔ Yalnız Admin edə bilər'); return; }
   const n = { id: nextId++, name: '', qty: '', unit: 'ml', price: '', note: '' };
   S.anbar.push(n);
   set({ anbar: S.anbar });
@@ -534,6 +595,7 @@ function addItem() {
 }
 
 async function saveItem() {
+  if (!isAdmin()) { showToast('⛔ Yalnız Admin edə bilər'); return; }
   const b = S.editBuf;
   const items = S.anbar.map(i => i.id === S.editId
     ? { ...i, name: b.name, qty: parseFloat(b.qty) || b.qty, unit: b.unit, price: parseFloat(b.price) || b.price, note: b.note }
@@ -552,6 +614,7 @@ function cancelEdit() {
 }
 
 async function delItem(id) {
+  if (!isAdmin()) { showToast('⛔ Yalnız Admin edə bilər'); return; }
   await persist(S.anbar.filter(i => i.id !== id));
 }
 
@@ -631,6 +694,43 @@ function mkHome() {
   c4.innerHTML = '<div class="hc-icon">🎨</div><div class="hc-body"><div class="hc-title">Rəng Dünyası</div><div class="hc-desc">M&P ağ baza üçün rəng tövsiyələri</div></div><div class="hc-arrow">→</div>';
   c4.onclick = () => set({ page: 'rengdunyasi', rengSub: null });
 
+  // ── VERSİYA + ADMİN PANELİ ──
+  const adminWrap = ce('div');
+  adminWrap.style.cssText = 'width:100%;margin-top:10px;display:flex;flex-direction:column;align-items:center;gap:8px';
+
+  // Version pill
+  const verPill = ce('div');
+  verPill.style.cssText = 'display:inline-flex;align-items:center;gap:5px;background:rgba(26,26,46,.08);border:1px solid rgba(26,26,46,.12);border-radius:20px;padding:4px 12px;font-size:11px;color:#6c7a99';
+  verPill.innerHTML = `<span style="width:7px;height:7px;border-radius:50%;background:${isAdmin()?'#4caf50':'#9aa0b0'};display:inline-block"></span> v${APP_VERSION} · ${isAdmin()?'<b style="color:#4caf50">Admin</b>':'Guest'}`;
+  adminWrap.appendChild(verPill);
+
+  // Admin code input (if not admin)
+  if (!isAdmin()) {
+    const codeRow = ce('div');
+    codeRow.style.cssText = 'display:flex;gap:6px;align-items:center';
+    const inp = document.createElement('input');
+    inp.type = 'password';
+    inp.placeholder = 'Admin kodu';
+    inp.maxLength = 10;
+    inp.style.cssText = 'border:1.5px solid #d5cec6;border-radius:10px;padding:8px 12px;font-size:13px;width:130px;background:#fff;color:#1a1a2e;font-family:inherit';
+    const btn = ce('button');
+    btn.style.cssText = 'background:#1a1a2e;color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:600';
+    btn.textContent = 'Daxil ol';
+    btn.onclick = () => {
+      if (inp.value === ADMIN_CODE) { setAdmin(inp.value); render(); showToast('Admin rejimi aktivdir ✓'); }
+      else { showToast('Kod yanlışdır'); inp.value = ''; }
+    };
+    inp.onkeydown = e => { if (e.key === 'Enter') btn.click(); };
+    codeRow.appendChild(inp); codeRow.appendChild(btn);
+    adminWrap.appendChild(codeRow);
+  } else {
+    const logoutBtn = ce('button');
+    logoutBtn.style.cssText = 'font-size:11px;background:none;border:1px solid #d5cec6;border-radius:8px;padding:4px 12px;color:#9aa0b0';
+    logoutBtn.textContent = 'Çıxış';
+    logoutBtn.onclick = () => { clearAdmin(); render(); };
+    adminWrap.appendChild(logoutBtn);
+  }
+
   d.appendChild(logo);
   d.appendChild(h1);
   d.appendChild(sub);
@@ -638,6 +738,7 @@ function mkHome() {
   d.appendChild(c4);
   d.appendChild(c2);
   d.appendChild(c1);
+  d.appendChild(adminWrap);
   return d;
 }
 
@@ -658,6 +759,13 @@ function mkNav() {
 
   nav.appendChild(brand);
   nav.appendChild(tabs);
+
+  const badge = ce('div');
+  badge.style.cssText = 'font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;' +
+    (isAdmin() ? 'background:rgba(76,175,80,.2);color:#4caf50;border:1px solid rgba(76,175,80,.3)' :
+                 'background:rgba(154,160,176,.1);color:#9aa0b0;border:1px solid rgba(154,160,176,.2)');
+  badge.textContent = isAdmin() ? 'Admin' : 'Guest';
+  nav.appendChild(badge);
   return nav;
 }
 
@@ -1495,12 +1603,11 @@ async function runBlendAI(mode) {
   const input = S.bfInput.trim();
   if (!input) { showToast('Zəhmət olmasa bir şey yazın'); return; }
 
+  if (!isAdmin()) { showToast('⛔ AI yalnız Admin üçündür'); return; }
   set({ bfLoading: true, bfResult: null });
 
   // Build fragrance list from anbar with guc
-  const atirList = S.atirAnbar.map(a =>
-    `${a.name} | ${a.country}${a.brand ? ', ' + a.brand : ''} | istifadə: ${a.usage || '-'} | güc: ${a.guc || '-'}`
-  ).join('\n');
+  const atirList = S.atirAnbar.map(a => `${a.name} | ${a.guc||'?'}` ).join('\n');
 
   const mehsul = S.bfMehsul || 'M&P Sabun';
   const cins = S.bfCins || 'Qadın';
@@ -1514,13 +1621,16 @@ async function runBlendAI(mode) {
   const gucQayda = 'ƏTİR GÜCU BALANSI — faiz qoyarkən mütləq nəzərə al: Güclü: 10-20%, Yaxşı: 20-35%, Orta: 30-45%, Zəif: 40-55%, Çox Zəif: 50-65%';
 
   const prompt = mode === 'movzu'
-    ? `Sən peşəkar parfümer və kosmetik formulyatorsən.\n\n${mehsulQayda[mehsul] || ''}\nCİNSİYYƏT: ${cins} üçün uyğun qoxu profili seç.\n\n${gucQayda}\n\nMüştərinin tələbi: "${input}" mövzusuna uyğun ${mehsul} üçün blend yarat.\n\nAnbar siyahısı:\n${atirList}\n\nQAYDALAR:\n- Mövzuya uyğun ətirləri anbardan seç\n- Anbarında olmayan lazım olan varsa anbar: false qeyd et\n- 3-5 ətirdən ibarət blend, faizlər cəmi dəqiq 100%\n- Azərbaycan adı gözəl, mənalı olsun (məs. Dəniz Küləyi, Gecə Bağçası)\n- YALNIZ JSON ver:\n{"blend_adi_az":"Azərbaycanca ad","blend_adi_en":"English name","movzu":"${input}","mehsul":"${mehsul}","izah":"1-2 cümlə izahat","atirlər":[{"ad":"Ətir adı","faiz":40,"anbar":true,"qeyd":"rolu"}]}`
-    : `Sən peşəkar parfümer və kosmetik formulyatorsən.\n\n${mehsulQayda[mehsul] || ''}\nCİNSİYYƏT: ${cins} üçün uyğun qoxu profili seç.\n\n${gucQayda}\n\nMüştərinin tələbi: "${input}" ətirini mərkəzə alaraq ${mehsul} üçün blend yarat.\n\nAnbar siyahısı:\n${atirList}\n\nQAYDALAR:\n- "${input}" ətiri dominant olsun (30-50%), zəifdirsə faizini artır\n- Tamamlayıcı ətirləri anbardan seç, yoxdursa anbar: false\n- 3-5 ətirdən ibarət 2-3 variant, hər birinin faizləri cəmi dəqiq 100%\n- Hər variantın adı gözəl, mənalı olsun\n- YALNIZ JSON ver:\n{"əsas_ətir":"${input}","mehsul":"${mehsul}","variantlar":[{"ad_az":"Azərbaycanca ad","ad_en":"English name","izah":"1-2 cümlə","atirlər":[{"ad":"Ətir adı","faiz":45,"anbar":true,"qeyd":"rolu"}]}]}`;
+    ? `${mehsulQayda[mehsul] || ''}\nCİNSİYYƏT: ${cins} üçün uyğun qoxu profili seç.\n\n${gucQayda}\n\nMüştərinin tələbi: "${input}" mövzusuna uyğun ${mehsul} üçün blend yarat.\n\nQAYDALAR:\n- Mövzuya uyğun ətirləri anbardan seç\n- Anbarında olmayan lazım olan varsa anbar: false qeyd et\n- 3-5 ətirdən ibarət blend, faizlər cəmi dəqiq 100%\n- Azərbaycan adı gözəl, mənalı olsun (məs. Dəniz Küləyi, Gecə Bağçası)\n- YALNIZ JSON ver:\n{"blend_adi_az":"Azərbaycanca ad","blend_adi_en":"English name","movzu":"${input}","mehsul":"${mehsul}","izah":"1-2 cümlə izahat","atirlər":[{"ad":"Ətir adı","faiz":40,"anbar":true,"qeyd":"rolu"}]}`
+    : `${mehsulQayda[mehsul] || ''}\nCİNSİYYƏT: ${cins} üçün uyğun qoxu profili seç.\n\n${gucQayda}\n\nMüştərinin tələbi: "${input}" ətirini mərkəzə alaraq ${mehsul} üçün blend yarat.\n\nQAYDALAR:\n- "${input}" ətiri dominant olsun (30-50%), zəifdirsə faizini artır\n- Tamamlayıcı ətirləri anbardan seç, yoxdursa anbar: false\n- 3-5 ətirdən ibarət 2-3 variant, hər birinin faizləri cəmi dəqiq 100%\n- Hər variantın adı gözəl, mənalı olsun\n- YALNIZ JSON ver:\n{"əsas_ətir":"${input}","mehsul":"${mehsul}","variantlar":[{"ad_az":"Azərbaycanca ad","ad_en":"English name","izah":"1-2 cümlə","atirlər":[{"ad":"Ətir adı","faiz":45,"anbar":true,"qeyd":"rolu"}]}]}`;
+
+  // Prompt caching: system + anbar siyahısı ayrıca göndərilir
+  const systemPrompt = `Sən peşəkar parfümer və kosmetik formulyatorsən. Yalnız JSON cavab ver, heç bir izahat əlavə etmə.\n\nAnbar siyahısı:\n${atirList}`;
 
   try {
     const response = await fetch(GS_URL, {
       method: 'POST',
-      body: JSON.stringify({ action: 'ai_blend', prompt: prompt })
+      body: JSON.stringify({ action: 'ai_blend', prompt: prompt, systemPrompt: systemPrompt })
     });
 
     const data = await response.json();
@@ -1916,8 +2026,8 @@ function mkCPPage() {
     // ── STAR RATING ──
     const rKey = 'blendRating_cp_' + b.ad.replace(/\s+/g,'_');
     let curRating = 0;
-    try { curRating = parseInt(localStorage.getItem(rKey) || '0') || 0; } catch(e) {}
-    const hasRating = localStorage.getItem(rKey) !== null;
+    { const _r = getRating(rKey); curRating = _r !== null ? (parseInt(_r) || 0) : 0; }
+    const hasRating = getRating(rKey) !== null;
     const isZero = hasRating && curRating === 0;
 
     const starRow = ce('div');
@@ -2001,128 +2111,128 @@ function mkCPPage() {
 // ── HAZIR BLENDLƏr DATA ──────────────────────────────────────────────────────
 const HAZIR_BLENDLER = [
   // M&P SABUN — QADIN
-  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Meyvə',ad:'Blossom Garden / Çiçəklənən Bağ',atirlər:'Jasmine FO FR 40% + Peony FO FR 35% + Strawberry FO FR 25%',izah:'Bahar çiçəklərinin romantikası, şirin çiyələklə.',alternativ:'Jasmine → Ylang-Ylang FR | Peony → Rose Petals USA | Strawberry → Cherry FR'},
-  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Oduncaq',ad:'Sakura Night / Sakura Gecəsi',atirlər:'Japan Cherry Blossom FO USA 55% + Palo Santo & Sandalwood FO USA 35% + Mimosa FO FR 10%',izah:'Yapon albalı çiçəyi, zərif oduncaq bazası.',alternativ:'Japan CB → Rose Petals USA | Mimosa → White Tea USA'},
-  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Şərq',ad:'Tropical Nights / Tropik Gecələr',atirlər:'Ylang-Ylang FO FR 55% + Bergamot FO USA 30% + Patchouli FO USA 15%',izah:'Ekzotik ylang-ylang, torpaq patchouli aksentli.',alternativ:'Ylang-Ylang → Jasmine FR | Patchouli → Palo Santo USA | Bergamot → Lemon FR'},
-  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Çiçək',ad:'Rose Symphony / Gül Simfoniyası',atirlər:'Japan Cherry Blossom FO USA 35% + Rose Petals FO USA 30% + Peony FO FR 20% + Jasmine FO FR 15%',izah:'Dörd çiçəyin harmoniyası. Klassik, zərif.',alternativ:'Rose Petals → Peony FR | Japan CB → Mimosa FR'},
-  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Çiçək',ad:'Cherry Blossom Bouquet / Albalı Çiçəyi Buketi',atirlər:'Japan Cherry Blossom FO USA 50% + Peony FO FR 30% + Rose Petals FO USA 20%',izah:'Üç çiçəyin incə buketi.',alternativ:'Peony → Jasmine FR | Rose Petals → Mimosa FR'},
-  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Meyvə-Tropik',ad:'Island Cream / Ada Kremi',atirlər:'Coconut FO FR 50% + Mango Garden FO FR 30% + Ylang-Ylang FO FR 20%',izah:'Tropik ada hissi. Kokos, manqo, ekzotik çiçək.',alternativ:'Coconut → Strawberry FR | Mango → Orange FR | Ylang-Ylang → Jasmine FR'},
-  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Çiçək',ad:'Spring Mimosa / Bahar Mimozası',atirlər:'Jasmine FO FR 40% + Peony FO FR 35% + Mimosa FO FR 25%',izah:'Yumşaq, romantik bahar.',alternativ:'Mimosa → White Tea USA | Jasmine → Rose Petals USA'},
-  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Spa',ad:'Lotus Ritual / Lotos Ayini',atirlər:'Lotos FO FR 40% + White Tea FO USA 35% + Mimosa FO FR 25%',izah:'Spa atmosferi. Lotos, ağ çay, mimoza.',alternativ:'Lotos → Jasmine FR | Mimosa → Peony FR'},
-  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Meyvə-Çiçək',ad:'Cherry Lotus Dream / Albalı Lotos',atirlər:'Cherry FO FR 50% + Lotos FO FR 40% + Phatoil White Musk FO CN 10%',izah:'Şirin albalı, mistik lotos, yüngül müşk.',alternativ:'Cherry → Strawberry FR | Lotos → Peony FR'},
-  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Müşk',ad:'Cherry Blossom Musk / Albalı Çiçəyi Müşk',atirlər:'Japan Cherry Blossom FO USA 55% + Cherry FO FR 30% + Phatoil White Musk FO CN 15%',izah:'Yapon çiçəyi, şirin albalı, təmiz müşk.',alternativ:'Japan CB → Rose Petals USA | White Musk → 10%'},
-  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Dəniz-Çiçək',ad:'Ocean Blossom / Okean Çiçəyi',atirlər:'Ocean Breeze FO USA 50% + Japan Cherry Blossom FO USA 30% + Peony FO FR 20%',izah:'Dəniz küləyi, albalı çiçəyi, pion.',alternativ:'Ocean Breeze → White Tea USA | Peony → Mimosa FR'},
-  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Sitrus-Çiçək',ad:'Agave Blossom / Kaktus Çiçəyi',atirlər:'Citrus Agave FO USA 45% + Jasmine FO FR 35% + White Tea FO USA 20%',izah:'Egzotik kaktus sitrusu, yasəmən, ağ çay.',alternativ:'Citrus Agave → Bergamot USA | Jasmine → Peony FR'},
-  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Meyvə-Çiçək',ad:'Raspberry Garden / Moruq Bağçası',atirlər:'Raspberry FO FR 50% + Rose Petals FO USA 30% + Mimosa FO FR 20%',izah:'Şirin moruq, qızılgül, mimoza.',alternativ:'Raspberry → Strawberry FR | Rose Petals → Peony FR'},
-  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Bal-Çiçək',ad:'Honey Garden / Bal Bağçası',atirlər:'Jasmine FO FR 40% + Rose Petals FO USA 35% + Rozino Honey EO CN 25%',izah:'Yasəmən, qızılgül, natural bal. İsti, romantik.',alternativ:'Rozino Honey → artır 35% (çox zəif) | Jasmine → Peony FR'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Meyvə',ad:'Blossom Garden / Çiçəklənən Bağ',atirlər:'Jasmine FO FR 40% + Peony FO FR 35% + Strawberry FO FR 25%',izah:'Təravətli yasəmən və pionun romantikası şirin çiyələklə tamamlanır. Bahar bağçasının ilk çiçəklənməsi kimi yumşaq, çiçəkli, sevimli.',alternativ:'Jasmine → Ylang-Ylang FR | Peony → Rose Petals USA | Strawberry → Cherry FR'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Oduncaq',ad:'Sakura Night / Sakura Gecəsi',atirlər:'Japan Cherry Blossom FO USA 55% + Palo Santo & Sandalwood FO USA 35% + Mimosa FO FR 10%',izah:'Yapon albalı çiçəyinin incə zərifliyi mistik palo santo-nun torpaq nəfəsiylə qucaqlaşır. Şərqin romantik gecəsi — sükut, zəriflik, dərinlik.',alternativ:'Japan CB → Rose Petals USA | Mimosa → White Tea USA'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Şərq',ad:'Tropical Nights / Tropik Gecələr',atirlər:'Ylang-Ylang FO FR 55% + Bergamot FO USA 30% + Patchouli FO USA 15%',izah:'Ekzotik ylang-ylang-ın sərxoş edici çiçək nəfəsi berqamotun parlaq sitrusuyla açılır, patchoulinin dərin torpaq akkordları ilə gecəyə çevrilir.',alternativ:'Ylang-Ylang → Jasmine FR | Patchouli → Palo Santo USA | Bergamot → Lemon FR'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Çiçək',ad:'Rose Symphony / Gül Simfoniyası',atirlər:'Japan Cherry Blossom FO USA 35% + Rose Petals FO USA 30% + Peony FO FR 20% + Jasmine FO FR 15%',izah:'Dörd nəcib çiçəyin xoru — albalı çiçəyi, qızılgül, pion, yasəmən. Bir-birini tamamlayan notlar klassik, dəbdəbəli bir buket yaradır.',alternativ:'Rose Petals → Peony FR | Japan CB → Mimosa FR'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Çiçək',ad:'Cherry Blossom Bouquet / Albalı Çiçəyi Buketi',atirlər:'Japan Cherry Blossom FO USA 50% + Peony FO FR 30% + Rose Petals FO USA 20%',izah:'Yapon albalı çiçəyinin bahar şənliyi pion və qızılgülün romantizmiylə birləşir. Zərif, çiçəkli, unudulmaz bir ilk təəssürat.',alternativ:'Peony → Jasmine FR | Rose Petals → Mimosa FR'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Meyvə-Tropik',ad:'Island Cream / Ada Kremi',atirlər:'Coconut FO FR 50% + Mango Garden FO FR 30% + Ylang-Ylang FO FR 20%',izah:'Kokosun kremli tropik nəfəsi manqonun ekzotik şirinliyi ilə qucaqlaşır, ylang-ylang-ın çiçəkli akkordu isə sizi xəyal adaya aparır.',alternativ:'Coconut → Strawberry FR | Mango → Orange FR | Ylang-Ylang → Jasmine FR'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Çiçək',ad:'Spring Mimosa / Bahar Mimozası',atirlər:'Jasmine FO FR 40% + Peony FO FR 35% + Mimosa FO FR 25%',izah:'Yasəməni, pion və mimozanın üçlü çiçək harmoniyası. Yumşaq, pudralı, intim — sanki ilk bahar günəşinin dəri üzərindəki nəvaziş təması.',alternativ:'Mimosa → White Tea USA | Jasmine → Rose Petals USA'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Spa',ad:'Lotus Ritual / Lotos Ayini',atirlər:'Lotos FO FR 40% + White Tea FO USA 35% + Mimosa FO FR 25%',izah:'Balzac lotosun ruhani sakitliyi ağ çayın mineralik səriliyi ilə birləşir. Bali spa ritualını xatırladan meditativ, arındırıcı bir kompozisiya.',alternativ:'Lotos → Jasmine FR | Mimosa → Peony FR'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Meyvə-Çiçək',ad:'Cherry Lotus Dream / Albalı Lotos',atirlər:'Cherry FO FR 50% + Lotos FO FR 40% + Phatoil White Musk FO CN 10%',izah:'Şirin albalının canlılığı mistik lotosla dərinləşir, ağ müşkün saf nəfəsi hər şeyi sarır. Realist olmayan, xəyali, zərif bir yuxu.',alternativ:'Cherry → Strawberry FR | Lotos → Peony FR'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Müşk',ad:'Cherry Blossom Musk / Albalı Çiçəyi Müşk',atirlər:'Japan Cherry Blossom FO USA 55% + Cherry FO FR 30% + Phatoil White Musk FO CN 15%',izah:'Yapon albalı çiçəyinin uçucu zərifliyi şirin albalının meyvəli akkorduyla güclənir, ağ müşk isə hər şeyin üstünə ipək kimi örtülür.',alternativ:'Japan CB → Rose Petals USA | White Musk → 10%'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Dəniz-Çiçək',ad:'Ocean Blossom / Okean Çiçəyi',atirlər:'Ocean Breeze FO USA 50% + Japan Cherry Blossom FO USA 30% + Peony FO FR 20%',izah:'Dəniz küləyinin azad nəfəsini albalı çiçəyi örtür, pion isə bu dəniz-çiçək buluşmasına romantik bir son verir. Açıq havada çiçəklənən bahar.',alternativ:'Ocean Breeze → White Tea USA | Peony → Mimosa FR'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Sitrus-Çiçək',ad:'Agave Blossom / Kaktus Çiçəyi',atirlər:'Citrus Agave FO USA 45% + Jasmine FO FR 35% + White Tea FO USA 20%',izah:'Mexikanın ekzotik kaktus bitkisinin sitrus akkordları yasəməni açır, ağ çay isə hər şeyi mineralik bir sakitliyə qərq edir. Fərqli, canlı, yaddaqalan.',alternativ:'Citrus Agave → Bergamot USA | Jasmine → Peony FR'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Meyvə-Çiçək',ad:'Raspberry Garden / Moruq Bağçası',atirlər:'Raspberry FO FR 50% + Rose Petals FO USA 30% + Mimosa FO FR 20%',izah:'Şirin-turş moruğun canlılığı qızılgülün klassik romantizmiylə birləşir, mimoza isə kompozisiyaya yaz çiçəkliyi yüngüllüyü qatır.',alternativ:'Raspberry → Strawberry FR | Rose Petals → Peony FR'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Bal-Çiçək',ad:'Honey Garden / Bal Bağçası',atirlər:'Jasmine FO FR 40% + Rose Petals FO USA 35% + Rozino Honey EO CN 25%',izah:'Yasəməni və qızılgülün çiçək dueti natural bal tonu ilə istilik qazanır. Arı bağçasının qızıl günəşi — şirin, romantik, natural.',alternativ:'Rozino Honey → artır 35% (çox zəif) | Jasmine → Peony FR'},
   // M&P SABUN — UNİSEX
-  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Dəniz-Oduncaq',ad:'Ocean Forest / Okean Meşə',atirlər:'Black Sea FO USA 45% + Palo Santo & Sandalwood FO USA 35% + Cypress & Bayberry FO USA 20%',izah:'Dəniz təravəti, dağ meşəsinin oduncağı.',alternativ:'Black Sea → Ocean Breeze USA | Cypress → Patchouli USA'},
-  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Sitrus-Çiçək',ad:'Bergamot Lavender / Berqamot Lavanda',atirlər:'Bergamot FO USA 60% + Lavender FO FR 40%',izah:'Sitrus, lavandanın sakitliyi. Klassik.',alternativ:'Bergamot → Lemon FR | Lavender → White Tea USA'},
-  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Sitrus-Təravət',ad:'Citrus Burst / Sitrus Partlayışı',atirlər:'Bergamot FO USA 40% + Orange FO FR 30% + Lemon FO FR 20% + White Tea FO USA 10%',izah:'Üç sitrusun enerjisi. Səhər sabunu.',alternativ:'Orange → Lemon FR | Bergamot → Citrus Agave USA'},
-  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Çiçək-Spa',ad:'Lavender Spa / Lavanda Spa',atirlər:'Lavender FO FR 55% + White Tea FO USA 30% + Ylang-Ylang FO FR 15%',izah:'Lavanda, ağ çay. Spa rahatlığı.',alternativ:'Ylang-Ylang → Jasmine FR | White Tea → Bergamot USA'},
-  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Qourmet',ad:'Mocha Cream / Moka Krem',atirlər:'Coffee FO USA 50% + Chocolate FO FR 35% + Coconut FO FR 15%',izah:'Qəhvə, şokolad, kokos.',alternativ:'Chocolate → Cherry FR | Coconut → Mango FR'},
-  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Oduncaq-Spa',ad:'Sandalwood Calm / Səndəl Sakitliyi',atirlər:'Palo Santo & Sandalwood FO USA 50% + Lotos FO FR 30% + Phatoil White Musk FO CN 20%',izah:'Güclü səndəl, lotos. Spa.',alternativ:'Lotos → Mimosa FR | White Musk → azalt 10%'},
-  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Meyvə-Müşk',ad:'Cotton Breeze / Pambıq Küləyi',atirlər:'Apple Element FO USA 50% + Coconut FO FR 35% + Phatoil White Musk FO CN 15%',izah:'Alma, kokos, müşk. Təmiz paltar effekti.',alternativ:'Apple → Citrus Agave USA | White Musk → buraxmaq olar'},
-  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Şərq-Sitrus',ad:'Amber Citrus / Kəhrəba Sitrus',atirlər:'Amber FO FR 45% + Bergamot FO USA 35% + Orange FO FR 20%',izah:'İsti kəhrəba, sitrus.',alternativ:'Amber → Palo Santo USA | Orange → Lemon FR'},
-  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Meyvə-Sitrus',ad:'Berry Citrus / Giləmeyvə Sitrus',atirlər:'Raspberry FO FR 45% + Citrus Agave FO USA 35% + Lemon FO FR 20%',izah:'Moruq, sitrus, limon.',alternativ:'Raspberry → Strawberry FR | Citrus Agave → Bergamot USA'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Dəniz-Oduncaq',ad:'Ocean Forest / Okean Meşə',atirlər:'Black Sea FO USA 45% + Palo Santo & Sandalwood FO USA 35% + Cypress & Bayberry FO USA 20%',izah:'Dənizin mineral səriliyi dağ meşəsinin oduncaq nəfəsiylə qucaqlaşır, şam ağacının bərk akkordu isə bu buluşmaya güc verir. Kişilik üçün çox, qadınlıq üçün da açıq.',alternativ:'Black Sea → Ocean Breeze USA | Cypress → Patchouli USA'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Sitrus-Çiçək',ad:'Bergamot Lavender / Berqamot Lavanda',atirlər:'Bergamot FO USA 60% + Lavender FO FR 40%',izah:'İtalyan berqamotunun işıqlı sitrusu fransız lavandası ilə görüşür. Sadə, klassik, mükəmməl — beş əsrlik ətir tarixinin ən köklü dueti.',alternativ:'Bergamot → Lemon FR | Lavender → White Tea USA'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Sitrus-Təravət',ad:'Citrus Burst / Sitrus Partlayışı',atirlər:'Bergamot FO USA 40% + Orange FO FR 30% + Lemon FO FR 20% + White Tea FO USA 10%',izah:'Berqamot, portağal, limon — üç sitrus eyni anda açılır, ağ çay isə bu parlaq sabah enerjisini sabitləşdirir. Günə başlamaq üçün ideal.',alternativ:'Orange → Lemon FR | Bergamot → Citrus Agave USA'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Çiçək-Spa',ad:'Lavender Spa / Lavanda Spa',atirlər:'Lavender FO FR 55% + White Tea FO USA 30% + Ylang-Ylang FO FR 15%',izah:'Lavandanın arındırıcı akkordlarını berqamotun işıqlı sitrusu açır, ağ çay isə bu sakitliyin mineral çərçivəsini çəkir. Ən saf spa meditasiyası.',alternativ:'Ylang-Ylang → Jasmine FR | White Tea → Bergamot USA'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Qourmet',ad:'Mocha Cream / Moka Krem',atirlər:'Coffee FO USA 50% + Chocolate FO FR 35% + Coconut FO FR 15%',izah:'Tünd qəhvənin qaynar nəfəsi şokoladın kremli şirinliyi ilə əriyir, kokosun tropik tonu isə bu şirin buluşmaya yüngüllük qatır. Café latte sabunu.',alternativ:'Chocolate → Cherry FR | Coconut → Mango FR'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Oduncaq-Spa',ad:'Sandalwood Calm / Səndəl Sakitliyi',atirlər:'Palo Santo & Sandalwood FO USA 50% + Lotos FO FR 30% + Phatoil White Musk FO CN 20%',izah:'Palo santo-nun mistik tüstüsü ilə doğan səndəl akkordları lotosun çiçəkli sakitliyi ilə birləşir, ağ müşk isə hər şeyin üstünə pərdə çəkir.',alternativ:'Lotos → Mimosa FR | White Musk → azalt 10%'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Meyvə-Müşk',ad:'Cotton Breeze / Pambıq Küləyi',atirlər:'Apple Element FO USA 50% + Coconut FO FR 35% + Phatoil White Musk FO CN 15%',izah:'Almanın çiçəkli təzəliyi kokosun kremli nəfəsiylə yumşalır, müşk isə bütün kompozisiyanı süd kimi saf, yuğunlu bir aura ilə bürüyür.',alternativ:'Apple → Citrus Agave USA | White Musk → buraxmaq olar'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Şərq-Sitrus',ad:'Amber Citrus / Kəhrəba Sitrus',atirlər:'Amber FO FR 45% + Bergamot FO USA 35% + Orange FO FR 20%',izah:'İsti, qatran kəhrəbanın dərin bazası berqamotun parlaq sitrusu ilə kontrast yaradır, portağalın şirəli tonu isə bu buluşmaya həyat verir.',alternativ:'Amber → Palo Santo USA | Orange → Lemon FR'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Meyvə-Sitrus',ad:'Berry Citrus / Giləmeyvə Sitrus',atirlər:'Raspberry FO FR 45% + Citrus Agave FO USA 35% + Lemon FO FR 20%',izah:'Moruğun şirin-turş canlılığı kaktus sitrusu ilə qüvvətlənir, limon isə bu giləmeyvə-sitrus duetini parlaq bir akord ilə tamamlayır.',alternativ:'Raspberry → Strawberry FR | Citrus Agave → Bergamot USA'},
   // M&P SABUN — UŞAQ
-  {kateqoriya:'M&P Sabun',cins:'Uşaq',profil:'Meyvə-Sitrus',ad:'Berry Lemon / Giləmeyvə Limon',atirlər:'Strawberry FO FR 65% + Lemon FO FR 35%',izah:'Çiyələk, sitrus. Xoş, enerjili.',alternativ:'Strawberry → Cherry FR | Lemon → Orange FR'},
-  {kateqoriya:'M&P Sabun',cins:'Uşaq',profil:'Meyvə-Sitrus',ad:'Sunny Fruit / Günəşli Meyvə',atirlər:'Mango Garden FO FR 50% + Strawberry FO FR 35% + White Tea FO USA 15%',izah:'Manqo, çiyələk. Şirin, təmiz.',alternativ:'Mango → Coconut FR | Strawberry → Cherry FR'},
-  {kateqoriya:'M&P Sabun',cins:'Uşaq',profil:'Meyvə-Şirin',ad:'Coconut Mango / Kokos Manqo',atirlər:'Coconut FO FR 60% + Mango Garden FO FR 40%',izah:'Tropik, şirin. Uşaqlar üçün sevimli.',alternativ:'Coconut → Strawberry FR | Mango → Orange FR'},
+  {kateqoriya:'M&P Sabun',cins:'Uşaq',profil:'Meyvə-Sitrus',ad:'Berry Lemon / Giləmeyvə Limon',atirlər:'Strawberry FO FR 65% + Lemon FO FR 35%',izah:'Çiyələyin şirin, meyvəli nəfəsi limonun kəskin sitrus akkordunu yumşaldır. Sadə, canlı, gülümsəyən — yay sabahının enerji içkisi kimi.',alternativ:'Strawberry → Cherry FR | Lemon → Orange FR'},
+  {kateqoriya:'M&P Sabun',cins:'Uşaq',profil:'Meyvə-Sitrus',ad:'Sunny Fruit / Günəşli Meyvə',atirlər:'Mango Garden FO FR 50% + Strawberry FO FR 35% + White Tea FO USA 15%',izah:'Manqonun tropik şirinliyi çiyələyin meyvəli akkordunu tamlayır, ağ çayın mineralik səriliyi isə bu meyvəli buluşmanı yüngül saxlayır.',alternativ:'Mango → Coconut FR | Strawberry → Cherry FR'},
+  {kateqoriya:'M&P Sabun',cins:'Uşaq',profil:'Meyvə-Şirin',ad:'Coconut Mango / Kokos Manqo',atirlər:'Coconut FO FR 60% + Mango Garden FO FR 40%',izah:'Kokosun kremli, tropik nəfəsi manqonun ekzotik şirinliyi ilə tam harmoniyada birləşir. Uşaqların sevimli — xoşbəxt, sadə, şirin.',alternativ:'Coconut → Strawberry FR | Mango → Orange FR'},
   // M&P SABUN — KİŞİ
-  {kateqoriya:'M&P Sabun',cins:'Kişi',profil:'Oduncaq-Maskulin',ad:'Gentleman Wood / Centlmen Ağac',atirlər:'Palo Santo & Sandalwood FO USA 45% + Patchouli FO USA 30% + Cypress & Bayberry FO USA 25%',izah:'Klassik kişi sabunu. Güclü oduncaq bazası.',alternativ:'Cypress → Black Sea USA | Patchouli → azalt 20%'},
-  {kateqoriya:'M&P Sabun',cins:'Kişi',profil:'Sitrus-Ədviyyat',ad:'Spiced Citrus / Ədviyyatlı Sitrus',atirlər:'Bergamot FO USA 35% + Lemon FO FR 25% + Ginger & Spice FO USA 25% + Cypress & Bayberry FO USA 15%',izah:'Sitrus, ədviyyat istilik.',alternativ:'Ginger → Patchouli USA | Cypress → Black Sea USA'},
-  {kateqoriya:'M&P Sabun',cins:'Kişi',profil:'Dəniz-Oduncaq',ad:'Ocean Wood / Okean Ağac',atirlər:'Palo Santo & Sandalwood FO USA 40% + Black Sea FO USA 40% + Patchouli FO USA 20%',izah:'Dəniz, oduncaq. Barberxana.',alternativ:'Black Sea → Ocean Breeze USA | Patchouli → Cypress USA'},
-  {kateqoriya:'M&P Sabun',cins:'Kişi',profil:'Şərq-Dəniz',ad:'Black Amber / Qara Kəhrəba',atirlər:'Amber FO FR 45% + Black Sea FO USA 35% + Cypress & Bayberry FO USA 20%',izah:'Qaranlıq kəhrəba, dəniz.',alternativ:'Amber → Palo Santo USA | Black Sea → Ocean Breeze USA'},
-  {kateqoriya:'M&P Sabun',cins:'Kişi',profil:'Dəniz-Sitrus',ad:'Ocean Citrus / Okean Sitrus',atirlər:'Ocean Breeze FO USA 50% + Citrus Agave FO USA 30% + Bergamot FO USA 20%',izah:'Dəniz, kaktus sitrusu, berqamot.',alternativ:'Ocean Breeze → Black Sea USA | Citrus Agave → Lemon FR'},
-  {kateqoriya:'M&P Sabun',cins:'Kişi',profil:'Şərq-Qaranlıq',ad:'Noir Amber / Qara Kəhrəba',atirlər:'Amber Noir FO USA 50% + Patchouli FO USA 30% + Cypress & Bayberry FO USA 20%',izah:'Qaranlıq kəhrəba, patchouli, şam ağacı.',alternativ:'Amber Noir → Amber FR | Patchouli → azalt 20%'},
+  {kateqoriya:'M&P Sabun',cins:'Kişi',profil:'Oduncaq-Maskulin',ad:'Gentleman Wood / Centlmen Ağac',atirlər:'Palo Santo & Sandalwood FO USA 45% + Patchouli FO USA 30% + Cypress & Bayberry FO USA 25%',izah:'Palo santo-nun mistik ağac bazası patchoulinin dərin torpaq tonu ilə güclənir, şam-buludkəkotu isə kişilik üçün nəcib bir tac qoyur. Barberxananın imzası.',alternativ:'Cypress → Black Sea USA | Patchouli → azalt 20%'},
+  {kateqoriya:'M&P Sabun',cins:'Kişi',profil:'Sitrus-Ədviyyat',ad:'Spiced Citrus / Ədviyyatlı Sitrus',atirlər:'Bergamot FO USA 35% + Lemon FO FR 25% + Ginger & Spice FO USA 25% + Cypress & Bayberry FO USA 15%',izah:'Berqamotun işıqlı sitrusu limonun kəskinliyi ilə açılır, zəncəfil-ədviyyat istilik qatır, şam ağacının bərk bazası isə hər şeyi tutub saxlayır.',alternativ:'Ginger → Patchouli USA | Cypress → Black Sea USA'},
+  {kateqoriya:'M&P Sabun',cins:'Kişi',profil:'Dəniz-Oduncaq',ad:'Ocean Wood / Okean Ağac',atirlər:'Palo Santo & Sandalwood FO USA 40% + Black Sea FO USA 40% + Patchouli FO USA 20%',izah:'Dənizin mineral dərinliyi palo santo-nun ağac nəfəsiylə buluşur, patchouli isə bu dəniz-meşə duetinə torpağın kökünü verir. Barberxananın imza ətri.',alternativ:'Black Sea → Ocean Breeze USA | Patchouli → Cypress USA'},
+  {kateqoriya:'M&P Sabun',cins:'Kişi',profil:'Şərq-Dəniz',ad:'Black Amber / Qara Kəhrəba',atirlər:'Amber FO FR 45% + Black Sea FO USA 35% + Cypress & Bayberry FO USA 20%',izah:'Kəhrəbanın dərin, qatran bazası soyuq dəniz akkordunu cəlb edir, şam-buludkəkotu isə bu qaranlıq kompozisiyaya kənar çıxmaq bilən bir od akkordu əlavə edir.',alternativ:'Amber → Palo Santo USA | Black Sea → Ocean Breeze USA'},
+  {kateqoriya:'M&P Sabun',cins:'Kişi',profil:'Dəniz-Sitrus',ad:'Ocean Citrus / Okean Sitrus',atirlər:'Ocean Breeze FO USA 50% + Citrus Agave FO USA 30% + Bergamot FO USA 20%',izah:'Dəniz küləyinin mineral azadlığı kaktus sitrusunun ekzotik akkorduna qovuşur, berqamot isə bu dəniz-sitrus buluşmasını italyan ruhuna aparır.',alternativ:'Ocean Breeze → Black Sea USA | Citrus Agave → Lemon FR'},
+  {kateqoriya:'M&P Sabun',cins:'Kişi',profil:'Şərq-Qaranlıq',ad:'Noir Amber / Qara Kəhrəba',atirlər:'Amber Noir FO USA 50% + Patchouli FO USA 30% + Cypress & Bayberry FO USA 20%',izah:'Amber Noir-un tünd, mistik kəhrəba bazası patchoulinin dərin torpaq tonu ilə quyruqlaşır, şam ağacı isə bu qaranlıq triumvirata son bir güc qatır.',alternativ:'Amber Noir → Amber FR | Patchouli → azalt 20%'},
   // ƏRİYƏN MUM — QADIN
-  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Çiçək-Meyvə',ad:'Flower Meadow / Çiçək Çəmənliyi',atirlər:'Japan Cherry Blossom FO USA 25% + Peony FO FR 25% + Mango Garden FO FR 25% + Citrus Agave FO USA 15% + Ylang-Ylang FO FR 10%',izah:'Beş çiçək-meyvə notunun yaz şənliyi.',alternativ:'Japan CB → Rose Petals USA | Mango → Coconut FR'},
-  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Çiçək-Sitrus',ad:'Soft Floral Breeze / Yumşaq Çiçək Meh',atirlər:'Jasmine FO FR 40% + Peony FO FR 40% + Bergamot FO USA 20%',izah:'Yasəmən, pion, berqamot.',alternativ:'Jasmine → Ylang-Ylang FR | Peony → Mimosa FR'},
-  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Çiçək-Çiçək',ad:'Yellow Tulip Dream / Sarı Lalə Arzusu',atirlər:'Yellow Tulips FO RU 50% + Jasmine FO FR 30% + White Tea FO USA 20%',izah:'Lalə, yasəmən, ağ çay.',alternativ:'Yellow Tulips → Rose Petals USA | White Tea → Mimosa FR'},
-  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Spa-Təmiz',ad:'Hotel Linen Ritual / Otel Lineni Ayini',atirlər:'White Tea FO USA 55% + Lotos FO FR 30% + Phatoil White Musk FO CN 15%',izah:'Lüks otel spa. Təmiz, zen.',alternativ:'Lotos → Mimosa FR | White Musk → azalt 10%'},
-  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Meyvə-Çiçək',ad:'Cherry Lotus Breeze / Albalı Lotos',atirlər:'Cherry FO FR 50% + Lotos FO FR 40% + Phatoil White Musk FO CN 10%',izah:'Şirin albalı, mistik lotos.',alternativ:'Cherry → Strawberry FR | Lotos → Peony FR'},
-  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Oduncaq-Çiçək',ad:'Mystic Amber Silk / Mistik Kəhrəba',atirlər:'Palo Santo & Sandalwood FO USA 40% + Ylang-Ylang FO FR 35% + Amber FO FR 25%',izah:'Səndəl, ekzotik çiçək, kəhrəba.',alternativ:'Ylang-Ylang → Jasmine FR'},
-  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Şirin-Çiçək',ad:'Honey Blossom / Bal Çiçək',atirlər:'Jasmine FO FR 35% + Mimosa FO FR 30% + Rozino Honey EO CN 35%',izah:'Yasəmən, mimoza, bal.',alternativ:'Rozino Honey → artır 40% (çox zəif) | Jasmine → 35%'},
+  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Çiçək-Meyvə',ad:'Flower Meadow / Çiçək Çəmənliyi',atirlər:'Japan Cherry Blossom FO USA 25% + Peony FO FR 25% + Mango Garden FO FR 25% + Citrus Agave FO USA 15% + Ylang-Ylang FO FR 10%',izah:'Beş çiçəkli-meyvəli notun yaz festivalı — albalı çiçəyi, pion, manqo, kaktus sitrusu, ylang-ylang bir yerdə çəmənlikdə qaçan xoşbəxt uşaqlığı çatdırır.',alternativ:'Japan CB → Rose Petals USA | Mango → Coconut FR'},
+  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Çiçək-Sitrus',ad:'Soft Floral Breeze / Yumşaq Çiçək Meh',atirlər:'Jasmine FO FR 40% + Peony FO FR 40% + Bergamot FO USA 20%',izah:'Yasəməni və pionun romantik çiçək cütlüyünə berqamotun işıqlı sitrusu bir çıxış qapısı açır. Bahar küləyinin pəncərəyə gətirdiyi çiçək tozu.',alternativ:'Jasmine → Ylang-Ylang FR | Peony → Mimosa FR'},
+  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Çiçək-Çiçək',ad:'Yellow Tulip Dream / Sarı Lalə Arzusu',atirlər:'Yellow Tulips FO RU 50% + Jasmine FO FR 30% + White Tea FO USA 20%',izah:'Sarı lalənin ötkəm çiçək akkordunu yasəməni romantikləşdirir, ağ çay isə bu çiçəkli dueti mineralik bir sakitliklə sabitləşdirir. Bahar pəncərəsinin ətri.',alternativ:'Yellow Tulips → Rose Petals USA | White Tea → Mimosa FR'},
+  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Spa-Təmiz',ad:'Hotel Linen Ritual / Otel Lineni Ayini',atirlər:'White Tea FO USA 55% + Lotos FO FR 30% + Phatoil White Musk FO CN 15%',izah:'Beş ulduzlu otelin təzə yuyulmuş çarşaflarından qalxan ağ çay mineralliyi lotos çiçəyi ilə dərinləşir, müşkün pambıq nəfəsi isə tam tamamlayır.',alternativ:'Lotos → Mimosa FR | White Musk → azalt 10%'},
+  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Meyvə-Çiçək',ad:'Cherry Lotus Breeze / Albalı Lotos',atirlər:'Cherry FO FR 50% + Lotos FO FR 40% + Phatoil White Musk FO CN 10%',izah:'Şirin albalının meyvəli akkordunu mistik lotos örtür, yüngül müşk isə bu romantik buluşmaya ipəkli bir son verir. Yataq otağı ətri.',alternativ:'Cherry → Strawberry FR | Lotos → Peony FR'},
+  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Oduncaq-Çiçək',ad:'Mystic Amber Silk / Mistik Kəhrəba',atirlər:'Palo Santo & Sandalwood FO USA 40% + Ylang-Ylang FO FR 35% + Amber FO FR 25%',izah:'Palo santo-nun mistik ağac tüstüsü ylang-ylang-ın ekzotik çiçəyi ilə görüşür, kəhrəba isə bu Şərq-Qərb buluşmasını dərin, istilik dolu bir bazaya oturdur.',alternativ:'Ylang-Ylang → Jasmine FR'},
+  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Şirin-Çiçək',ad:'Honey Blossom / Bal Çiçək',atirlər:'Jasmine FO FR 35% + Mimosa FO FR 30% + Rozino Honey EO CN 35%',izah:'Yasəməni və mimozanın yüngül çiçək cütlüyünü natural bal tonu istilik verir. Arı bağçasının üzərindəki ilıq günəş — şirin, natural, ürəkdə iz buraxan.',alternativ:'Rozino Honey → artır 40% (çox zəif) | Jasmine → 35%'},
   // ƏRİYƏN MUM — UNİSEX
-  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Spa-Sakitlik',ad:'Spa Relaxation / Spa Rahatlığı',atirlər:'Lavender FO FR 45% + White Tea FO USA 35% + Bergamot FO USA 20%',izah:'Lavanda, ağ çay, berqamot.',alternativ:'Bergamot → Lemon FR | Lavender → Ylang-Ylang FR'},
-  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Qourmet-Ədviyyat',ad:'Winter Coffee / Qış Qəhvəsi',atirlər:'Coffee FO USA 50% + Ginger & Spice FO USA 30% + Patchouli FO USA 20%',izah:'Qəhvə, zəncəfil. Qış komfortu.',alternativ:'Ginger → Apple Cinnamon CN artır 40%'},
-  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Dəniz-Oduncaq',ad:'Coastal Woods / Sahil Meşəsi',atirlər:'Black Sea FO USA 50% + Cypress & Bayberry FO USA 35% + White Tea FO USA 15%',izah:'Dəniz, meşə oduncağı.',alternativ:'Black Sea → Ocean Breeze USA | Cypress → Patchouli USA'},
-  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Qourmet-Darçın',ad:'Cinnamon Mocha / Darçınlı Moka',atirlər:'Coffee FO USA 45% + Chocolate FO FR 35% + Apple Cinnamon EO CN 20%',izah:'Qəhvə, şokolad, darçın.',alternativ:'Apple Cinnamon → Ginger & Spice USA 15%'},
-  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Meyvə-Ədviyyat',ad:'Holiday Apple / Bayram Alması',atirlər:'Apple Element FO USA 45% + Ginger & Spice FO USA 35% + Apple Cinnamon EO CN 20%',izah:'Alma, darçın. Yeni il ruhu.',alternativ:'Apple Cinnamon CN → Ginger artır 45%'},
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Spa-Sakitlik',ad:'Spa Relaxation / Spa Rahatlığı',atirlər:'Lavender FO FR 45% + White Tea FO USA 35% + Bergamot FO USA 20%',izah:'Lavandanın arındırıcı akkordları ağ çayın mineralik sakitliyi ilə dərinləşir, berqamotun işıqlı sitrusu isə bu sakitliyə həyat verir. Ev spa ritualı.',alternativ:'Bergamot → Lemon FR | Lavender → Ylang-Ylang FR'},
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Qourmet-Ədviyyat',ad:'Winter Coffee / Qış Qəhvəsi',atirlər:'Coffee FO USA 50% + Ginger & Spice FO USA 30% + Patchouli FO USA 20%',izah:'Dəmli qəhvənin qaynar nəfəsi zəncəfilin istilik ədviyyatıyla birləşir, patchoulinin torpaq tonu isə bu qış kompozisiyasına dərinlik verir. Qar yağan axşamın ətri.',alternativ:'Ginger → Apple Cinnamon CN artır 40%'},
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Dəniz-Oduncaq',ad:'Coastal Woods / Sahil Meşəsi',atirlər:'Black Sea FO USA 50% + Cypress & Bayberry FO USA 35% + White Tea FO USA 15%',izah:'Soyuq dənizin mineral nəfəsi meşənin şam ağacı akkordunu cəlb edir, ağ çay isə bu dəniz-meşə buluşmasını aydın, zərif bir tonalda saxlayır.',alternativ:'Black Sea → Ocean Breeze USA | Cypress → Patchouli USA'},
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Qourmet-Darçın',ad:'Cinnamon Mocha / Darçınlı Moka',atirlər:'Coffee FO USA 45% + Chocolate FO FR 35% + Apple Cinnamon EO CN 20%',izah:'Tünd qəhvənin qaynar dərinliyi şokoladın kremli akkorduyla birləşir, alma-darçın isə bu qış içkisinə ədviyyatlı bir istilik əlavə edir. Şam yanında moka.',alternativ:'Apple Cinnamon → Ginger & Spice USA 15%'},
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Meyvə-Ədviyyat',ad:'Holiday Apple / Bayram Alması',atirlər:'Apple Element FO USA 45% + Ginger & Spice FO USA 35% + Apple Cinnamon EO CN 20%',izah:'Almanın şirin-meyvəli akkordunu zəncəfil-ədviyyatın istilik nəfəsi keçir, alma-darçın isə bu Milad kombounu tamamlayır. Bayram stolu — küknar, armud, istiqbal.',alternativ:'Apple Cinnamon CN → Ginger artır 45%'},
   {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Çiçək-Spa',ad:'Lotus White Spa / Lotos Spa',atirlər:'White Tea FO USA 50% + Lotos FO FR 35% + Phatoil White Musk FO CN 15%',izah:'Ağ çay, lotos, müşk.',alternativ:'Lotos → Mimosa FR | White Musk → 10%'},
   {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Qourmet-Kafe',ad:'Cafe Mocha / Kafe Moka',atirlər:'Coffee FO USA 55% + Chocolate FO FR 30% + Coconut FO FR 15%',izah:'Qəhvə, şokolad, kokos.',alternativ:'Chocolate → Cherry FR | Coconut → Mango FR'},
-  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Oduncaq-Oduncaq',ad:'Rustic Cabin / Kənd Daxması',atirlər:'EUQEE Warm Rustic Wood FO CN 45% + EUQEE Forest Pine FO CN 35% + Patchouli FO USA 20%',izah:'Köhnə ağac, şam, torpaq.',alternativ:'Rustic Wood CN → artır 50% | Forest Pine CN → artır 40%'},
-  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Meyvə-Meyvə',ad:'Apple Orchard / Alma Bağı',atirlər:'Apple Element FO USA 65% + Cherry FO FR 35%',izah:'Alma, albalı. Payız bağı.',alternativ:'Cherry → Strawberry FR'},
-  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Ədviyyat-Sitrus',ad:'Spiced Orange / Ədviyyatlı Portağal',atirlər:'Ginger & Spice FO USA 45% + Orange FO FR 35% + Apple Cinnamon EO CN 20%',izah:'Zəncəfil, portağal, darçın.',alternativ:'Orange → Lemon FR | Apple Cinnamon → Ginger artır'},
-  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Tüstü-Şərq',ad:'Smoke Amber / Tüstü Kəhrəba',atirlər:'Smoke and Amber FO RU 50% + Amber FO FR 30% + Patchouli FO USA 20%',izah:'Tüstü, kəhrəba, torpaq. Mistik.',alternativ:'Smoke and Amber → Yellow Tulips RU | Amber → Palo Santo USA'},
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Oduncaq-Oduncaq',ad:'Rustic Cabin / Kənd Daxması',atirlər:'EUQEE Warm Rustic Wood FO CN 45% + EUQEE Forest Pine FO CN 35% + Patchouli FO USA 20%',izah:'Köhnə ağacın daxma rayihəsi şam ağacının meşə nəfəsiylə güclənir, patchoulinin dərin torpağı isə bu kənd kompozisiyasına natural bir kök verir.',alternativ:'Rustic Wood CN → artır 50% | Forest Pine CN → artır 40%'},
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Meyvə-Meyvə',ad:'Apple Orchard / Alma Bağı',atirlər:'Apple Element FO USA 65% + Cherry FO FR 35%',izah:'Payız almanın şirin-turş akkordunu albalı meyvəli tonuyla tamlayır. Payız bağının ilk dərimi — torpaq, meyvə, nostalji, istiqbal.',alternativ:'Cherry → Strawberry FR'},
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Ədviyyat-Sitrus',ad:'Spiced Orange / Ədviyyatlı Portağal',atirlər:'Ginger & Spice FO USA 45% + Orange FO FR 35% + Apple Cinnamon EO CN 20%',izah:'Zəncəfilin isti ədviyyat nəfəsi portağalın şirəli sitrusu ilə görüşür, alma-darçın isə bu istilik-sitrus buluşmasına şənlik havasını gətirir.',alternativ:'Orange → Lemon FR | Apple Cinnamon → Ginger artır'},
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Tüstü-Şərq',ad:'Smoke Amber / Tüstü Kəhrəba',atirlər:'Smoke and Amber FO RU 50% + Amber FO FR 30% + Patchouli FO USA 20%',izah:'Odun tüstüsünün mistik akkordunu kəhrəbanın dərin bazası tutur, patchoulinin torpaq tonu isə bu tüstü-kəhrəba duetini alt katlara aparır. Kamin başında gecə.',alternativ:'Smoke and Amber → Yellow Tulips RU | Amber → Palo Santo USA'},
   // ƏRİYƏN MUM — KİŞİ
-  {kateqoriya:'Əriyən Mum',cins:'Kişi',profil:'Dəniz-Oduncaq',ad:'Deep Ocean Wood / Dərin Okean',atirlər:'Black Sea FO USA 45% + Palo Santo & Sandalwood FO USA 35% + Patchouli FO USA 20%',izah:'Dəniz, oduncaq. Lüks barberxana.',alternativ:'Black Sea → Ocean Breeze USA | Patchouli → azalt 15%'},
-  {kateqoriya:'Əriyən Mum',cins:'Kişi',profil:'Dəri-Tütün',ad:'Vintage Leather / Vintage Dəri',atirlər:'EUQEE Leather FO CN 45% + EUQEE Sweet Tobacco FO CN 35% + EUQEE Bamboo & Teak FO CN 20%',izah:'Dəri, tütün, bambu.',alternativ:'Hər CN artır: Leather 50% / Tobacco 40% / Bamboo 10%'},
-  {kateqoriya:'Əriyən Mum',cins:'Kişi',profil:'Ədviyyat-Dəri',ad:'Bay Rum Classic / Klassik Bay Rom',atirlər:'EUQEE Bay Rum Premium FO CN 50% + EUQEE Sweet Tobacco FO CN 30% + EUQEE Leather FO CN 20%',izah:'Bay rom, tütün, dəri.',alternativ:'Tobacco CN → artır 35% | Leather CN → artır 25%'},
-  {kateqoriya:'Əriyən Mum',cins:'Kişi',profil:'Tütün-Qəhvə',ad:'Tobacco Coffee / Tütün Qəhvə',atirlər:'EUQEE Sweet Tobacco FO CN 50% + Coffee FO USA 35% + EUQEE Cedarwood FO CN 15%',izah:'Tütün, qəhvə, sidr.',alternativ:'Tobacco CN → artır 55% | Cedarwood CN → artır 20%'},
-  {kateqoriya:'Əriyən Mum',cins:'Kişi',profil:'Şərq-Oduncaq',ad:'Amber Woods / Kəhrəba Meşəsi',atirlər:'Amber FO FR 45% + Palo Santo & Sandalwood FO USA 35% + Patchouli FO USA 20%',izah:'Kəhrəba, mistik ağaclar.',alternativ:'Patchouli → azalt 15% | Amber → artır 50%'},
-  {kateqoriya:'Əriyən Mum',cins:'Kişi',profil:'Tüstü-Oduncaq',ad:'Dark Smoke / Qaranlıq Tüstü',atirlər:'Smoke and Amber FO RU 50% + Palo Santo & Sandalwood FO USA 30% + EUQEE Leather FO CN 20%',izah:'Tüstü, mistik ağac, dəri.',alternativ:'Smoke and Amber → Yellow Tulips RU | Leather CN → artır 25%'},
+  {kateqoriya:'Əriyən Mum',cins:'Kişi',profil:'Dəniz-Oduncaq',ad:'Deep Ocean Wood / Dərin Okean',atirlər:'Black Sea FO USA 45% + Palo Santo & Sandalwood FO USA 35% + Patchouli FO USA 20%',izah:'Dənizin dərin mineral dünyasını palo santo-nun mistik oduncağı yüzə çıxarır, patchoulinin torpaq tonu isə bu lüks barberxana kompozisiyasına imza kimi yapışır.',alternativ:'Black Sea → Ocean Breeze USA | Patchouli → azalt 15%'},
+  {kateqoriya:'Əriyən Mum',cins:'Kişi',profil:'Dəri-Tütün',ad:'Vintage Leather / Vintage Dəri',atirlər:'EUQEE Leather FO CN 45% + EUQEE Sweet Tobacco FO CN 35% + EUQEE Bamboo & Teak FO CN 20%',izah:'Köhnə dərinin nəcib, tam akkordunu tütünün kəskin dərinliyi gücləndirir, bambunun sərrin tonu isə bu vintage kompozisiyaya müasirlik qatır.',alternativ:'Hər CN artır: Leather 50% / Tobacco 40% / Bamboo 10%'},
+  {kateqoriya:'Əriyən Mum',cins:'Kişi',profil:'Ədviyyat-Dəri',ad:'Bay Rum Classic / Klassik Bay Rom',atirlər:'EUQEE Bay Rum Premium FO CN 50% + EUQEE Sweet Tobacco FO CN 30% + EUQEE Leather FO CN 20%',izah:'Bay romun karib ətrinin ədviyyatlı-meyvəli karakteri tütünün dərin tüstüsüylə birləşir, dəri isə bu kişi ikonasına nəciblik əlavə edir.',alternativ:'Tobacco CN → artır 35% | Leather CN → artır 25%'},
+  {kateqoriya:'Əriyən Mum',cins:'Kişi',profil:'Tütün-Qəhvə',ad:'Tobacco Coffee / Tütün Qəhvə',atirlər:'EUQEE Sweet Tobacco FO CN 50% + Coffee FO USA 35% + EUQEE Cedarwood FO CN 15%',izah:'Tütünün dərin, közərən tüstüsü qəhvənin qaynar nəfəsiylə qucaqlaşır, sid ağacının bərk oduncağı isə bu kişi fantaziyasına yer verir.',alternativ:'Tobacco CN → artır 55% | Cedarwood CN → artır 20%'},
+  {kateqoriya:'Əriyən Mum',cins:'Kişi',profil:'Şərq-Oduncaq',ad:'Amber Woods / Kəhrəba Meşəsi',atirlər:'Amber FO FR 45% + Palo Santo & Sandalwood FO USA 35% + Patchouli FO USA 20%',izah:'Kəhrəbanın qatran istiliyi palo santo-nun mistik ağac akkordunu cəlb edir, patchoulinin dərin torpağı isə bu orman-kəhrəba buluşmasını kök sala biləcək bir yerə oturdur.',alternativ:'Patchouli → azalt 15% | Amber → artır 50%'},
+  {kateqoriya:'Əriyən Mum',cins:'Kişi',profil:'Tüstü-Oduncaq',ad:'Dark Smoke / Qaranlıq Tüstü',atirlər:'Smoke and Amber FO RU 50% + Palo Santo & Sandalwood FO USA 30% + EUQEE Leather FO CN 20%',izah:'Odun tüstüsünün pərdəsi altında palo santo-nun mistik nəfəsi yavaş açılır, dərinin nəcib akkordunu isə bu qaranlıq kompozisiyanın ən gizli katı edir.',alternativ:'Smoke and Amber → Yellow Tulips RU | Leather CN → artır 25%'},
   // ƏTİRLİ TABLET — QADIN
-  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Çiçək-Sitrus',ad:'Japanese Elegance / Yapon Zərifliyi',atirlər:'Japan Cherry Blossom FO USA 65% + Bergamot FO USA 35%',izah:'Albalı çiçəyi, berqamot. Minimalist.',alternativ:'Japan CB → Rose Petals USA | Bergamot → White Tea USA'},
-  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Çiçək-Çiçək',ad:'Rose Garden / Gül Bağçası',atirlər:'Japan Cherry Blossom FO USA 50% + Rose Petals FO USA 35% + Mimosa FO FR 15%',izah:'Üç çiçək buketi.',alternativ:'Rose Petals → Peony FR | Mimosa → Jasmine FR'},
-  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Meyvə-Tropik',ad:'Mango Paradise / Manqo Cənnəti',atirlər:'Mango Garden FO FR 55% + Coconut FO FR 45%',izah:'Manqo, kokos. Tropik.',alternativ:'Mango → Strawberry FR | Coconut → Orange FR'},
-  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Çiçək-Çiçək',ad:'Yellow Tulip / Sarı Lalə',atirlər:'Yellow Tulips FO RU 55% + White Tea FO USA 30% + Citrus Agave FO USA 15%',izah:'Lalə, ağ çay, sitrus.',alternativ:'Yellow Tulips → Rose Petals USA | White Tea → Mimosa FR'},
-  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Şərq-Çiçək',ad:'Rose Amber / Gül Kəhrəbası',atirlər:'Rose Petals FO USA 40% + Jasmine FO FR 25% + Amber FO FR 20% + Peony FO FR 15%',izah:'Kəhrəba, üç çiçək.',alternativ:'Rose Petals → Japan CB USA | Amber → Palo Santo USA'},
-  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Spa-Çiçək',ad:'White Tea Spa / Ağ Çay Spa',atirlər:'White Tea FO USA 50% + Mimosa FO FR 30% + Lotos FO FR 20%',izah:'Ağ çay, mimoza, lotos.',alternativ:'Mimosa → Jasmine FR | Lotos → Peony FR'},
-  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Çiçək-Ədviyyat',ad:'Violet Rose / Bənövşə Gül',atirlər:'Black Violet & Saffron FO USA 50% + Rose Petals FO USA 30% + Amber FO FR 20%',izah:'Bənövşə, zəfəran, qızılgül.',alternativ:'Black Violet → Japan CB USA | Amber → Palo Santo USA'},
-  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Çiçək-Ekzotik',ad:'Black Orchid / Qara Saxsı',atirlər:'Towatap Black Orchid EO CN 40% + Jasmine FO FR 35% + Palo Santo & Sandalwood FO USA 25%',izah:'Saxsı, yasəmən, səndəl.',alternativ:'Black Orchid CN → artır 45% (zəif) | Jasmine → Ylang-Ylang FR'},
-  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Meyvə-Çiçək',ad:'Berry Bouquet / Giləmeyvə Buketi',atirlər:'Raspberry FO FR 45% + Rose Petals FO USA 30% + Peony FO FR 25%',izah:'Moruq, qızılgül, pion.',alternativ:'Raspberry → Strawberry FR | Rose Petals → Japan CB USA'},
-  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Oduncaq-Çiçək',ad:'Vanilla Woods / Vanil Meşəsi',atirlər:'Palo Santo & Sandalwood FO USA 45% + Ylang-Ylang FO FR 30% + Towatap Vanilla EO CN 25%',izah:'Səndəl, ylang-ylang, vanil.',alternativ:'Vanilla CN → artır 30% | Ylang-Ylang → Jasmine FR'},
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Çiçək-Sitrus',ad:'Japanese Elegance / Yapon Zərifliyi',atirlər:'Japan Cherry Blossom FO USA 65% + Bergamot FO USA 35%',izah:'Yapon albalı çiçəyinin sakura kimi uçucu, zərif akkordunu berqamot italyan işığıyla aydınladır. Az, minimal, mükəmməl — wabi-sabi estetikası.',alternativ:'Japan CB → Rose Petals USA | Bergamot → White Tea USA'},
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Çiçək-Çiçək',ad:'Rose Garden / Gül Bağçası',atirlər:'Japan Cherry Blossom FO USA 50% + Rose Petals FO USA 35% + Mimosa FO FR 15%',izah:'Albalı çiçəyinin zərif tonu qızılgülün klassik romantizmiylə birləşir, mimoza isə bu gül bağçasına yaz yüngüllüyü qatır. İngilis bağçasının ikona ətri.',alternativ:'Rose Petals → Peony FR | Mimosa → Jasmine FR'},
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Meyvə-Tropik',ad:'Mango Paradise / Manqo Cənnəti',atirlər:'Mango Garden FO FR 55% + Coconut FO FR 45%',izah:'Manqonun ekzotik, tropik şirinliyi kokosun kremli bazasıyla birləşir. İki nota, bir xəyal — Karib adalarının gün batımı.',alternativ:'Mango → Strawberry FR | Coconut → Orange FR'},
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Çiçək-Çiçək',ad:'Yellow Tulip / Sarı Lalə',atirlər:'Yellow Tulips FO RU 55% + White Tea FO USA 30% + Citrus Agave FO USA 15%',izah:'Sarı laləni ötkəm çiçək akkordunu ağ çayın mineralik səriliyi sabitləşdirir, kaktus sitrusu isə kompozisiyaya bahar canlılığını qatır.',alternativ:'Yellow Tulips → Rose Petals USA | White Tea → Mimosa FR'},
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Şərq-Çiçək',ad:'Rose Amber / Gül Kəhrəbası',atirlər:'Rose Petals FO USA 40% + Jasmine FO FR 25% + Amber FO FR 20% + Peony FO FR 15%',izah:'Kəhrəbanın dərin, qatran bazası üzərində qızılgül, yasəmən, pion — üç romantik çiçək əridilir. Şərqin lüks gül bağçası.',alternativ:'Rose Petals → Japan CB USA | Amber → Palo Santo USA'},
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Spa-Çiçək',ad:'White Tea Spa / Ağ Çay Spa',atirlər:'White Tea FO USA 50% + Mimosa FO FR 30% + Lotos FO FR 20%',izah:'Ağ çayın mineralik sakitliyi mimozanın yüngül çiçəkliyi ilə açılır, lotos isə bu spa ritualını daha dərin bir meditasiya sükutuna aparır.',alternativ:'Mimosa → Jasmine FR | Lotos → Peony FR'},
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Çiçək-Ədviyyat',ad:'Violet Rose / Bənövşə Gül',atirlər:'Black Violet & Saffron FO USA 50% + Rose Petals FO USA 30% + Amber FO FR 20%',izah:'Black Violet & Saffronun mistik bənövşə-zəfəran akkordunu qızılgülün klassik romantizmi tamamlayır, kəhrəba isə bu Şərq-Qərb buluşmasına dərinlik verir.',alternativ:'Black Violet → Japan CB USA | Amber → Palo Santo USA'},
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Çiçək-Ekzotik',ad:'Black Orchid / Qara Saxsı',atirlər:'Towatap Black Orchid EO CN 40% + Jasmine FO FR 35% + Palo Santo & Sandalwood FO USA 25%',izah:'Qara orxideyanın tünd, egzotik çiçək akkordunu yasəmən romantikləşdirir, palo santo-nun mistik ağac nəfəsi isə bu kompozisiyanı dərinliyə aparır.',alternativ:'Black Orchid CN → artır 45% (zəif) | Jasmine → Ylang-Ylang FR'},
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Meyvə-Çiçək',ad:'Berry Bouquet / Giləmeyvə Buketi',atirlər:'Raspberry FO FR 45% + Rose Petals FO USA 30% + Peony FO FR 25%',izah:'Moruğun şirin-turş canlılığı qızılgülün klassik akkordunu canlandırır, pion isə bu meyvəli-çiçəkli buketi tamamlayan son çiçəkdir.',alternativ:'Raspberry → Strawberry FR | Rose Petals → Japan CB USA'},
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Oduncaq-Çiçək',ad:'Vanilla Woods / Vanil Meşəsi',atirlər:'Palo Santo & Sandalwood FO USA 45% + Ylang-Ylang FO FR 30% + Towatap Vanilla EO CN 25%',izah:'Palo santo-nun mistik ağac bazası ylang-ylang-ın ekzotik çiçəyi ilə örtülür, vanilin kremli istiliyi isə bu Şərq kompozisiyasını yumşaq bir son akkordla bağlayır.',alternativ:'Vanilla CN → artır 30% | Ylang-Ylang → Jasmine FR'},
   // ƏTİRLİ TABLET — UNİSEX
-  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Sitrus-Sitrus',ad:'Citrus Burst / Sitrus Partlayış',atirlər:'Lemon FO FR 40% + Orange FO FR 35% + Bergamot FO USA 25%',izah:'Üç sitrus enerjisi.',alternativ:'Orange → Citrus Agave USA'},
-  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Çiçək-Spa',ad:'Lavender Spa / Lavanda Spa',atirlər:'Lavender FO FR 55% + Bergamot FO USA 25% + White Tea FO USA 20%',izah:'Lavanda, berqamot, ağ çay.',alternativ:'Lavender → Ylang-Ylang FR | Bergamot → Lemon FR'},
-  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Şərq-Şirin',ad:'Amber Cream / Kəhrəba Kremi',atirlər:'Amber FO FR 55% + Towatap Vanilla EO CN 30% + Phatoil White Musk FO CN 15%',izah:'Kəhrəba, vanil, müşk.',alternativ:'Vanilla CN → artır 35% | White Musk CN → 20%'},
-  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Oduncaq-Çiçək',ad:'Sandalwood Zen / Səndəl Zen',atirlər:'Palo Santo & Sandalwood FO USA 55% + Lotos FO FR 25% + Phatoil White Musk FO CN 20%',izah:'Səndəl, lotos, müşk.',alternativ:'White Musk CN → artır 25% | Lotos → Mimosa FR'},
-  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Dəniz-Təravət',ad:'Ocean Fresh / Okean Təravət',atirlər:'Ocean Breeze FO USA 55% + White Tea FO USA 30% + Bergamot FO USA 15%',izah:'Dəniz, ağ çay, berqamot.',alternativ:'Ocean Breeze → Black Sea USA | Bergamot → Lemon FR'},
-  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Şərq-Qaranlıq',ad:'Dark Amber / Qaranlıq Kəhrəba',atirlər:'Amber Noir FO USA 50% + Amber FO FR 30% + Patchouli FO USA 20%',izah:'İkili kəhrəba, patchouli.',alternativ:'Amber FR → Palo Santo USA | Patchouli → azalt 15%'},
-  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Nanə-Təravət',ad:'Mint Fresh / Nanə Təravət',atirlər:'Towatap Peppermint EO CN 45% + Towatap Eucalyptus EO CN 30% + White Tea FO USA 25%',izah:'Nanə, evkalipt, ağ çay.',alternativ:'Peppermint CN → artır 50% | Eucalyptus CN → artır 35%'},
-  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Tüstü-Şərq',ad:'Smoke Noir / Tüstü Gecəsi',atirlər:'Smoke and Amber FO RU 50% + Amber Noir FO USA 30% + Patchouli FO USA 20%',izah:'Tüstü, qaranlıq kəhrəba.',alternativ:'Smoke and Amber → Yellow Tulips RU | Amber Noir → Amber FR'},
+  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Sitrus-Sitrus',ad:'Citrus Burst / Sitrus Partlayış',atirlər:'Lemon FO FR 40% + Orange FO FR 35% + Bergamot FO USA 25%',izah:'Limonun kəskin akkordunun yanında portağal şirəli bir kontrast yaradır, berqamot isə bu üç sitrus xorunun italyan enerjisini bir notaya toplayır.',alternativ:'Orange → Citrus Agave USA'},
+  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Çiçək-Spa',ad:'Lavender Spa / Lavanda Spa',atirlər:'Lavender FO FR 55% + Bergamot FO USA 25% + White Tea FO USA 20%',izah:'Lavandanın arındırıcı akkordlarını berqamotun işıqlı sitrusu açır, ağ çay isə bu sakitliyin mineral çərçivəsini çəkir. Ən saf spa meditasiyası.',alternativ:'Lavender → Ylang-Ylang FR | Bergamot → Lemon FR'},
+  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Şərq-Şirin',ad:'Amber Cream / Kəhrəba Kremi',atirlər:'Amber FO FR 55% + Towatap Vanilla EO CN 30% + Phatoil White Musk FO CN 15%',izah:'Kəhrəbanın dərin, qatran bazası vanilin kremli şirinliyi ilə əriyir, ağ müşk isə bu bahalı üçlüyü yumşaq, pudralı bir örtüklə bağlayır.',alternativ:'Vanilla CN → artır 35% | White Musk CN → 20%'},
+  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Oduncaq-Çiçək',ad:'Sandalwood Zen / Səndəl Zen',atirlər:'Palo Santo & Sandalwood FO USA 55% + Lotos FO FR 25% + Phatoil White Musk FO CN 20%',izah:'Palo santo-nun mistik ağac nəfəsi lotos çiçəyinin sualtı sakitliyi ilə görüşür, müşk isə bu Şərq meditasiyasını son sükutla tamamlayır.',alternativ:'White Musk CN → artır 25% | Lotos → Mimosa FR'},
+  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Dəniz-Təravət',ad:'Ocean Fresh / Okean Təravət',atirlər:'Ocean Breeze FO USA 55% + White Tea FO USA 30% + Bergamot FO USA 15%',izah:'Dənizin mineral azadlığı ağ çayın sakitliyi ilə dərinləşir, berqamot isə bu dəniz-çay duetinə bircə damla italyan güneşi qatır.',alternativ:'Ocean Breeze → Black Sea USA | Bergamot → Lemon FR'},
+  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Şərq-Qaranlıq',ad:'Dark Amber / Qaranlıq Kəhrəba',atirlər:'Amber Noir FO USA 50% + Amber FO FR 30% + Patchouli FO USA 20%',izah:'Amber Noir-un tünd, mistik kəhrəbasına fransız kəhrəbasının daha istilik tonu əlavə olunur, patchouli isə bu ikili kəhrəba kompozisiyasını dərin torpaq bazasına oturdur.',alternativ:'Amber FR → Palo Santo USA | Patchouli → azalt 15%'},
+  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Nanə-Təravət',ad:'Mint Fresh / Nanə Təravət',atirlər:'Towatap Peppermint EO CN 45% + Towatap Eucalyptus EO CN 30% + White Tea FO USA 25%',izah:'Nane-nın soyuq, kəskin akkordunu evkalipt genişləndirir, ağ çay isə bu nəfəs açan ikilinə mineralik sakitlik qatır. Klinik təmizliyin ətri.',alternativ:'Peppermint CN → artır 50% | Eucalyptus CN → artır 35%'},
+  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Tüstü-Şərq',ad:'Smoke Noir / Tüstü Gecəsi',atirlər:'Smoke and Amber FO RU 50% + Amber Noir FO USA 30% + Patchouli FO USA 20%',izah:'Odun tüstüsünün mistik qatı qaranlıq kəhrəbanın dərinliyi ilə buluşur, patchouli isə bu gecə kompozisiyasının torpaq katında gizli izini buraxır.',alternativ:'Smoke and Amber → Yellow Tulips RU | Amber Noir → Amber FR'},
   // ƏTİRLİ TABLET — UŞAQ
-  {kateqoriya:'Ətirli Tablet',cins:'Uşaq',profil:'Meyvə-Sitrus',ad:'Apple Citrus / Alma Sitrus',atirlər:'Apple Element FO USA 55% + Citrus Agave FO USA 30% + Bergamot FO USA 15%',izah:'Alma, sitrus.',alternativ:'Apple → Strawberry FR | Citrus Agave → Lemon FR'},
-  {kateqoriya:'Ətirli Tablet',cins:'Uşaq',profil:'Meyvə-Şirin',ad:'Berry Vanilla / Giləmeyvə Vanil',atirlər:'Raspberry FO FR 50% + Strawberry FO FR 35% + Towatap Vanilla EO CN 15%',izah:'Moruq, çiyələk, vanil.',alternativ:'Raspberry → Cherry FR | Vanilla CN → artır 20%'},
+  {kateqoriya:'Ətirli Tablet',cins:'Uşaq',profil:'Meyvə-Sitrus',ad:'Apple Citrus / Alma Sitrus',atirlər:'Apple Element FO USA 55% + Citrus Agave FO USA 30% + Bergamot FO USA 15%',izah:'Almanın şirin-meyvəli akkordunu kaktus sitrusu ekzotikləşdirir, berqamot isə bu meyvəli-sitrus buluşmasına bir İtalya sahil şəhərinin açıqlığını qatır.',alternativ:'Apple → Strawberry FR | Citrus Agave → Lemon FR'},
+  {kateqoriya:'Ətirli Tablet',cins:'Uşaq',profil:'Meyvə-Şirin',ad:'Berry Vanilla / Giləmeyvə Vanil',atirlər:'Raspberry FO FR 50% + Strawberry FO FR 35% + Towatap Vanilla EO CN 15%',izah:'Moruğun şirin-turş akkordunu çiyələyin meyvəli tonu qüvvətləndirir, vanilin kremli istiliyi isə bu meyvəli cütlüyü yumşaq bir son katla örtür.',alternativ:'Raspberry → Cherry FR | Vanilla CN → artır 20%'},
   // ƏTİRLİ TABLET — KİŞİ
-  {kateqoriya:'Ətirli Tablet',cins:'Kişi',profil:'Oduncaq-Oduncaq',ad:'Forest Deep / Dərin Meşə',atirlər:'Cypress & Bayberry FO USA 50% + Patchouli FO USA 30% + Palo Santo & Sandalwood FO USA 20%',izah:'Şam, patchouli, səndəl.',alternativ:'Patchouli → azalt 20% | Sandalwood → artır 25%'},
-  {kateqoriya:'Ətirli Tablet',cins:'Kişi',profil:'Dəniz-Oduncaq',ad:'Ocean Wood / Okean Ağac',atirlər:'Black Sea FO USA 45% + Palo Santo & Sandalwood FO USA 35% + Patchouli FO USA 20%',izah:'Dəniz, səndəl, patchouli.',alternativ:'Black Sea → Ocean Breeze USA | Patchouli → azalt 15%'},
-  {kateqoriya:'Ətirli Tablet',cins:'Kişi',profil:'Dəniz-Qaranlıq',ad:'Dark Ocean / Qaranlıq Okean',atirlər:'Ocean Breeze FO USA 45% + Amber Noir FO USA 35% + Black Sea FO USA 20%',izah:'İki dəniz, qaranlıq kəhrəba.',alternativ:'Ocean Breeze → Black Sea artır | Amber Noir → Amber FR'},
-  {kateqoriya:'Ətirli Tablet',cins:'Kişi',profil:'Tüstü-Oduncaq',ad:'Forest Smoke / Meşə Tüstüsü',atirlər:'Smoke and Amber FO RU 50% + Cypress & Bayberry FO USA 30% + Palo Santo & Sandalwood FO USA 20%',izah:'Tüstü, şam, səndəl.',alternativ:'Smoke and Amber → Yellow Tulips RU | Cypress → Patchouli USA'},
+  {kateqoriya:'Ətirli Tablet',cins:'Kişi',profil:'Oduncaq-Oduncaq',ad:'Forest Deep / Dərin Meşə',atirlər:'Cypress & Bayberry FO USA 50% + Patchouli FO USA 30% + Palo Santo & Sandalwood FO USA 20%',izah:'Şam-buludkəkotunun yabanı, bərk meşə akkordunu patchoulinin dərin torpağı əsas tutur, palo santo-nun mistik nəfəsi isə bu meşənin dibinə çəkir. Kişilik üçün.',alternativ:'Patchouli → azalt 20% | Sandalwood → artır 25%'},
+  {kateqoriya:'Ətirli Tablet',cins:'Kişi',profil:'Dəniz-Oduncaq',ad:'Ocean Wood / Okean Ağac',atirlər:'Black Sea FO USA 45% + Palo Santo & Sandalwood FO USA 35% + Patchouli FO USA 20%',izah:'Dənizin mineral dərinliyi palo santo-nun ağac nəfəsiylə buluşur, patchouli isə bu dəniz-meşə duetinə torpağın kökünü verir. Barberxananın imza ətri.',alternativ:'Black Sea → Ocean Breeze USA | Patchouli → azalt 15%'},
+  {kateqoriya:'Ətirli Tablet',cins:'Kişi',profil:'Dəniz-Qaranlıq',ad:'Dark Ocean / Qaranlıq Okean',atirlər:'Ocean Breeze FO USA 45% + Amber Noir FO USA 35% + Black Sea FO USA 20%',izah:'Dəniz küləyinin azad nəfəsi Amber Noir-un qaranlıq kəhrəbasıyla görüşür, soyuq dəniz isə bu lüks kişi kompozisiyasının qaranlıq bir tərəfini ortaya çıxarır.',alternativ:'Ocean Breeze → Black Sea artır | Amber Noir → Amber FR'},
+  {kateqoriya:'Ətirli Tablet',cins:'Kişi',profil:'Tüstü-Oduncaq',ad:'Forest Smoke / Meşə Tüstüsü',atirlər:'Smoke and Amber FO RU 50% + Cypress & Bayberry FO USA 30% + Palo Santo & Sandalwood FO USA 20%',izah:'Odun tüstüsünün duman örtüyü altında şam meşəsinin bərk akkordu yavaş açılır, palo santo-nun mistik nəfəsi isə bu meşə-tüstü fantaziyasını ruhani bir yerə aparır.',alternativ:'Smoke and Amber → Yellow Tulips RU | Cypress → Patchouli USA'},
 
   // ── YENİ ƏTİRLƏR — M&P SABUN ────────────────────────────────
   // Green Tea and Lemongrass
-  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Çay-Sitrus',ad:'Green Tea Citrus / Yaşıl Çay Sitrus',atirlər:'Green Tea and Lemongrass FO USA 60% + Bergamot FO FR 25% + Lemon (Limon) FO FR 15%',izah:'Yaşıl çay, limon otu, berqamot. Təmiz, enerjili.',alternativ:'Bergamot FR → Citrus Agave USA | Lemon → Orange FR'},
-  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çay-Çiçək',ad:'Matcha Blossom / Matça Çiçəyi',atirlər:'Matcha and Bergamot FO USA 50% + Jasmine (Yasəmən) FO FR 30% + White Tea FO USA 20%',izah:'Matça, berqamot, yasəmən. Zen hissi.',alternativ:'Matcha → Green Tea USA | Jasmine → Mimosa FR'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Çay-Sitrus',ad:'Green Tea Citrus / Yaşıl Çay Sitrus',atirlər:'Green Tea and Lemongrass FO USA 60% + Bergamot FO FR 25% + Lemon (Limon) FO FR 15%',izah:'Yaşıl çayın mineralik-ot akkordunu limon otunun kəskin səriliyi canlandırır, berqamotun işıqlı sitrusu isə bu sabah enerjisi kompozisiyasına italyan yüngüllüyü qatır.',alternativ:'Bergamot FR → Citrus Agave USA | Lemon → Orange FR'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çay-Çiçək',ad:'Matcha Blossom / Matça Çiçəyi',atirlər:'Matcha and Bergamot FO USA 50% + Jasmine (Yasəmən) FO FR 30% + White Tea FO USA 20%',izah:'Yaşıl matçanın dərin, torpaq-ot bazası yasəməni çiçəyiylə romantikləşir, ağ çay isə bu Şərq-Qərb buluşmasına mineral bir balans verir.',alternativ:'Matcha → Green Tea USA | Jasmine → Mimosa FR'},
   // Lavender USA
-  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Lavanda-Herbal',ad:'Lavender Fields / Lavanda Çölü',atirlər:'Lavender FO USA 55% + Rosemary Sage FO USA 30% + Green Tea and Lemongrass FO USA 15%',izah:'Lavanda, rozmarin, yaşıl çay. Herbal spa.',alternativ:'Rosemary Sage → Lavender FR | Lemongrass → Bergamot FR'},
-  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Lavanda-Çiçək',ad:'Lavender Rose / Lavanda Gül',atirlər:'Lavender FO USA 50% + Rose Petals FO USA 30% + Peony (Pion) FO FR 20%',izah:'Lavanda, qızılgül, pion. Klassik romantik.',alternativ:'Lavender USA → Lavender FR | Rose Petals → Japan CB USA'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Lavanda-Herbal',ad:'Lavender Fields / Lavanda Çölü',atirlər:'Lavender FO USA 55% + Rosemary Sage FO USA 30% + Green Tea and Lemongrass FO USA 15%',izah:'Güclü lavandanın arındırıcı akkordlarını rozmarinin bərk herbal tonu əsas tutur, yaşıl çay-limon otu isə bu Provence çölünə sərrinlik qatır.',alternativ:'Rosemary Sage → Lavender FR | Lemongrass → Bergamot FR'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Lavanda-Çiçək',ad:'Lavender Rose / Lavanda Gül',atirlər:'Lavender FO USA 50% + Rose Petals FO USA 30% + Peony (Pion) FO FR 20%',izah:'Lavandanın sakitləşdirici akkordunu qızılgülün romantik çiçəyi tamamlayır, pion isə bu lavanda-gül buluşmasına son bir zərif çiçək notası qatır.',alternativ:'Lavender USA → Lavender FR | Rose Petals → Japan CB USA'},
   // Rosemary Sage
-  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Herbal-Oduncaq',ad:'Rosemary Wood / Rozmarin Ağac',atirlər:'Rosemary Sage FO USA 50% + Palo Santo & Sandalwood FO USA 30% + Patchouli FO USA 20%',izah:'Rozmarin, adaçayı, səndəl, patchouli. Kişilik.',alternativ:'Rosemary Sage → Green Tea USA | Patchouli → Cypress USA'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Herbal-Oduncaq',ad:'Rosemary Wood / Rozmarin Ağac',atirlər:'Rosemary Sage FO USA 50% + Palo Santo & Sandalwood FO USA 30% + Patchouli FO USA 20%',izah:'Rozmarinin güclü herbal nəfəsi palo santo-nun mistik oduncağıyla görüşür, patchouli isə bu herbal-meşə kompozisiyasına torpaq kökü verir.',alternativ:'Rosemary Sage → Green Tea USA | Patchouli → Cypress USA'},
   // Saffron Cedarwood
-  {kateqoriya:'M&P Sabun',cins:'Kişi',profil:'Şərq-Oduncaq',ad:'Saffron Cedar / Zəfəran Sidr',atirlər:'Saffron Cedarwood FO USA 55% + Amber Noir FO USA 30% + Patchouli FO USA 15%',izah:'Zəfəran, sidr, qaranlıq kəhrəba. Zəngin Şərq.',alternativ:'Amber Noir → Amber FR | Patchouli → azalt 10%'},
-  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Şərq-Çiçək',ad:'Saffron Bloom / Zəfəran Çiçəyi',atirlər:'Saffron Cedarwood FO USA 45% + Rose Petals FO USA 35% + Jasmine (Yasəmən) FO FR 20%',izah:'Zəfəran, qızılgül, yasəmən. Lüks.',alternativ:'Rose Petals → Peony FR | Saffron → Amber Noir USA'},
+  {kateqoriya:'M&P Sabun',cins:'Kişi',profil:'Şərq-Oduncaq',ad:'Saffron Cedar / Zəfəran Sidr',atirlər:'Saffron Cedarwood FO USA 55% + Amber Noir FO USA 30% + Patchouli FO USA 15%',izah:'Zəfəranın qiymətli, ekzotik akkordunu tünd kəhrəba dərinliyə aparır, patchoulinin torpaq tonu isə bu Şərq lüksünü kökə oturdur.',alternativ:'Amber Noir → Amber FR | Patchouli → azalt 10%'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Şərq-Çiçək',ad:'Saffron Bloom / Zəfəran Çiçəyi',atirlər:'Saffron Cedarwood FO USA 45% + Rose Petals FO USA 35% + Jasmine (Yasəmən) FO FR 20%',izah:'Zəfəranın nadir, sarı-qızılı akkordunu qızılgülün klassik romantizmi örtür, yasəmən isə bu Şərq lüks bağçasına son bir çiçək nəfəsi qatır.',alternativ:'Rose Petals → Peony FR | Saffron → Amber Noir USA'},
   // English Garden
-  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Herbal',ad:'English Garden / İngilis Bağçası',atirlər:'English Garden FO USA 55% + Rose Petals FO USA 25% + Lavender FO USA 20%',izah:'İngilis bağçası çiçəkləri, gül, lavanda.',alternativ:'English Garden → Elderberry USA | Lavender → Mimosa FR'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Herbal',ad:'English Garden / İngilis Bağçası',atirlər:'English Garden FO USA 55% + Rose Petals FO USA 25% + Lavender FO USA 20%',izah:'İngilis bağçasının çoxlu çiçək akkordlarını qızılgülün klassik romantizmi tamamlayır, lavanda isə bu bağçanın sabah çiyi kimi sərrin bir tərəfini üzə çıxarır.',alternativ:'English Garden → Elderberry USA | Lavender → Mimosa FR'},
   // Elderberry Nectar
-  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Meyvə-Çiçək',ad:'Elderberry Rose / Yovşan Gül',atirlər:'Elderberry Nectar FO USA 50% + Rose Petals FO USA 30% + Mimosa FO FR 20%',izah:'Yovşan giləsi, qızılgül, mimoza. Meyvəli-çiçəkli.',alternativ:'Elderberry → Raspberry FR | Mimosa → Peony FR'},
-  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Meyvə-Çay',ad:'Berry Green Tea / Giləmeyvə Çay',atirlər:'Elderberry Nectar FO USA 50% + Green Tea and Lemongrass FO USA 35% + Bergamot FO FR 15%',izah:'Yovşan, yaşıl çay, berqamot. Təravətli.',alternativ:'Green Tea → Matcha USA | Bergamot → Lemon FR'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Meyvə-Çiçək',ad:'Elderberry Rose / Yovşan Gül',atirlər:'Elderberry Nectar FO USA 50% + Rose Petals FO USA 30% + Mimosa FO FR 20%',izah:'Yovşan giləsinin dərin, tünd meyvəli akkordunu qızılgülün romantizmi tamamlayır, mimoza isə bu meyvəli-çiçəkli kompozisiyaya yaz yüngüllüyü qatır.',alternativ:'Elderberry → Raspberry FR | Mimosa → Peony FR'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Meyvə-Çay',ad:'Berry Green Tea / Giləmeyvə Çay',atirlər:'Elderberry Nectar FO USA 50% + Green Tea and Lemongrass FO USA 35% + Bergamot FO FR 15%',izah:'Yovşanın dərin meyvəli akkordunu yaşıl çayın mineral səriliyi havalandırır, berqamot isə bu meyvə-çay buluşmasına işıqlı bir sitrus qapısı açır.',alternativ:'Green Tea → Matcha USA | Bergamot → Lemon FR'},
   // Pink Sugar Crystals
-  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Şirin-Çiçək',ad:'Pink Sugar Blossom / Çəhrayı Şəkər Çiçəyi',atirlər:'Pink Sugar Crystals FO USA 50% + Peony (Pion) FO FR 30% + Strawberry (Çiyələk) FO FR 20%',izah:'Şirin şəkər, pion, çiyələk. Uşaq-gəlin.',alternativ:'Peony → Jasmine FR | Strawberry → Cherry FR'},
-  {kateqoriya:'M&P Sabun',cins:'Uşaq',profil:'Şirin-Vanil',ad:'Pink Sugar Dream / Şəkər Xəyalı',atirlər:'Pink Sugar Crystals FO USA 60% + Coconut (Kokos) FO FR 25% + Towatap Vanilla EO CN 15%',izah:'Şirin, vanil, kokos. Uşaqlar üçün.',alternativ:'Coconut → Strawberry FR | Vanilla → artır 20%'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Şirin-Çiçək',ad:'Pink Sugar Blossom / Çəhrayı Şəkər Çiçəyi',atirlər:'Pink Sugar Crystals FO USA 50% + Peony (Pion) FO FR 30% + Strawberry (Çiyələk) FO FR 20%',izah:'Pink Sugarin şirin, pudralı akkordunu pionun romantik çiçəyi tamamlayır, çiyələk isə bu qadın imzasına şirin bir meyvəli son qatır.',alternativ:'Peony → Jasmine FR | Strawberry → Cherry FR'},
+  {kateqoriya:'M&P Sabun',cins:'Uşaq',profil:'Şirin-Vanil',ad:'Pink Sugar Dream / Şəkər Xəyalı',atirlər:'Pink Sugar Crystals FO USA 60% + Coconut (Kokos) FO FR 25% + Towatap Vanilla EO CN 15%',izah:'Şirin şəkər-pudra akkordunu kokosun kremli tropik nəfəsi tamamlayır, vanil isə bu xoşbəxt, sevimli uşaq kompozisiyasına son bir isti öpüş verir.',alternativ:'Coconut → Strawberry FR | Vanilla → artır 20%'},
 
   // ── YENİ ƏTİRLƏR — ƏRİYƏN MUM ──────────────────────────────
-  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Çay-Herbal',ad:'Green Tea Zen / Yaşıl Çay Zen',atirlər:'Green Tea and Lemongrass FO USA 55% + Matcha and Bergamot FO USA 30% + White Tea FO USA 15%',izah:'İki çay, limon otu. Meditasiya.',alternativ:'Matcha → Rosemary Sage USA | White Tea → Bergamot FR'},
-  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Lavanda-Çay',ad:'Lavender Tea / Lavanda Çay',atirlər:'Lavender FO USA 50% + Green Tea and Lemongrass FO USA 30% + Elderberry Nectar FO USA 20%',izah:'Lavanda, yaşıl çay, yovşan. Yumşaq.',alternativ:'Elderberry → Raspberry FR | Green Tea → Matcha USA'},
-  {kateqoriya:'Əriyən Mum',cins:'Kişi',profil:'Şərq-Herbal',ad:'Saffron Sage / Zəfəran Adaçayı',atirlər:'Saffron Cedarwood FO USA 50% + Rosemary Sage FO USA 30% + Patchouli FO USA 20%',izah:'Zəfəran, sidr, rozmarin, patchouli.',alternativ:'Rosemary Sage → Green Tea USA | Patchouli → Cypress USA'},
-  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Çiçək-Şirin',ad:'English Blossom / İngilis Çiçəyi',atirlər:'English Garden FO USA 50% + Pink Sugar Crystals FO USA 30% + Mimosa FO FR 20%',izah:'Bağça çiçəkləri, şirin şəkər, mimoza.',alternativ:'Pink Sugar → Elderberry USA | Mimosa → Peony FR'},
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Çay-Herbal',ad:'Green Tea Zen / Yaşıl Çay Zen',atirlər:'Green Tea and Lemongrass FO USA 55% + Matcha and Bergamot FO USA 30% + White Tea FO USA 15%',izah:'İki çay — yaşıl çay limon otuyla, matça berqamotla — yan-yana oturur, ağ çayın mineralik sakitliyi isə bu cüt çay meditasiyasını son bir sükutla bağlayır.',alternativ:'Matcha → Rosemary Sage USA | White Tea → Bergamot FR'},
+  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Lavanda-Çay',ad:'Lavender Tea / Lavanda Çay',atirlər:'Lavender FO USA 50% + Green Tea and Lemongrass FO USA 30% + Elderberry Nectar FO USA 20%',izah:'Lavandanın arındırıcı akkordunu yaşıl çayın mineralik səriliyi havalandırır, yovşanın dərin meyvəli tonu isə bu herbal kompozisiyaya gözlənilməz bir dərinlik qatır.',alternativ:'Elderberry → Raspberry FR | Green Tea → Matcha USA'},
+  {kateqoriya:'Əriyən Mum',cins:'Kişi',profil:'Şərq-Herbal',ad:'Saffron Sage / Zəfəran Adaçayı',atirlər:'Saffron Cedarwood FO USA 50% + Rosemary Sage FO USA 30% + Patchouli FO USA 20%',izah:'Zəfəranın qiymətli ekzotik akkordunu rozmarinin güclü herbal tonu əsas tutur, patchouli isə bu Şərq-Aralıq dənizi buluşmasını torpağa bağlayır.',alternativ:'Rosemary Sage → Green Tea USA | Patchouli → Cypress USA'},
+  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Çiçək-Şirin',ad:'English Blossom / İngilis Çiçəyi',atirlər:'English Garden FO USA 50% + Pink Sugar Crystals FO USA 30% + Mimosa FO FR 20%',izah:'İngilis bağçası çiçəklərini pink sugarin şirin-pudralı akkordunu işıqlandırır, mimoza isə bu çiçəkli-şirin duetə son bir bahar dokusu verir.',alternativ:'Pink Sugar → Elderberry USA | Mimosa → Peony FR'},
 
   // ── YENİ ƏTİRLƏR — ƏTİRLİ TABLET ────────────────────────────
-  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Çay-Sitrus',ad:'Matcha Bergamot / Matça Berqamot',atirlər:'Matcha and Bergamot FO USA 60% + Green Tea and Lemongrass FO USA 25% + Lemon (Limon) FO FR 15%',izah:'Matça, berqamot, limon otu. Canlı.',alternativ:'Green Tea → White Tea USA | Lemon → Bergamot FR'},
-  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Çiçək-Herbal',ad:'Garden Lavender / Bağça Lavandası',atirlər:'English Garden FO USA 45% + Lavender FO USA 35% + Elderberry Nectar FO USA 20%',izah:'İngilis bağçası, lavanda, yovşan.',alternativ:'English Garden → Rose Petals USA | Elderberry → Raspberry FR'},
-  {kateqoriya:'Ətirli Tablet',cins:'Kişi',profil:'Şərq-Oduncaq',ad:'Cedar Saffron Night / Sidr Zəfəran Gecəsi',atirlər:'Saffron Cedarwood FO USA 50% + Black Violet and Saffron FO USA 30% + Rosemary Sage FO USA 20%',izah:'Zəfəran, sidr, qara bənövşə, rozmarin.',alternativ:'Black Violet → Amber Noir USA | Rosemary → Patchouli USA'},
+  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Çay-Sitrus',ad:'Matcha Bergamot / Matça Berqamot',atirlər:'Matcha and Bergamot FO USA 60% + Green Tea and Lemongrass FO USA 25% + Lemon (Limon) FO FR 15%',izah:'Matçanın dərin, torpaq-ot akkordunu yaşıl çay limon otuyla gücləndirir, limonun kəskin sitrusu isə bu ikili Şərq çayına italyan bir işıq qatır.',alternativ:'Green Tea → White Tea USA | Lemon → Bergamot FR'},
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Çiçək-Herbal',ad:'Garden Lavender / Bağça Lavandası',atirlər:'English Garden FO USA 45% + Lavender FO USA 35% + Elderberry Nectar FO USA 20%',izah:'İngilis bağçasının çoxlu çiçək akkordlarını lavandanın arındırıcı tonu örtür, yovşan isə bu bağça-lavanda buluşmasına meyvəli-çiçəkli dərinlik qatır.',alternativ:'English Garden → Rose Petals USA | Elderberry → Raspberry FR'},
+  {kateqoriya:'Ətirli Tablet',cins:'Kişi',profil:'Şərq-Oduncaq',ad:'Cedar Saffron Night / Sidr Zəfəran Gecəsi',atirlər:'Saffron Cedarwood FO USA 50% + Black Violet and Saffron FO USA 30% + Rosemary Sage FO USA 20%',izah:'Zəfəranın qiymətli akkordunu Black Violet & Saffronun mistik bənövşəsi tamamlayır, rozmarin isə bu gecə kompozisiyasına son bir herbal kəskinlik verir.',alternativ:'Black Violet → Amber Noir USA | Rosemary → Patchouli USA'},
 ];
 
 // ── HAZIR BLENDLƏr SƏHİFƏSİ ─────────────────────────────────────────────────
@@ -2182,7 +2292,7 @@ function mkHazirBlendlerPage() {
   }
   // Sort: 5→1 first, unrated middle, 0 (never again) at bottom
   filtered = [...filtered].sort((a, b) => {
-    const getR = x => { try { const v = localStorage.getItem('blendRating_' + x.ad.replace(/\s+/g,'_')); return v === null ? -1 : parseInt(v); } catch(e) { return -1; } };
+    const getR = x => { const v = getRating('blendRating_' + x.ad.replace(/\s+/g,'_')); return v === null ? -1 : parseInt(v) || 0; };
     const ra = getR(a), rb = getR(b);
     if (ra === 0 && rb !== 0) return 1;
     if (rb === 0 && ra !== 0) return -1;
@@ -2214,7 +2324,7 @@ function mkHazirBlendlerPage() {
     // Rating key per blend (use ad as unique key)
     const rKey = 'blendRating_' + b.ad.replace(/\s+/g,'_');
     let curRating = 0;
-    try { curRating = parseInt(localStorage.getItem(rKey) || '0') || 0; } catch(e) {}
+    { const _r = getRating(rKey); curRating = _r !== null ? (parseInt(_r) || 0) : 0; }
 
     // Skip if rated 0 and filter is active — no, show all but dim 0-rated ones
     // (user said 0 = never use again, so show with red X indicator)
@@ -2246,7 +2356,7 @@ function mkHazirBlendlerPage() {
     starRow.className = 'rc-starrow';
     starRow.style.cssText = 'display:flex;align-items:center;gap:4px;margin-bottom:8px;flex-wrap:wrap';
 
-    const hasRating = localStorage.getItem(rKey) !== null;
+    const hasRating = getRating(rKey) !== null;
     const isZero = hasRating && curRating === 0;
 
     // ✕ button
@@ -2666,11 +2776,10 @@ function mkMasterBlendPage() {
 }
 
 async function runMasterBlendAI() {
+  if (!isAdmin()) { showToast('⛔ AI yalnız Admin üçündür'); return; }
   set({ mbLoading: true, mbResult: null });
 
-  const atirList = S.atirAnbar.map(a =>
-    `${a.name} | ${a.country}${a.brand?', '+a.brand:''} | güc: ${a.guc||'-'}`
-  ).join('\n');
+  const atirList = S.atirAnbar.map(a => `${a.name} | ${a.guc||'?'}` ).join('\n');
 
   const xarakter = S.mbXarakter || '❓ Bilmirəm';
   const effekt = S.mbEffekt || 'Universal saxla';
@@ -2681,9 +2790,6 @@ async function runMasterBlendAI() {
 Mövcud qoxunun xarakteri: ${xarakter}
 İstədiyi effekt: ${effekt}
 Məhsul: ${mehsul}
-
-Anbar siyahısı:
-${atirList}
 
 MASTER BLEND MƏNTİQİ:
 - Master blend mövcud ətri POZMAMALIDIR — ona yumşaqlıq, dərinlik, sabitlik əlavə etməlidir
@@ -2696,10 +2802,12 @@ MASTER BLEND MƏNTİQİ:
 YALNIZ JSON ver:
 {"ad_az":"Azərbaycanca ad","ad_en":"English name","xarakter":"${xarakter}","effekt":"${effekt}","mehsul":"${mehsul}","izah":"2-3 cümlə — niyə bu blend bu məhsula uyğundur","atirlər":[{"ad":"Ətir adı","faiz":40,"anbar":true,"rol":"niyə bu ətir seçildi"}]}`;
 
+  const systemPromptMB = `Sən peşəkar parfümer və kosmetik formulyatorsən. Yalnız JSON cavab ver.\n\nAnbar siyahısı:\n${atirList}`;
+
   try {
     const resp = await fetch(GS_URL, {
       method: 'POST',
-      body: JSON.stringify({ action: 'ai_blend', prompt: prompt })
+      body: JSON.stringify({ action: 'ai_blend', prompt: prompt, systemPrompt: systemPromptMB })
     });
     const data = await resp.json();
     const text = data.content.map(i => i.text || '').join('');
@@ -3348,11 +3456,9 @@ function showRatingConfirm(card, rKey, val) {
   okBtn.textContent = 'Bəli';
   okBtn.onclick = ev => {
     ev.stopPropagation();
-    try {
-      if (val === 'del') localStorage.removeItem(rKey);
-      else localStorage.setItem(rKey, String(val));
-    } catch(err) {}
-    render();
+    if (val === 'del') deleteRating(rKey);
+    else saveRating(rKey, val);
+    panel.remove();
   };
 
   const noBtn = ce('button', 'sec-btn');
