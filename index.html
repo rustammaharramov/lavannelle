@@ -1488,6 +1488,8 @@ async function runBlendAI(mode) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "x-api-key": ANTHROPIC_KEY,
+        "anthropic-version": "2023-06-01",
         "anthropic-dangerous-direct-browser-access": "true"
       },
       body: JSON.stringify({
@@ -2270,6 +2272,8 @@ YALNIZ JSON ver:
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'x-api-key': ANTHROPIC_KEY,
+        'anthropic-version': '2023-06-01',
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
@@ -2336,7 +2340,9 @@ function mkMasterBlendResult() {
   return wrap;
 }
 
-// ── RATING CONFIRM HELPER ────────────────────────────────────────────────────
+// API KEY — buraya öz açarınızı yazın
+const ANTHROPIC_KEY = 'YOUR_API_KEY_HERE';
+
 function showRatingConfirm(card, rKey, val) {
   // Remove any existing confirm panel
   const existing = card.querySelector('.rc-panel');
