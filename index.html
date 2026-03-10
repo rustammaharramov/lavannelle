@@ -334,6 +334,7 @@ const S = {
   mbMehsul: 'Sabun', mbXarakter: '', mbEffekt: 'Universal saxla', mbResult: null, mbLoading: false,
   rengSub: null, rengSeçim: null, rengAI: '', rengAIResult: null, rengAILoading: false,
   hbKat: 'Hamısı', hbCins: 'Hamısı', hbSearch: '', hbHideZero: false,
+  savedBlends: [],
   atirAnbar: [], atirSearch: '', atirEditId: null, atirEditBuf: {}, atirSyncSt: ''
 };
 
@@ -370,6 +371,18 @@ window.addEventListener('popstate', e => {
     render();
   }
 });
+
+// ── SAVED BLENDS ────────────────────────────────────────────────
+function loadSavedBlends() {
+  try {
+    const raw = localStorage.getItem('lavannelle_saved_blends');
+    S.savedBlends = raw ? JSON.parse(raw) : [];
+  } catch(e) { S.savedBlends = []; }
+}
+function saveBlendToStorage() {
+  try { localStorage.setItem('lavannelle_saved_blends', JSON.stringify(S.savedBlends)); } catch(e) {}
+}
+loadSavedBlends();
 
 // ── PERSIST ───────────────────────────────────────────────────
 async function persist(items) {
@@ -1607,7 +1620,6 @@ function mkBlendResult() {
   useBtn.textContent = '🧪 Blend Hesablayıcıya köçür';
   useBtn.style.marginTop = '8px';
   useBtn.onclick = () => {
-    // Build blend string and go to blend calculator
     let blendStr = '';
     if (mode === 'movzu' && r.atirlər) {
       blendStr = r.atirlər.map(a => a.ad + ' ' + a.faiz + '%').join(' + ');
@@ -1618,6 +1630,61 @@ function mkBlendResult() {
     set({ atirSub: 'blend' });
   };
   wrap.appendChild(useBtn);
+
+  // Helper to build a saveable blend object from AI result
+  function buildSaveObj(blendData, mehsul, cins, profil) {
+    const atirStr = (blendData.atirlər || []).map(a => a.ad + ' ' + a.faiz + '%').join(' + ');
+    const altArr = (blendData.atirlər || [])
+      .filter(a => a.alternativ)
+      .map(a => a.ad.split(' ')[0] + ' → ' + a.alternativ);
+    const altStr = altArr.join(' | ');
+    return {
+      kateqoriya: mehsul || 'M&P Sabun',
+      cins: cins || 'Unisex',
+      profil: profil || 'AI Blend',
+      ad: (blendData.blend_adi_en || blendData.ad || 'AI Blend') + (blendData.blend_adi_az ? ' / ' + blendData.blend_adi_az : ''),
+      atirlər: atirStr,
+      izah: blendData.izah || '',
+      alternativ: altStr,
+      aiSaved: true,
+    };
+  }
+
+  // Yadda saxla button(s)
+  if (mode === 'movzu') {
+    const alreadySaved = S.savedBlends.some(b => b.ad === ((r.blend_adi_en || r.blend_adi || '') + (r.blend_adi_az ? ' / ' + r.blend_adi_az : '')));
+    const saveBtn = ce('button', 'new-kal-btn');
+    saveBtn.textContent = alreadySaved ? '✓ Yadda saxlanıb' : '💾 Hazır Blendlərə əlavə et';
+    saveBtn.style.cssText = 'margin-top:6px;background:' + (alreadySaved ? 'rgba(39,174,96,.2)' : 'rgba(155,122,204,.15)') + ';border-color:' + (alreadySaved ? '#27ae60' : '#9b7acc') + ';color:' + (alreadySaved ? '#27ae60' : '#9b7acc');
+    if (!alreadySaved) {
+      saveBtn.onclick = () => {
+        const obj = buildSaveObj(r, r.mehsul, r.cins, r.movzu);
+        S.savedBlends.unshift(obj);
+        saveBlendToStorage();
+        render();
+      };
+    }
+    wrap.appendChild(saveBtn);
+  } else {
+    // Multiple variants - save button for each
+    (r.variantlar || []).forEach((v, vi) => {
+      const vName = v.ad || ('Variant ' + (vi+1));
+      const alreadySaved = S.savedBlends.some(b => b.ad.startsWith(vName));
+      const saveBtn = ce('button', 'new-kal-btn');
+      saveBtn.textContent = alreadySaved ? '✓ ' + vName + ' saxlanıb' : '💾 ' + vName + ' → Hazır Blendlərə';
+      saveBtn.style.cssText = 'margin-top:6px;display:block;width:100%;background:' + (alreadySaved ? 'rgba(39,174,96,.2)' : 'rgba(155,122,204,.15)') + ';border-color:' + (alreadySaved ? '#27ae60' : '#9b7acc') + ';color:' + (alreadySaved ? '#27ae60' : '#9b7acc');
+      if (!alreadySaved) {
+        const vCopy = v;
+        saveBtn.onclick = () => {
+          const obj = buildSaveObj(vCopy, r.mehsul, r.cins, r.profil);
+          S.savedBlends.unshift(obj);
+          saveBlendToStorage();
+          render();
+        };
+      }
+      wrap.appendChild(saveBtn);
+    });
+  }
 
   return wrap;
 }
@@ -1819,8 +1886,15 @@ function mkHazirBlendlerPage() {
     nameEl.textContent = b.ad;
 
     const katBadge = ce('span');
-    katBadge.style.cssText = 'font-size:13px';
-    katBadge.textContent = b.kateqoriya === 'M&P Sabun' ? '🧼' : b.kateqoriya === 'Əriyən Mum' ? '🕯️' : '🌸';
+    katBadge.style.cssText = 'font-size:13px;display:flex;align-items:center;gap:4px';
+    const katIcon = ce('span'); katIcon.textContent = b.kateqoriya === 'M&P Sabun' ? '🧼' : b.kateqoriya === 'Əriyən Mum' ? '🕯️' : '🌸';
+    katBadge.appendChild(katIcon);
+    if (b.aiSaved) {
+      const aiBadge = ce('span');
+      aiBadge.style.cssText = 'font-size:9px;background:rgba(155,122,204,.3);color:#9b7acc;border-radius:5px;padding:1px 5px;font-weight:700';
+      aiBadge.textContent = 'AI';
+      katBadge.appendChild(aiBadge);
+    }
 
     topRow.appendChild(nameEl);
     topRow.appendChild(katBadge);
@@ -1877,7 +1951,7 @@ function mkHazirBlendlerPage() {
     }
     starRow.appendChild(rl);
 
-    // Delete button
+    // Delete button for rated blends
     if (hasRating) {
       const delBtn = ce('button');
       delBtn.style.cssText = 'font-size:11px;background:none;border:1px solid #444;border-radius:6px;cursor:pointer;padding:1px 7px;color:#666;margin-left:4px';
@@ -1887,6 +1961,19 @@ function mkHazirBlendlerPage() {
         showRatingConfirm(card, rKey, 'del');
       };
       starRow.appendChild(delBtn);
+    }
+    // Remove from saved button for AI blends
+    if (b.aiSaved) {
+      const rmBtn = ce('button');
+      rmBtn.style.cssText = 'font-size:11px;background:none;border:1px solid #c0392b;border-radius:6px;cursor:pointer;padding:1px 7px;color:#c0392b;margin-left:4px';
+      rmBtn.textContent = '🗑 Sil';
+      rmBtn.onclick = ev => {
+        ev.stopPropagation();
+        S.savedBlends = S.savedBlends.filter(x => x.ad !== b.ad);
+        saveBlendToStorage();
+        render();
+      };
+      starRow.appendChild(rmBtn);
     }
 
     card.appendChild(starRow);
