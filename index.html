@@ -21,13 +21,13 @@ button{font-family:inherit;cursor:pointer}
 .nav-tab.active{background:rgba(255,255,255,.12);color:#fff}
 .home{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;gap:10px}
 .home h1{font-size:28px;font-weight:700;color:#1a1a2e;margin-bottom:4px}
-.home p{font-size:14px;color:#999;margin-bottom:20px}
+.home p{font-size:14px;color:#bbbbbb;margin-bottom:20px}
 .home-card{width:100%;background:#fff;border:1.5px solid #e0dbd4;border-radius:16px;padding:22px 20px;display:flex;align-items:center;gap:16px;text-align:left;box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .home-card:active{background:#faf8f5}
 .hc-icon{font-size:30px;width:52px;height:52px;background:#f0ece4;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .hc-body{flex:1}
 .hc-title{font-size:16px;font-weight:700;color:#1a1a2e;margin-bottom:2px}
-.hc-desc{font-size:12px;color:#999;line-height:1.4}
+.hc-desc{font-size:12px;color:#bbbbbb;line-height:1.4}
 .hc-arrow{font-size:20px;color:#3b5bdb;font-weight:700}
 .page{padding:16px;min-height:calc(100vh - 56px)}
 .topbar{display:flex;gap:8px;margin-bottom:12px;align-items:center}
@@ -36,7 +36,7 @@ button{font-family:inherit;cursor:pointer}
 .search-inp:focus{outline:none;border-color:#3b5bdb}
 .add-btn{background:#1a1a2e;color:#fff;border:none;border-radius:12px;padding:12px 16px;font-size:14px;font-weight:700;white-space:nowrap}
 .statusbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.st-info{font-size:12px;color:#999}
+.st-info{font-size:12px;color:#bbbbbb}
 .st-badge{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px}
 .st-sync{background:#ebfbee;color:#2b8a3e;border:1px solid #b2f2bb}
 .st-local{background:#fff3e0;color:#e67e22;border:1px solid #ffd8a8}
@@ -47,7 +47,7 @@ button{font-family:inherit;cursor:pointer}
 .mat-num{font-size:11px;color:#ccc;width:18px;flex-shrink:0;font-family:monospace;text-align:right}
 .mat-info{flex:1;min-width:0}
 .mat-name{font-size:15px;font-weight:600;color:#1a1a2e;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mat-meta{font-size:12px;color:#aaa;margin-top:2px}
+.mat-meta{font-size:12px;color:#c8c8c8;margin-top:2px}
 .mat-note{font-size:11px;color:#e67e22;font-weight:600;margin-top:2px}
 .mat-price{font-size:15px;font-weight:700;color:#1a1a2e;font-family:monospace;flex-shrink:0;margin-right:4px}
 .mat-chevron{font-size:14px;color:#ccc;flex-shrink:0}
@@ -55,19 +55,19 @@ button{font-family:inherit;cursor:pointer}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .form-full{margin-bottom:10px}
 .form-group{display:flex;flex-direction:column;gap:4px}
-.form-label{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.6px}
+.form-label{font-size:10px;font-weight:700;color:#c8c8c8;text-transform:uppercase;letter-spacing:.6px}
 .form-inp{background:#fff;border:1.5px solid #d5cec6;border-radius:10px;padding:12px 13px;font-size:15px;font-family:inherit;width:100%}
 .form-inp:focus{outline:none;border-color:#3b5bdb}
 .form-btns{display:flex;gap:8px}
 .btn-save{flex:1;background:#1a1a2e;color:#fff;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:700}
-.btn-cancel{background:#f0ece4;color:#555;border:none;border-radius:10px;padding:14px 18px;font-size:14px;font-weight:600}
+.btn-cancel{background:#f0ece4;color:#7a8499;border:none;border-radius:10px;padding:14px 18px;font-size:14px;font-weight:600}
 .btn-delete{background:#fff5f5;color:#c92a2a;border:1.5px solid #ffc9c9;border-radius:10px;padding:14px;font-size:14px;font-weight:600;margin-top:8px;width:100%}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#1a1a2e;color:#fff;padding:13px 26px;border-radius:24px;font-size:14px;font-weight:600;z-index:999;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.25)}
 .toast.show{opacity:1}
 .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:16px;background:#F7F4EF}
 @keyframes spin{to{transform:rotate(360deg)}}
 .spinner{width:34px;height:34px;border:3px solid #e0dbd4;border-top-color:#3b5bdb;border-radius:50%;animation:spin .7s linear infinite}
-.loading p{font-size:13px;color:#999}
+.loading p{font-size:13px;color:#bbbbbb}
 .steps{display:flex;align-items:center;margin-bottom:18px}
 .step-pill{display:flex;align-items:center;gap:6px;padding:6px 12px 6px 5px;border-radius:20px;font-size:12px;font-weight:600}
 .step-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
@@ -78,7 +78,7 @@ button{font-family:inherit;cursor:pointer}
 .recipe-ta{width:100%;padding:16px;font-size:14px;font-family:inherit;border:none;resize:none;color:#333;line-height:1.9;min-height:220px;background:#fff}
 .recipe-ta:focus{outline:none}
 .pri-btn{background:#1a1a2e;color:#fff;border:none;border-radius:10px;padding:13px 22px;font-size:15px;font-weight:700}
-.sec-btn{background:#f0ece4;color:#555;border:none;border-radius:10px;padding:13px 18px;font-size:14px;font-weight:600}
+.sec-btn{background:#f0ece4;color:#7a8499;border:none;border-radius:10px;padding:13px 18px;font-size:14px;font-weight:600}
 .ing-card{background:#fff;border-radius:12px;border:1.5px solid #e0dbd4;padding:14px;margin-bottom:8px}
 .ing-card.unmatched{border-color:#ffd8a8;background:#fffbf0}
 .ing-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
@@ -91,7 +91,7 @@ button{font-family:inherit;cursor:pointer}
 .ing-row{display:flex;align-items:center;gap:8px}
 .ing-pct{width:90px;background:#fff;border:1.5px solid #d5cec6;border-radius:8px;padding:11px;font-size:15px;font-family:inherit;text-align:center}
 .ing-pct:focus{outline:none;border-color:#3b5bdb}
-.ing-cost{flex:1;font-size:13px;color:#666;text-align:right}
+.ing-cost{flex:1;font-size:13px;color:#9fa9bf;text-align:right}
 .ing-cost strong{color:#1a1a2e;font-family:monospace;font-size:14px}
 .result-box{background:#1a1a2e;border-radius:14px;padding:22px 20px;margin-bottom:12px}
 .res-name{color:#fff;font-size:18px;font-weight:700;margin-bottom:2px}
@@ -104,7 +104,7 @@ button{font-family:inherit;cursor:pointer}
 .chip-ok{background:#ebfbee;color:#2b8a3e;border-color:#b2f2bb}
 .chip-warn{background:#fffbf0;color:#e67e22;border-color:#ffd8a8}
 .chip-err{background:#fff5f5;color:#c92a2a;border-color:#ffc9c9}
-.chip-neu{background:#f0ece4;color:#555;border-color:#d5cec6}
+.chip-neu{background:#f0ece4;color:#7a8499;border-color:#d5cec6}
 .new-kal-btn{width:100%;background:#f0ece4;color:#1a1a2e;border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:700;margin-bottom:30px}
 .empty-msg{text-align:center;padding:40px 20px;color:#ccc;font-size:14px}
 </style>
@@ -842,7 +842,7 @@ function mkSteps() {
     const pill = ce('div', 'step-pill');
     if (act) pill.style.cssText = 'background:#1a1a2e;color:#fff;border:1.5px solid #1a1a2e';
     else if (done) pill.style.cssText = 'background:#ebfbee;color:#2b8a3e;border:1.5px solid #b2f2bb';
-    else pill.style.cssText = 'background:#e8e4dc;color:#aaa;border:1.5px solid #d5cec6';
+    else pill.style.cssText = 'background:#e8e4dc;color:#c8c8c8;border:1.5px solid #d5cec6';
 
     const num = ce('div', 'step-num');
     if (act) num.style.cssText = 'background:#fff;color:#1a1a2e';
@@ -872,7 +872,7 @@ function mkKStep1() {
 
   const foot = ce('div', 'kal-footer');
   const hint = ce('span');
-  hint.style.cssText = 'font-size:12px;color:#aaa';
+  hint.style.cssText = 'font-size:12px;color:#c8c8c8';
   hint.textContent = 'Hər sətirdə ad və faiz';
   const btn = ce('button', 'pri-btn');
   btn.textContent = 'Növbəti →';
@@ -893,7 +893,7 @@ function mkKStep2() {
   h2.style.cssText = 'font-size:17px;font-weight:700;color:#1a1a2e;margin-bottom:6px';
   h2.textContent = 'Miqdar / Ağırlıq';
   const p2 = ce('p');
-  p2.style.cssText = 'font-size:13px;color:#666;margin-bottom:16px';
+  p2.style.cssText = 'font-size:13px;color:#9fa9bf;margin-bottom:16px';
   p2.textContent = 'Bu resept neçə g / ml üçündür?';
 
   const row = ce('div');
@@ -913,7 +913,7 @@ function mkKStep2() {
   row.appendChild(wi); row.appendChild(us);
 
   const info = ce('div');
-  info.style.cssText = 'font-size:12px;color:#999;background:#f7f4ef;border-radius:8px;padding:10px 13px';
+  info.style.cssText = 'font-size:12px;color:#bbbbbb;background:#f7f4ef;border-radius:8px;padding:10px 13px';
   info.textContent = S.kRows.length + ' ingredient · ' + S.kRows.reduce((s, r) => s + (parseFloat(r.percent) || 0), 0).toFixed(2) + '%';
 
   body.appendChild(h2); body.appendChild(p2); body.appendChild(row); body.appendChild(info);
@@ -973,7 +973,7 @@ function mkKStep3() {
     inp2.disabled = !S[activeKey];
     inp2.oninput = e => { const p = {}; p[valKey] = e.target.value; S[valKey] = e.target.value; };
     const sym = ce('span');
-    sym.style.cssText = 'font-size:13px;color:#aaa;flex-shrink:0';
+    sym.style.cssText = 'font-size:13px;color:#c8c8c8;flex-shrink:0';
     sym.textContent = '₼';
     row.appendChild(cb); row.appendChild(lbl); row.appendChild(inp2); row.appendChild(sym);
     return row;
@@ -1040,7 +1040,7 @@ function mkKStep3() {
     pi.type = 'number'; pi.value = r.percent; pi.min = '0'; pi.max = '100'; pi.step = '.1';
     pi.oninput = e => kUpdRow(r.id, 'percent', e.target.value);
     const pctLbl = ce('span');
-    pctLbl.style.cssText = 'font-size:13px;color:#aaa';
+    pctLbl.style.cssText = 'font-size:13px;color:#c8c8c8';
     pctLbl.textContent = '%';
     const cost = ce('div', 'ing-cost');
     if (r.cost != null) {
@@ -1192,7 +1192,7 @@ function mkAtirDunyasi() {
   page.appendChild(hdr);
 
   const sub = ce('p');
-  sub.style.cssText = 'font-size:13px;color:#999;margin-bottom:20px';
+  sub.style.cssText = 'font-size:13px;color:#bbbbbb;margin-bottom:20px';
   sub.textContent = 'Ətirlərlə bağlı bütün alətlər';
   page.appendChild(sub);
 
@@ -1206,7 +1206,7 @@ function mkAtirDunyasi() {
     const card = ce('button', 'home-card');
     card.style.cssText = 'margin-bottom:10px;' + (c.soon ? 'opacity:.5' : '');
     card.disabled = !!c.soon;
-    card.innerHTML = `<div class="hc-icon">${c.icon}</div><div class="hc-body"><div class="hc-title">${c.title}${c.soon ? ' <span style="font-size:10px;color:#aaa;font-weight:400">tezliklə</span>' : ''}</div><div class="hc-desc">${c.desc}</div></div><div class="hc-arrow">→</div>`;
+    card.innerHTML = `<div class="hc-icon">${c.icon}</div><div class="hc-body"><div class="hc-title">${c.title}${c.soon ? ' <span style="font-size:10px;color:#c8c8c8;font-weight:400">tezliklə</span>' : ''}</div><div class="hc-desc">${c.desc}</div></div><div class="hc-arrow">→</div>`;
     if (!c.soon) card.onclick = () => set({ atirSub: c.sub });
     page.appendChild(card);
   });
@@ -1289,7 +1289,7 @@ function mkAtir() {
   s3i.min = '0'; s3i.max = '100'; s3i.step = '0.1';
   s3i.style.cssText = 'font-size:22px;font-weight:700;width:130px';
   s3i.oninput = e => { S.aFaiz = e.target.value; updateAtirResult(); };
-  const s3sym = ce('span'); s3sym.style.cssText = 'font-size:20px;color:#aaa;font-weight:700'; s3sym.textContent = '%';
+  const s3sym = ce('span'); s3sym.style.cssText = 'font-size:20px;color:#c8c8c8;font-weight:700'; s3sym.textContent = '%';
   s3row.appendChild(s3i); s3row.appendChild(s3sym);
   s3b.appendChild(s3l); s3b.appendChild(s3row);
   s3.appendChild(s3b);
@@ -1375,7 +1375,7 @@ function mkBlendFabrikaPage() {
   page.appendChild(hdr);
 
   const sub = ce('p');
-  sub.style.cssText = 'font-size:13px;color:#999;margin-bottom:16px';
+  sub.style.cssText = 'font-size:13px;color:#bbbbbb;margin-bottom:16px';
   sub.textContent = 'AI ilə ətir blendi yaradın';
   page.appendChild(sub);
 
@@ -1391,7 +1391,7 @@ function mkBlendFabrikaPage() {
     const card = ce('button', 'home-card');
     card.style.cssText = 'margin-bottom:10px;' + (c.soon ? 'opacity:.5' : '');
     card.disabled = !!c.soon;
-    card.innerHTML = `<div class="hc-icon">${c.icon}</div><div class="hc-body"><div class="hc-title">${c.title}${c.soon ? ' <span style="font-size:10px;color:#aaa;font-weight:400">tezliklə</span>' : ''}</div><div class="hc-desc">${c.desc}</div></div><div class="hc-arrow">→</div>`;
+    card.innerHTML = `<div class="hc-icon">${c.icon}</div><div class="hc-body"><div class="hc-title">${c.title}${c.soon ? ' <span style="font-size:10px;color:#c8c8c8;font-weight:400">tezliklə</span>' : ''}</div><div class="hc-desc">${c.desc}</div></div><div class="hc-arrow">→</div>`;
     if (!c.soon) card.onclick = () => set({ atirSub: c.sub, bfInput: '', bfResult: null, bfLoading: false });
     page.appendChild(card);
   });
@@ -1428,7 +1428,7 @@ function mkBlendAIPage(mode) {
   inp.oninput = e => { S.bfInput = e.target.value; };
 
   const hint = ce('p');
-  hint.style.cssText = 'font-size:12px;color:#aaa;margin-bottom:14px;line-height:1.5';
+  hint.style.cssText = 'font-size:12px;color:#c8c8c8;margin-bottom:14px;line-height:1.5';
   hint.textContent = isMovzu
     ? 'Ətir anbarınızdakı ətirlərdən mövzuya uyğun blend yaradılacaq. Anbarınızda uyğun ətir yoxdursa alternativ təklif ediləcək.'
     : 'Bu ətiri mərkəzə alaraq ona uyğun tamamlayıcı blendlər yaradılacaq. 100% istifadə tövsiyə edilmir.';
@@ -1476,7 +1476,7 @@ function mkBlendAIPage(mode) {
   // Result
   if (S.bfLoading) {
     const load = ce('div');
-    load.style.cssText = 'text-align:center;padding:30px;color:#aaa;font-size:14px';
+    load.style.cssText = 'text-align:center;padding:30px;color:#c8c8c8;font-size:14px';
     load.innerHTML = '<div class="spinner" style="margin:0 auto 12px"></div>AI blend hazırlayır...';
     page.appendChild(load);
   }
@@ -1760,7 +1760,7 @@ function mkCPPage() {
 
   // ── CƏDVƏL ──
   const tblTitle = ce('div');
-  tblTitle.style.cssText = 'font-size:13px;font-weight:700;color:#e0e0e0;margin-bottom:10px';
+  tblTitle.style.cssText = 'font-size:13px;font-weight:700;color:#f5f5f5;margin-bottom:10px';
   tblTitle.textContent = '📊 CP Test Cədvəli';
   page.appendChild(tblTitle);
 
@@ -1804,7 +1804,7 @@ function mkCPPage() {
       const divRow = document.createElement('tr');
       const divTd = document.createElement('td');
       divTd.colSpan = 6;
-      divTd.style.cssText = 'padding:3px 8px;font-size:10px;color:#555;background:rgba(255,255,255,.04);text-align:center;letter-spacing:1px';
+      divTd.style.cssText = 'padding:3px 8px;font-size:10px;color:#7a8499;background:rgba(255,255,255,.04);text-align:center;letter-spacing:1px';
       divTd.textContent = '── CP Test yoxlanılmamış ──';
       divRow.appendChild(divTd);
       tbody.appendChild(divRow);
@@ -1873,12 +1873,12 @@ function mkCPPage() {
 
   // ── BLENDLƏR ──
   const blTitle = ce('div');
-  blTitle.style.cssText = 'font-size:13px;font-weight:700;color:#e0e0e0;margin-bottom:4px';
+  blTitle.style.cssText = 'font-size:13px;font-weight:700;color:#f5f5f5;margin-bottom:4px';
   blTitle.textContent = '🧴 CP Blendlər (3 ətirli)';
   page.appendChild(blTitle);
 
   const blDesc = ce('div');
-  blDesc.style.cssText = 'font-size:11px;color:#666;margin-bottom:10px;line-height:1.5';
+  blDesc.style.cssText = 'font-size:11px;color:#9fa9bf;margin-bottom:10px;line-height:1.5';
   blDesc.textContent = 'Yalnız CP Test+ ətirlərdən, 3 ətirli. Cədvəl məlumatlarına əsasən hesablanıb.';
   page.appendChild(blDesc);
 
@@ -1906,7 +1906,7 @@ function mkCPPage() {
     const topRow = ce('div');
     topRow.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:8px';
     const icon = ce('span'); icon.textContent = levelIcon[b.level];
-    const name = ce('div'); name.style.cssText = 'font-size:13px;font-weight:700;color:#e0e0e0;flex:1'; name.textContent = b.ad;
+    const name = ce('div'); name.style.cssText = 'font-size:13px;font-weight:700;color:#f5f5f5;flex:1'; name.textContent = b.ad;
     const lvlBadge = ce('span');
     lvlBadge.style.cssText = 'font-size:9px;color:'+levelTextC[b.level]+';font-weight:700;border:1px solid '+levelBorder[b.level]+';border-radius:6px;padding:1px 6px';
     lvlBadge.textContent = levelLabel[b.level];
@@ -1920,7 +1920,7 @@ function mkCPPage() {
       const row = ce('div');
       row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:4px';
       const nm = ce('span'); nm.style.cssText = 'font-size:12px;color:#9aa0b0'; nm.textContent = m[1];
-      const pct = ce('span'); pct.style.cssText = 'font-size:13px;font-weight:700;color:#e0e0e0;font-family:monospace'; pct.textContent = m[2]+'%';
+      const pct = ce('span'); pct.style.cssText = 'font-size:13px;font-weight:700;color:#f5f5f5;font-family:monospace'; pct.textContent = m[2]+'%';
       row.appendChild(nm); row.appendChild(pct);
       card.appendChild(row);
     });
@@ -2144,13 +2144,13 @@ function mkHazirBlendlerPage() {
   // Hide zero toggle button removed — 0-rated stay at bottom
 
   const count = ce('div');
-  count.style.cssText = 'font-size:12px;color:#666;margin-bottom:10px';
+  count.style.cssText = 'font-size:12px;color:#9fa9bf;margin-bottom:10px';
   count.textContent = filtered.length + ' blend tapıldı';
   page.appendChild(count);
 
   if (filtered.length === 0) {
     const empty = ce('div');
-    empty.style.cssText = 'text-align:center;padding:40px;color:#666;font-size:14px';
+    empty.style.cssText = 'text-align:center;padding:40px;color:#9fa9bf;font-size:14px';
     empty.textContent = 'Heç bir blend tapılmadı';
     page.appendChild(empty);
     return page;
@@ -2236,7 +2236,7 @@ function mkHazirBlendlerPage() {
       rl.style.cssText = 'font-size:11px;color:#e74c3c;margin-left:4px';
       rl.textContent = 'Istifade edilmir';
     } else {
-      rl.style.cssText = 'font-size:11px;color:#555;margin-left:4px';
+      rl.style.cssText = 'font-size:11px;color:#7a8499;margin-left:4px';
       rl.textContent = 'Sinaqdan kecmeyib';
     }
     starRow.appendChild(rl);
@@ -2244,7 +2244,7 @@ function mkHazirBlendlerPage() {
     // Delete button for rated blends
     if (hasRating) {
       const delBtn = ce('button');
-      delBtn.style.cssText = 'font-size:11px;background:none;border:1px solid #444;border-radius:6px;cursor:pointer;padding:1px 7px;color:#666;margin-left:4px';
+      delBtn.style.cssText = 'font-size:11px;background:none;border:1px solid #444;border-radius:6px;cursor:pointer;padding:1px 7px;color:#9fa9bf;margin-left:4px';
       delBtn.textContent = '\ud83d\uddd1';
       delBtn.onclick = ev => {
         ev.stopPropagation();
@@ -2478,13 +2478,13 @@ function mkMasterBlendPage() {
   page.appendChild(hdr);
 
   const desc = ce('p');
-  desc.style.cssText = 'font-size:12px;color:#777;margin-bottom:16px;line-height:1.5';
+  desc.style.cssText = 'font-size:12px;color:#ababab;margin-bottom:16px;line-height:1.5';
   desc.textContent = 'Mövcud məhsulunuzu pozmadan gücləndirən, dərinləşdirən blend. Hazır reseptlər və ya AI tövsiyəsi.';
   page.appendChild(desc);
 
   // ── Hazır Master Blendlər ──
   const sec1 = ce('div');
-  sec1.style.cssText = 'font-size:11px;font-weight:700;color:#888;letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px';
+  sec1.style.cssText = 'font-size:11px;font-weight:700;color:#b5b5b5;letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px';
   sec1.textContent = 'Hazır Master Blendlər';
   page.appendChild(sec1);
 
@@ -2547,7 +2547,7 @@ function mkMasterBlendPage() {
 
   // ── AI Master Blend ──
   const sec2 = ce('div');
-  sec2.style.cssText = 'font-size:11px;font-weight:700;color:#888;letter-spacing:.8px;text-transform:uppercase;margin:20px 0 10px';
+  sec2.style.cssText = 'font-size:11px;font-weight:700;color:#b5b5b5;letter-spacing:.8px;text-transform:uppercase;margin:20px 0 10px';
   sec2.textContent = 'AI ilə Fərdi Master Blend';
   page.appendChild(sec2);
 
@@ -2602,7 +2602,7 @@ function mkMasterBlendPage() {
 
   if (S.mbLoading) {
     const load = ce('div');
-    load.style.cssText = 'text-align:center;padding:24px;color:#aaa;font-size:13px';
+    load.style.cssText = 'text-align:center;padding:24px;color:#c8c8c8;font-size:13px';
     load.innerHTML = '<div class="spinner" style="margin:0 auto 10px"></div>AI master blend hazırlayır...';
     page.appendChild(load);
   }
@@ -2679,7 +2679,7 @@ function mkMasterBlendResult() {
     const left = ce('div'); left.style.cssText = 'flex:1';
     const nameEl = ce('span'); nameEl.style.cssText = `font-size:13px;color:${a.anbar?'#9aa0b0':'#e67e22'}`;
     nameEl.textContent = a.ad + (a.anbar ? '' : ' ⚠');
-    const rolEl = ce('div'); rolEl.style.cssText = 'font-size:10px;color:#555;margin-top:1px'; rolEl.textContent = a.rol || '';
+    const rolEl = ce('div'); rolEl.style.cssText = 'font-size:10px;color:#7a8499;margin-top:1px'; rolEl.textContent = a.rol || '';
     left.appendChild(nameEl); left.appendChild(rolEl);
     const pct = ce('span'); pct.style.cssText = 'font-family:monospace;font-weight:700;font-size:14px;color:#fff;flex-shrink:0';
     pct.textContent = a.faiz + '%';
@@ -2799,7 +2799,7 @@ function mkRengDunyasi() {
   page.appendChild(hdr);
 
   const desc = ce('p');
-  desc.style.cssText = 'font-size:12px;color:#777;margin-bottom:16px;line-height:1.5';
+  desc.style.cssText = 'font-size:12px;color:#ababab;margin-bottom:16px;line-height:1.5';
   desc.textContent = 'M&P ağ sabun bazası üçün rəng bələdçisi. Parlaqlıq, tonlama, qarışdırma.';
   page.appendChild(desc);
 
@@ -2832,7 +2832,7 @@ function mkRengKatalog() {
   const leg = ce('div');
   leg.style.cssText = 'display:flex;flex-direction:column;gap:4px;margin-bottom:14px;padding:10px;background:rgba(255,255,255,.04);border-radius:10px';
   Object.values(QRUP_INFO).forEach(function(q) {
-    const r = ce('div'); r.style.cssText = 'font-size:11px;color:#888';
+    const r = ce('div'); r.style.cssText = 'font-size:11px;color:#b5b5b5';
     r.textContent = q.icon + ' ' + q.label + ' — ' + q.izah;
     leg.appendChild(r);
   });
@@ -2846,14 +2846,14 @@ function mkRengKatalog() {
     const info = ce('div'); info.style.cssText = 'flex:1';
     const adRow = ce('div'); adRow.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:2px';
     const az = ce('span'); az.style.cssText = 'font-size:14px;font-weight:700;color:#fff'; az.textContent = r.az;
-    const en = ce('span'); en.style.cssText = 'font-size:11px;color:#666'; en.textContent = r.en;
+    const en = ce('span'); en.style.cssText = 'font-size:11px;color:#9fa9bf'; en.textContent = r.en;
     adRow.appendChild(az); adRow.appendChild(en);
     const metaRow = ce('div'); metaRow.style.cssText = 'display:flex;gap:6px;align-items:center';
     const setBadge = ce('span');
-    setBadge.style.cssText = 'font-size:10px;padding:2px 6px;border-radius:8px;background:rgba(255,255,255,.08);color:#999';
+    setBadge.style.cssText = 'font-size:10px;padding:2px 6px;border-radius:8px;background:rgba(255,255,255,.08);color:#bbbbbb';
     setBadge.textContent = r.set === 'hər ikisi' ? '930 + 1050' : r.set;
     const qi = QRUP_INFO[r.qrup];
-    const qBadge = ce('span'); qBadge.style.cssText = 'font-size:10px;color:#888';
+    const qBadge = ce('span'); qBadge.style.cssText = 'font-size:10px;color:#b5b5b5';
     qBadge.textContent = qi.icon + ' ' + qi.label;
     metaRow.appendChild(setBadge); metaRow.appendChild(qBadge);
     info.appendChild(adRow); info.appendChild(metaRow);
@@ -2874,7 +2874,7 @@ function mkMutedTonlar() {
   page.appendChild(hdr);
 
   const note = ce('div');
-  note.style.cssText = 'font-size:11px;color:#777;margin-bottom:14px;line-height:1.5;padding:8px 10px;background:rgba(255,255,255,.04);border-radius:8px';
+  note.style.cssText = 'font-size:11px;color:#ababab;margin-bottom:14px;line-height:1.5;padding:8px 10px;background:rgba(255,255,255,.04);border-radius:8px';
   note.textContent = '100q ağ M&P bazası üçün damcı sayları. Cəmi ~15 damcı əsasında hesablanıb. 1050 set daha güclüdür — az damcı istifadə edin.';
   page.appendChild(note);
 
@@ -2886,7 +2886,7 @@ function mkMutedTonlar() {
     swatch.style.cssText = 'width:36px;height:36px;border-radius:8px;background:'+t.hex+';flex-shrink:0;border:2px solid rgba(255,255,255,.15)';
     const nameEl = ce('div');
     const en = ce('div'); en.style.cssText = 'font-size:14px;font-weight:700;color:#fff'; en.textContent = t.az;
-    const az = ce('div'); az.style.cssText = 'font-size:11px;color:#666'; az.textContent = t.en;
+    const az = ce('div'); az.style.cssText = 'font-size:11px;color:#9fa9bf'; az.textContent = t.en;
     nameEl.appendChild(en); nameEl.appendChild(az);
     topRow.appendChild(swatch); topRow.appendChild(nameEl);
     card.appendChild(topRow);
@@ -2925,7 +2925,7 @@ function mkRengMikser() {
     btn.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border-radius:10px;border:2px solid '+(sel?'#a78bfa':'transparent')+';background:rgba(255,255,255,.04);cursor:pointer';
     const sw = ce('div');
     sw.style.cssText = 'width:32px;height:32px;border-radius:8px;background:'+r.hex+';border:1.5px solid rgba(255,255,255,.15)';
-    const nm = ce('span'); nm.style.cssText = 'font-size:9px;color:#999;text-align:center;line-height:1.2'; nm.textContent = r.az;
+    const nm = ce('span'); nm.style.cssText = 'font-size:9px;color:#bbbbbb;text-align:center;line-height:1.2'; nm.textContent = r.az;
     btn.appendChild(sw); btn.appendChild(nm);
     btn.onclick = function() { S.rengSecim = sel ? null : r.id; render(); };
     grid.appendChild(btn);
@@ -2944,12 +2944,12 @@ function mkRengMikser() {
     const sw = ce('div'); sw.style.cssText = 'width:48px;height:48px;border-radius:12px;background:'+r.hex+';border:2px solid rgba(255,255,255,.2);flex-shrink:0';
     const nm = ce('div');
     const azEl = ce('div'); azEl.style.cssText = 'font-size:16px;font-weight:700;color:#fff'; azEl.textContent = r.az;
-    const enEl = ce('div'); enEl.style.cssText = 'font-size:12px;color:#666'; enEl.textContent = r.en + ' · ' + r.set;
+    const enEl = ce('div'); enEl.style.cssText = 'font-size:12px;color:#9fa9bf'; enEl.textContent = r.en + ' · ' + r.set;
     nm.appendChild(azEl); nm.appendChild(enEl);
     topR.appendChild(sw); topR.appendChild(nm);
     infoCard.appendChild(topR);
 
-    const qB = ce('div'); qB.style.cssText = 'font-size:11px;color:#aaa;margin-bottom:12px';
+    const qB = ce('div'); qB.style.cssText = 'font-size:11px;color:#c8c8c8;margin-bottom:12px';
     qB.textContent = qi.icon + ' ' + qi.label + ' — ' + qi.izah;
     infoCard.appendChild(qB);
     page.appendChild(infoCard);
@@ -3043,7 +3043,7 @@ function mkRengMikser() {
         var kombs = KOMBINASIYALAR[r.id] || [];
     if (kombs.length > 0) {
       const sec = ce('div');
-      sec.style.cssText = 'font-size:11px;font-weight:700;color:#888;letter-spacing:.8px;text-transform:uppercase;margin:14px 0 10px';
+      sec.style.cssText = 'font-size:11px;font-weight:700;color:#b5b5b5;letter-spacing:.8px;text-transform:uppercase;margin:14px 0 10px';
       sec.textContent = r.az + ' ilə kombinasiyalar';
       page.appendChild(sec);
 
@@ -3053,18 +3053,18 @@ function mkRengMikser() {
 
         const swatchRow = ce('div'); swatchRow.style.cssText = 'display:flex;align-items:center;gap:6px;flex-shrink:0';
         const sw1 = ce('div'); sw1.style.cssText = 'width:28px;height:28px;border-radius:6px;background:'+r.hex+';border:1.5px solid rgba(255,255,255,.2)';
-        const plus = ce('span'); plus.style.cssText = 'font-size:14px;color:#666'; plus.textContent = '+';
+        const plus = ce('span'); plus.style.cssText = 'font-size:14px;color:#9fa9bf'; plus.textContent = '+';
         var reng2 = RENGLER.find(function(x){ return x.az === k.reng; });
         var hex2 = reng2 ? reng2.hex : '#888';
         const sw2 = ce('div'); sw2.style.cssText = 'width:28px;height:28px;border-radius:6px;background:'+hex2+';border:1.5px solid rgba(255,255,255,.2)';
-        const arr = ce('span'); arr.style.cssText = 'font-size:14px;color:#666'; arr.textContent = '→';
+        const arr = ce('span'); arr.style.cssText = 'font-size:14px;color:#9fa9bf'; arr.textContent = '→';
         const sw3 = ce('div'); sw3.style.cssText = 'width:36px;height:36px;border-radius:8px;background:'+k.hex+';border:2px solid rgba(255,255,255,.25)';
         swatchRow.appendChild(sw1); swatchRow.appendChild(plus); swatchRow.appendChild(sw2); swatchRow.appendChild(arr); swatchRow.appendChild(sw3);
 
         const info = ce('div'); info.style.cssText = 'flex:1;min-width:0';
         const netice = ce('div'); netice.style.cssText = 'font-size:13px;font-weight:700;color:#fff;margin-bottom:1px'; netice.textContent = k.netice;
         const miq = ce('div'); miq.style.cssText = 'font-size:11px;color:#a78bfa;margin-bottom:2px'; miq.textContent = '+ ' + k.reng + ' ' + k.miqdar;
-        const iz = ce('div'); iz.style.cssText = 'font-size:10px;color:#666;line-height:1.4'; iz.textContent = k.izah;
+        const iz = ce('div'); iz.style.cssText = 'font-size:10px;color:#9fa9bf;line-height:1.4'; iz.textContent = k.izah;
         info.appendChild(netice); info.appendChild(miq); info.appendChild(iz);
 
         kard.appendChild(swatchRow); kard.appendChild(info);
@@ -3086,7 +3086,7 @@ function mkMasterReng() {
   page.appendChild(hdr);
 
   const intro = ce('div');
-  intro.style.cssText = 'font-size:12px;color:#888;margin-bottom:16px;line-height:1.6;padding:10px;background:rgba(255,255,255,.04);border-radius:10px';
+  intro.style.cssText = 'font-size:12px;color:#b5b5b5;margin-bottom:16px;line-height:1.6;padding:10px;background:rgba(255,255,255,.04);border-radius:10px';
   intro.textContent = 'Bir neçə rəngli sabun əridildi, rənglər qarışdı — qəhvəyi və ya boz çıxdı. Bu bölmə həmin rəngi tiksindirməyəcək hala salır.';
   page.appendChild(intro);
 
@@ -3148,7 +3148,7 @@ function mkMasterReng() {
     const probInfo = ce('div');
     const probTitle = ce('div'); probTitle.style.cssText = 'font-size:14px;font-weight:700;color:#222';
     probTitle.textContent = x.icon + ' ' + x.problem;
-    const probIzah = ce('div'); probIzah.style.cssText = 'font-size:11px;color:#555;margin-top:2px';
+    const probIzah = ce('div'); probIzah.style.cssText = 'font-size:11px;color:#7a8499;margin-top:2px';
     probIzah.textContent = x.izah;
     probInfo.appendChild(probTitle); probInfo.appendChild(probIzah);
     probRow.appendChild(probSw); probRow.appendChild(probInfo);
@@ -3162,7 +3162,7 @@ function mkMasterReng() {
       const kardInfo = ce('div'); kardInfo.style.cssText = 'flex:1';
       const adEl = ce('div'); adEl.style.cssText = 'font-size:12px;font-weight:700;color:#222;margin-bottom:2px'; adEl.textContent = y.ad;
       const resEl = ce('div'); resEl.style.cssText = 'font-size:11px;color:#6d4c9e;font-weight:600;margin-bottom:2px'; resEl.textContent = y.resept;
-      const netEl = ce('div'); netEl.style.cssText = 'font-size:10px;color:#555;line-height:1.4'; netEl.textContent = y.neticə;
+      const netEl = ce('div'); netEl.style.cssText = 'font-size:10px;color:#7a8499;line-height:1.4'; netEl.textContent = y.neticə;
       kardInfo.appendChild(adEl); kardInfo.appendChild(resEl); kardInfo.appendChild(netEl);
       kard.appendChild(resSw); kard.appendChild(kardInfo);
       sec.appendChild(kard);
@@ -3203,7 +3203,7 @@ function mkRengAIPage() {
   inp.oninput = function(e) { S.rengAI = e.target.value; };
 
   const hint = ce('div');
-  hint.style.cssText = 'font-size:11px;color:#555;margin-bottom:14px;line-height:1.5';
+  hint.style.cssText = 'font-size:11px;color:#7a8499;margin-bottom:14px;line-height:1.5';
   hint.textContent = 'Əlinizdəki rənglər: Sarı, Narıncı, Qırmızı, Limon-yaşıl, Çəhrayı, Bənövşəyi, Mavi, Süd şokoladı, Qara, Qəhvəyi, Yaşıl, Karmin, Ağ';
 
   const btn = ce('button', 'pri-btn');
@@ -3218,7 +3218,7 @@ function mkRengAIPage() {
 
   if (S.rengAILoading) {
     const load = ce('div');
-    load.style.cssText = 'text-align:center;padding:24px;color:#aaa;font-size:13px';
+    load.style.cssText = 'text-align:center;padding:24px;color:#c8c8c8;font-size:13px';
     load.innerHTML = '<div class="spinner" style="margin:0 auto 10px"></div>AI rəng resepti hazırlayır...';
     page.appendChild(load);
   }
