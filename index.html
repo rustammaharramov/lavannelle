@@ -225,7 +225,15 @@ const INIT_ATIR = [
   {id:48,name:"EUQEE Cedarwood FO",country:"Çin",brand:"EUQEE",usage:"Mum",note:"Grandpa's Woodshop",guc:"Zəif"},
   {id:49,name:"EUQEE Sweet Tobacco FO",country:"Çin",brand:"EUQEE",usage:"Mum",note:"Grandpa's Woodshop",guc:"Zəif"},
   {id:50,name:"Yellow Tulips FO",country:"Rusiya",brand:"Fon-tan",usage:"Mum",note:"Отдушка Желтые тюльпаны",guc:"Orta"},
-  {id:51,name:"Smoke and Amber FO",country:"Rusiya",brand:"Fon-tan",usage:"Mum",note:"Отдушка Дым и Амбра",guc:"Orta"}
+  {id:51,name:"Smoke and Amber FO",country:"Rusiya",brand:"Fon-tan",usage:"Mum",note:"Отдушка Дым и Амбра",guc:"Orta"},
+  {id:52,name:"Green Tea and Lemongrass FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:"",guc:"Güclü"},
+  {id:53,name:"Pink Sugar Crystals FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:"",guc:"Güclü"},
+  {id:54,name:"Lavender FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:"",guc:"Güclü"},
+  {id:55,name:"Rosemary Sage FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:"",guc:"Güclü"},
+  {id:56,name:"Saffron Cedarwood FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:"",guc:"Güclü"},
+  {id:57,name:"English Garden FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:"",guc:"Güclü"},
+  {id:58,name:"Elderberry Nectar FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:"",guc:"Güclü"},
+  {id:59,name:"Matcha and Bergamot FO",country:"USA",brand:"CandleScience",usage:"Sabun, Mum, Balzam, Saç",note:"",guc:"Güclü"}
 ];
 let nextId = 400; // will be updated after data loads
 
@@ -1782,6 +1790,38 @@ const HAZIR_BLENDLER = [
   {kateqoriya:'Ətirli Tablet',cins:'Kişi',profil:'Dəniz-Oduncaq',ad:'Ocean Wood / Okean Ağac',atirlər:'Black Sea FO USA 45% + Palo Santo & Sandalwood FO USA 35% + Patchouli FO USA 20%',izah:'Dəniz, səndəl, patchouli.',alternativ:'Black Sea → Ocean Breeze USA | Patchouli → azalt 15%'},
   {kateqoriya:'Ətirli Tablet',cins:'Kişi',profil:'Dəniz-Qaranlıq',ad:'Dark Ocean / Qaranlıq Okean',atirlər:'Ocean Breeze FO USA 45% + Amber Noir FO USA 35% + Black Sea FO USA 20%',izah:'İki dəniz, qaranlıq kəhrəba.',alternativ:'Ocean Breeze → Black Sea artır | Amber Noir → Amber FR'},
   {kateqoriya:'Ətirli Tablet',cins:'Kişi',profil:'Tüstü-Oduncaq',ad:'Forest Smoke / Meşə Tüstüsü',atirlər:'Smoke and Amber FO RU 50% + Cypress & Bayberry FO USA 30% + Palo Santo & Sandalwood FO USA 20%',izah:'Tüstü, şam, səndəl.',alternativ:'Smoke and Amber → Yellow Tulips RU | Cypress → Patchouli USA'},
+
+  // ── YENİ ƏTİRLƏR — M&P SABUN ────────────────────────────────
+  // Green Tea and Lemongrass
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Çay-Sitrus',ad:'Green Tea Citrus / Yaşıl Çay Sitrus',atirlər:'Green Tea and Lemongrass FO USA 60% + Bergamot FO FR 25% + Lemon (Limon) FO FR 15%',izah:'Yaşıl çay, limon otu, berqamot. Təmiz, enerjili.',alternativ:'Bergamot FR → Citrus Agave USA | Lemon → Orange FR'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çay-Çiçək',ad:'Matcha Blossom / Matça Çiçəyi',atirlər:'Matcha and Bergamot FO USA 50% + Jasmine (Yasəmən) FO FR 30% + White Tea FO USA 20%',izah:'Matça, berqamot, yasəmən. Zen hissi.',alternativ:'Matcha → Green Tea USA | Jasmine → Mimosa FR'},
+  // Lavender USA
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Lavanda-Herbal',ad:'Lavender Fields / Lavanda Çölü',atirlər:'Lavender FO USA 55% + Rosemary Sage FO USA 30% + Green Tea and Lemongrass FO USA 15%',izah:'Lavanda, rozmarin, yaşıl çay. Herbal spa.',alternativ:'Rosemary Sage → Lavender FR | Lemongrass → Bergamot FR'},
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Lavanda-Çiçək',ad:'Lavender Rose / Lavanda Gül',atirlər:'Lavender FO USA 50% + Rose Petals FO USA 30% + Peony (Pion) FO FR 20%',izah:'Lavanda, qızılgül, pion. Klassik romantik.',alternativ:'Lavender USA → Lavender FR | Rose Petals → Japan CB USA'},
+  // Rosemary Sage
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Herbal-Oduncaq',ad:'Rosemary Wood / Rozmarin Ağac',atirlər:'Rosemary Sage FO USA 50% + Palo Santo & Sandalwood FO USA 30% + Patchouli FO USA 20%',izah:'Rozmarin, adaçayı, səndəl, patchouli. Kişilik.',alternativ:'Rosemary Sage → Green Tea USA | Patchouli → Cypress USA'},
+  // Saffron Cedarwood
+  {kateqoriya:'M&P Sabun',cins:'Kişi',profil:'Şərq-Oduncaq',ad:'Saffron Cedar / Zəfəran Sidr',atirlər:'Saffron Cedarwood FO USA 55% + Amber Noir FO USA 30% + Patchouli FO USA 15%',izah:'Zəfəran, sidr, qaranlıq kəhrəba. Zəngin Şərq.',alternativ:'Amber Noir → Amber FR | Patchouli → azalt 10%'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Şərq-Çiçək',ad:'Saffron Bloom / Zəfəran Çiçəyi',atirlər:'Saffron Cedarwood FO USA 45% + Rose Petals FO USA 35% + Jasmine (Yasəmən) FO FR 20%',izah:'Zəfəran, qızılgül, yasəmən. Lüks.',alternativ:'Rose Petals → Peony FR | Saffron → Amber Noir USA'},
+  // English Garden
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Çiçək-Herbal',ad:'English Garden / İngilis Bağçası',atirlər:'English Garden FO USA 55% + Rose Petals FO USA 25% + Lavender FO USA 20%',izah:'İngilis bağçası çiçəkləri, gül, lavanda.',alternativ:'English Garden → Elderberry USA | Lavender → Mimosa FR'},
+  // Elderberry Nectar
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Meyvə-Çiçək',ad:'Elderberry Rose / Yovşan Gül',atirlər:'Elderberry Nectar FO USA 50% + Rose Petals FO USA 30% + Mimosa FO FR 20%',izah:'Yovşan giləsi, qızılgül, mimoza. Meyvəli-çiçəkli.',alternativ:'Elderberry → Raspberry FR | Mimosa → Peony FR'},
+  {kateqoriya:'M&P Sabun',cins:'Unisex',profil:'Meyvə-Çay',ad:'Berry Green Tea / Giləmeyvə Çay',atirlər:'Elderberry Nectar FO USA 50% + Green Tea and Lemongrass FO USA 35% + Bergamot FO FR 15%',izah:'Yovşan, yaşıl çay, berqamot. Təravətli.',alternativ:'Green Tea → Matcha USA | Bergamot → Lemon FR'},
+  // Pink Sugar Crystals
+  {kateqoriya:'M&P Sabun',cins:'Qadın',profil:'Şirin-Çiçək',ad:'Pink Sugar Blossom / Çəhrayı Şəkər Çiçəyi',atirlər:'Pink Sugar Crystals FO USA 50% + Peony (Pion) FO FR 30% + Strawberry (Çiyələk) FO FR 20%',izah:'Şirin şəkər, pion, çiyələk. Uşaq-gəlin.',alternativ:'Peony → Jasmine FR | Strawberry → Cherry FR'},
+  {kateqoriya:'M&P Sabun',cins:'Uşaq',profil:'Şirin-Vanil',ad:'Pink Sugar Dream / Şəkər Xəyalı',atirlər:'Pink Sugar Crystals FO USA 60% + Coconut (Kokos) FO FR 25% + Towatap Vanilla EO CN 15%',izah:'Şirin, vanil, kokos. Uşaqlar üçün.',alternativ:'Coconut → Strawberry FR | Vanilla → artır 20%'},
+
+  // ── YENİ ƏTİRLƏR — ƏRİYƏN MUM ──────────────────────────────
+  {kateqoriya:'Əriyən Mum',cins:'Unisex',profil:'Çay-Herbal',ad:'Green Tea Zen / Yaşıl Çay Zen',atirlər:'Green Tea and Lemongrass FO USA 55% + Matcha and Bergamot FO USA 30% + White Tea FO USA 15%',izah:'İki çay, limon otu. Meditasiya.',alternativ:'Matcha → Rosemary Sage USA | White Tea → Bergamot FR'},
+  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Lavanda-Çay',ad:'Lavender Tea / Lavanda Çay',atirlər:'Lavender FO USA 50% + Green Tea and Lemongrass FO USA 30% + Elderberry Nectar FO USA 20%',izah:'Lavanda, yaşıl çay, yovşan. Yumşaq.',alternativ:'Elderberry → Raspberry FR | Green Tea → Matcha USA'},
+  {kateqoriya:'Əriyən Mum',cins:'Kişi',profil:'Şərq-Herbal',ad:'Saffron Sage / Zəfəran Adaçayı',atirlər:'Saffron Cedarwood FO USA 50% + Rosemary Sage FO USA 30% + Patchouli FO USA 20%',izah:'Zəfəran, sidr, rozmarin, patchouli.',alternativ:'Rosemary Sage → Green Tea USA | Patchouli → Cypress USA'},
+  {kateqoriya:'Əriyən Mum',cins:'Qadın',profil:'Çiçək-Şirin',ad:'English Blossom / İngilis Çiçəyi',atirlər:'English Garden FO USA 50% + Pink Sugar Crystals FO USA 30% + Mimosa FO FR 20%',izah:'Bağça çiçəkləri, şirin şəkər, mimoza.',alternativ:'Pink Sugar → Elderberry USA | Mimosa → Peony FR'},
+
+  // ── YENİ ƏTİRLƏR — ƏTİRLİ TABLET ────────────────────────────
+  {kateqoriya:'Ətirli Tablet',cins:'Unisex',profil:'Çay-Sitrus',ad:'Matcha Bergamot / Matça Berqamot',atirlər:'Matcha and Bergamot FO USA 60% + Green Tea and Lemongrass FO USA 25% + Lemon (Limon) FO FR 15%',izah:'Matça, berqamot, limon otu. Canlı.',alternativ:'Green Tea → White Tea USA | Lemon → Bergamot FR'},
+  {kateqoriya:'Ətirli Tablet',cins:'Qadın',profil:'Çiçək-Herbal',ad:'Garden Lavender / Bağça Lavandası',atirlər:'English Garden FO USA 45% + Lavender FO USA 35% + Elderberry Nectar FO USA 20%',izah:'İngilis bağçası, lavanda, yovşan.',alternativ:'English Garden → Rose Petals USA | Elderberry → Raspberry FR'},
+  {kateqoriya:'Ətirli Tablet',cins:'Kişi',profil:'Şərq-Oduncaq',ad:'Cedar Saffron Night / Sidr Zəfəran Gecəsi',atirlər:'Saffron Cedarwood FO USA 50% + Black Violet and Saffron FO USA 30% + Rosemary Sage FO USA 20%',izah:'Zəfəran, sidr, qara bənövşə, rozmarin.',alternativ:'Black Violet → Amber Noir USA | Rosemary → Patchouli USA'},
 ];
 
 // ── HAZIR BLENDLƏr SƏHİFƏSİ ─────────────────────────────────────────────────
@@ -1832,7 +1872,7 @@ function mkHazirBlendlerPage() {
   page.appendChild(srch);
 
   // Filter blends
-  let filtered = HAZIR_BLENDLER;
+  let filtered = [...(S.savedBlends || []), ...HAZIR_BLENDLER];
   if (S.hbKat && S.hbKat !== 'Hamısı') filtered = filtered.filter(b => b.kateqoriya === S.hbKat);
   if (S.hbCins && S.hbCins !== 'Hamısı') filtered = filtered.filter(b => b.cins === S.hbCins);
   if (S.hbSearch) {
