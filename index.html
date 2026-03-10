@@ -2328,39 +2328,46 @@ function mkMasterBlendResult() {
 
 const RENGLER = [
   { id:'sari',      az:'Sarı',          en:'Yellow',          hex:'#F5C518', set:'hər ikisi', qrup:1 },
-  { id:'narinci',   az:'Narıncı',       en:'Orange',          hex:'#FF7043', set:'930',       qrup:1 },
-  { id:'qirmizi',   az:'Qırmızı',       en:'Red',             hex:'#E53935', set:'hər ikisi', qrup:1 },
-  { id:'lime',      az:'Limon-yaşıl',   en:'Lime',            hex:'#AEEA00', set:'930',       qrup:3 },
-  { id:'cehrayi',   az:'Çəhrayı',       en:'Pink',            hex:'#F06292', set:'hər ikisi', qrup:1 },
-  { id:'benovseyi', az:'Bənövşəyi',     en:'Violet',          hex:'#7B1FA2', set:'hər ikisi', qrup:3 },
-  { id:'mavi',      az:'Mavi',          en:'Blue',            hex:'#1E88E5', set:'hər ikisi', qrup:3 },
-  { id:'sud_shok',  az:'Süd şokoladı',  en:'Milk Chocolate',  hex:'#795548', set:'930',       qrup:2 },
-  { id:'qara',      az:'Qara',          en:'Black',           hex:'#212121', set:'hər ikisi', qrup:2 },
-  { id:'qehveyi',   az:'Qəhvəyi',       en:'Brown',           hex:'#6D4C41', set:'1050',      qrup:2 },
-  { id:'yasil',     az:'Yaşıl',         en:'Green',           hex:'#43A047', set:'1050',      qrup:3 },
-  { id:'karmin',    az:'Karmin',        en:'Carmine',         hex:'#B71C1C', set:'1050',      qrup:1 },
-  { id:'ag',        az:'Ağ',            en:'White',           hex:'#F5F5F5', set:'1050',      qrup:2 },
+  { id:'narinci',   az:'Narıncı',       en:'Orange',          hex:'#FF7043', set:'930',        qrup:1 },
+  { id:'qirmizi',   az:'Qırmızı',       en:'Red',             hex:'#E53935', set:'hər ikisi',  qrup:1 },
+  { id:'lime',      az:'Limon-yaşıl',   en:'Lime',            hex:'#AEEA00', set:'930',         qrup:3 },
+  { id:'cehrayi',   az:'Çəhrayı',       en:'Pink',            hex:'#F06292', set:'hər ikisi',  qrup:1 },
+  { id:'benovseyi', az:'Bənövşəyi',     en:'Violet',          hex:'#7B1FA2', set:'hər ikisi',  qrup:3 },
+  { id:'mavi',      az:'Mavi',          en:'Blue',            hex:'#1E88E5', set:'hər ikisi',  qrup:3 },
+  { id:'sud_shok',  az:'Süd şokoladı',  en:'Milk Chocolate',  hex:'#795548', set:'930',         qrup:2 },
+  { id:'qara',      az:'Qara',          en:'Black',           hex:'#212121', set:'hər ikisi',  qrup:2 },
+  { id:'qehveyi',   az:'Qəhvəyi',       en:'Brown',           hex:'#6D4C41', set:'1050 💪',    qrup:2 },
+  { id:'yasil',     az:'Yaşıl',         en:'Green',           hex:'#43A047', set:'1050 💪',    qrup:3 },
+  { id:'karmin',    az:'Karmin',        en:'Carmine',         hex:'#B71C1C', set:'1050 💪',    qrup:1 },
+  { id:'ag',        az:'Ağ',            en:'White',           hex:'#F5F5F5', set:'1050 💪',    qrup:2 },
 ];
 
 const QRUP_INFO = {
-  1: { icon:'🟢', label:'Tonlanır',   izah:'Qara və ya qəhvəyi ilə gözəl muted ton verir' },
+  1: { icon:'🟢', label:'Tonlanır',   izah:'Qara və ya qəhvəyi ilə gözəl sakit ton verir' },
   2: { icon:'🟡', label:'Tündləşir',  izah:'Qara ilə sadəcə shade yaranır, hue dəyişmir' },
-  3: { icon:'🔴', label:'Problemli',  izah:'Qara ilə tam başqa rəngə dönür — qəhvəyi və ya komplement istifadə et' },
+  3: { icon:'🔴', label:'Problemli',  izah:'Qara ilə tam başqa rəngə çevrilir — qəhvəyi və ya komplement istifadə et' },
+};
+
+const QARA_NETICE = {
+  mavi:      { hex:'#4A4A5A', ad:'Tünd boz-qara',      izah:'Mavi tamam itir, "kirli" boz qalır' },
+  yasil:     { hex:'#4A4A35', ad:'Tünd xaki-boz',       izah:'Yaşıl itir, zeytun deyil, pis boz-xaki çıxır' },
+  benovseyi: { hex:'#3D2B3D', ad:'Tünd qəhvəyi-boz',   izah:'Bənövşəyi tamam itir, çirkin boz-qəhvəyi qalır' },
+  lime:      { hex:'#4A4A25', ad:'Sarımtıl-xaki',       izah:'Ən pis nəticə — sarı-yaşıl tamam ölür' },
 };
 
 const MUTED_TONLAR = [
-  { ad:'Mustard Yellow', az:'Xardal Sarısı',   hex:'#C8960C', damci:'Sarı 8 damcı + Qara 1 damcı',                              resept:'Sarı + çox az Qara\nvə ya Sarı + az Qəhvəyi' },
-  { ad:'Terracotta',     az:'Terrakota',        hex:'#C0622A', damci:'Narıncı 8 damcı + Qara 1 damcı',                           resept:'Narıncı + çox az Qara\nvə ya Narıncı + az Qəhvəyi' },
-  { ad:'Brick Red',      az:'Kərpic Qırmızı',  hex:'#9B3A2A', damci:'Qırmızı 7 damcı + Qara 2 damcı',                           resept:'Qırmızı + az Qara\nvə ya Qırmızı + Qəhvəyi' },
-  { ad:'Dusty Rose',     az:'Dusty Rose',       hex:'#C08080', damci:'Çəhrayı 8 damcı + Qəhvəyi 1 damcı',                       resept:'Çəhrayı + çox az Qəhvəyi\nvə ya Çəhrayı + az Boz' },
-  { ad:'Sage Green',     az:'Ada çayı yaşılı', hex:'#8FAF8F', damci:'Yaşıl 7 damcı + Qırmızı 2 damcı',                         resept:'Yaşıl + az Qəhvəyi\nvə ya Yaşıl + az Qırmızı' },
-  { ad:'Olive Green',    az:'Zeytun yaşılı',   hex:'#808000', damci:'Sarı 5 damcı + Yaşıl 3 damcı + Qəhvəyi 1 damcı',          resept:'Sarı + Yaşıl + az Qəhvəyi' },
-  { ad:'Slate Blue',     az:'Tünd göy',        hex:'#6A7FA8', damci:'Mavi 8 damcı + Ağ 2 damcı',                               resept:'Mavi + az Ağ (Qara istifadə etmə!)' },
-  { ad:'Dusty Lavender', az:'Tünd lavanda',    hex:'#9980A8', damci:'Bənövşəyi 7 damcı + Ağ 2 damcı',                          resept:'Bənövşəyi + az Ağ' },
-  { ad:'Cocoa Brown',    az:'Kakao qəhvəyi',   hex:'#6B3D2E', damci:'Qəhvəyi 8 damcı + Qırmızı 1 damcı',                      resept:'Qəhvəyi + az Qırmızı' },
-  { ad:'Sand Beige',     az:'Qum bej',         hex:'#C8B89A', damci:'Sarı 7 damcı + Qəhvəyi 2 damcı',                          resept:'Sarı + az Qəhvəyi' },
-  { ad:'Clay Pink',      az:'Gil çəhrayı',     hex:'#C49080', damci:'Çəhrayı 6 damcı + Narıncı 2 damcı + Qəhvəyi 1 damcı',    resept:'Çəhrayı + az Narıncı + az Qəhvəyi' },
-  { ad:'Charcoal',       az:'Kömür',           hex:'#3D3D3D', damci:'Qara 8 damcı + Ağ 1 damcı',                              resept:'Qara + çox az Ağ' },
+  { ad:'Mustard',      az:'Xardal',         hex:'#B8860B', damci:'100q üçün: Sarı 6-7 + Qəhvəyi 2-3 damcı',              resept:'Sarı dominant, qəhvəyi onu torpaq rəngə çəkir.\nQara ilə də olur amma qəhvəyi daha zəngin ton verir.' },
+  { ad:'Terracotta',   az:'Terrakota',      hex:'#C1440E', damci:'100q üçün: Narıncı 6 + Qırmızı 2 + Qəhvəyi 1 damcı',  resept:'Klassik kərpic tonu. Narıncı əsas, qırmızı dərinlik,\nqəhvəyi torpaq toxunuşu verir.' },
+  { ad:'Burgundy',     az:'Bordo',          hex:'#800020', damci:'100q üçün: Qırmızı 6 + Bənövşəyi 2 + Qara 1 damcı',   resept:'Qırmızıya bənövşəyi qatılır — soyur, dərinləşir.\nAz qara tamamlayır. Klassik bordo.' },
+  { ad:'Dusty Rose',   az:'Toz çəhrayı',   hex:'#B07080', damci:'100q üçün: Çəhrayı 6 + Narıncı 1 + Qəhvəyi 1 damcı',  resept:'Çəhrayı + bir az narıncı onu "isti" edir,\nqəhvəyi parlaqlığı sakit edir. Ən sevimli tonlardan.' },
+  { ad:'Mauve',        az:'Mov',            hex:'#9B7FA6', damci:'100q üçün: Bənövşəyi 5 + Çəhrayı 3 + Ağ 2 damcı',     resept:'Bənövşəyini çəhrayı ilə "istiləşdir", ağ yumşaldır.\nQara əlavə etmə — bənövşəyi ölür.' },
+  { ad:'Steel Blue',   az:'Polad mavi',    hex:'#4682B4', damci:'100q üçün: Mavi 7 + Ağ 2 + az Bənövşəyi 1 damcı',     resept:'Mavini ağ yumşaldır, az bənövşəyi dərinlik verir.\nQara istifadə etmə — tamam dəyişir.' },
+  { ad:'Sage',         az:'Adaçayı',       hex:'#7D9B76', damci:'100q üçün: Yaşıl 5 + Sarı 2 + Qəhvəyi 2 damcı',       resept:'Yaşılı sarı "istiləşdirir", qəhvəyi natural edir.\nHerbal sabunlar üçün ideal.' },
+  { ad:'Olive',        az:'Zeytun',        hex:'#6B6B2A', damci:'100q üçün: Sarı 4 + Yaşıl 3 + Qara 2 damcı',          resept:'Bu tək istisnadır — yaşıl+sarı bazasına qara\nzeytun tonu verir. Az qara, ehtiyatla.' },
+  { ad:'Caramel',      az:'Karamel',       hex:'#C68642', damci:'100q üçün: Narıncı 5 + Sarı 3 + Qəhvəyi 2 damcı',     resept:'Şirin, isti ton. Narıncı + sarı birləşir,\nqəhvəyi dərinlik verir. Qida sabunları üçün gözəl.' },
+  { ad:'Blush',        az:'Al yanaq',      hex:'#DE9A9A', damci:'100q üçün: Çəhrayı 4 + Narıncı 2 damcı',              resept:'Ən sadə resept. Az rəng, çox baza — açıq, zərif.\nAğ bazanın özü yumşaldır.' },
+  { ad:'Warm Grey',    az:'İsti boz',      hex:'#9C8C7C', damci:'100q üçün: Qara 3 + Narıncı 1 + Qəhvəyi 1 damcı',    resept:'Soyuq boz deyil, isti boz. Narıncı və qəhvəyi\nbozun soyuqluğunu götürür.' },
+  { ad:'Eggplant',     az:'Badımcan',      hex:'#5C2A4A', damci:'100q üçün: Bənövşəyi 5 + Qırmızı 2 + Qara 2 damcı',  resept:'Bənövşəyini qırmızı "istiləşdirir", az qara\ndərinləşdirir. Qara çox olmasın.' },
 ];
 
 function mkRengDunyasi() {
@@ -2368,6 +2375,7 @@ function mkRengDunyasi() {
   if (S.rengSub === 'katalog') return mkRengKatalog();
   if (S.rengSub === 'muted')   return mkMutedTonlar();
   if (S.rengSub === 'mikser')  return mkRengMikser();
+  if (S.rengSub === 'master')  return mkMasterReng();
   if (S.rengSub === 'ai')      return mkRengAIPage();
 
   const hdr = ce('div', 'topbar');
@@ -2384,10 +2392,11 @@ function mkRengDunyasi() {
   page.appendChild(desc);
 
   [
-    { icon:'🎨', title:'Rəng Kataloqu',    desc:'13 rəng — davranış, set məlumatı',  sub:'katalog' },
-    { icon:'🌿', title:'Muted Tonlar',      desc:'12 hazır natural ton resepti',       sub:'muted'   },
-    { icon:'🔀', title:'Rəng Mikseri',      desc:'Rəng seç, tonlama üsulunu öyrən',   sub:'mikser'  },
-    { icon:'🤖', title:'AI Rəng Məsləhəti', desc:'"Limon sarısı istəyirəm" → resept', sub:'ai'      },
+    { icon:'🎨', title:'Rəng Kataloqu',    desc:'13 rəng — davranış, set məlumatı',       sub:'katalog' },
+    { icon:'🌿', title:'Sakit Tonlar',      desc:'12 hazır natural ton resepti',            sub:'muted'   },
+    { icon:'🔀', title:'Rəng Fabrikası',    desc:'Rəng seç, bütün kombinasiyaları gör',    sub:'mikser'  },
+    { icon:'🆘', title:'Master Rəng',       desc:'Qarışmış/ölmüş rəngi xilas et',          sub:'master'  },
+    { icon:'🤖', title:'AI Rəng Məsləhəti', desc:'"Limon sarısı istəyirəm" → resept',      sub:'ai'      },
   ].forEach(c => {
     const card = ce('button', 'home-card');
     card.style.marginBottom = '10px';
@@ -2445,7 +2454,7 @@ function mkRengKatalog() {
 function mkMutedTonlar() {
   const page = ce('div', 'page');
   const hdr = ce('div', 'topbar');
-  const title = ce('span', 'topbar-title'); title.textContent = '🌿 Muted Tonlar';
+  const title = ce('span', 'topbar-title'); title.textContent = '🌿 Sakit Tonlar';
   const back = ce('button', 'sec-btn'); back.textContent = '← Geri';
   back.style.cssText = 'padding:8px 14px;font-size:13px';
   back.onclick = () => set({ rengSub: null });
@@ -2454,7 +2463,7 @@ function mkMutedTonlar() {
 
   const note = ce('div');
   note.style.cssText = 'font-size:11px;color:#777;margin-bottom:14px;line-height:1.5;padding:8px 10px;background:rgba(255,255,255,.04);border-radius:8px';
-  note.textContent = '100q ağ M&P bazası üçün damcı sayları. 930 set daha güclüdür — az damcı istifadə edin.';
+  note.textContent = '100q ağ M&P bazası üçün damcı sayları. 1050 set daha güclüdür — az damcı istifadə edin.';
   page.appendChild(note);
 
   MUTED_TONLAR.forEach(function(t) {
@@ -2485,14 +2494,15 @@ function mkMutedTonlar() {
 function mkRengMikser() {
   const page = ce('div', 'page');
   const hdr = ce('div', 'topbar');
-  const title = ce('span', 'topbar-title'); title.textContent = '🔀 Rəng Mikseri';
+  const title = ce('span', 'topbar-title'); title.textContent = '🔀 Rəng Fabrikası';
   const back = ce('button', 'sec-btn'); back.textContent = '← Geri';
   back.style.cssText = 'padding:8px 14px;font-size:13px';
   back.onclick = () => set({ rengSub: null, rengSecim: null });
   hdr.appendChild(back); hdr.appendChild(title);
   page.appendChild(hdr);
 
-  const lbl = ce('div', 'form-label'); lbl.style.marginBottom = '10px'; lbl.textContent = 'Rənginizi seçin:';
+  const lbl = ce('div', 'form-label'); lbl.style.marginBottom = '10px';
+  lbl.textContent = 'Əsas rənginizi seçin:';
   page.appendChild(lbl);
 
   const grid = ce('div');
@@ -2512,38 +2522,248 @@ function mkRengMikser() {
 
   if (S.rengSecim) {
     const r = RENGLER.find(function(x) { return x.id === S.rengSecim; });
-    if (r) {
-      const qi = QRUP_INFO[r.qrup];
-      const infoCard = ce('div', 'result-box');
-      const topR = ce('div'); topR.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:12px';
-      const sw = ce('div'); sw.style.cssText = 'width:48px;height:48px;border-radius:12px;background:'+r.hex+';border:2px solid rgba(255,255,255,.2)';
-      const nm = ce('div');
-      const azEl = ce('div'); azEl.style.cssText = 'font-size:16px;font-weight:700;color:#fff'; azEl.textContent = r.az;
-      const enEl = ce('div'); enEl.style.cssText = 'font-size:12px;color:#666'; enEl.textContent = r.en + ' · ' + r.set;
-      nm.appendChild(azEl); nm.appendChild(enEl);
-      topR.appendChild(sw); topR.appendChild(nm);
-      infoCard.appendChild(topR);
+    if (!r) return page;
 
-      const qBadge = ce('div');
-      qBadge.style.cssText = 'font-size:12px;font-weight:600;margin-bottom:10px;color:#ccc';
-      qBadge.textContent = qi.icon + ' ' + qi.label + ' — ' + qi.izah;
-      infoCard.appendChild(qBadge);
+    const qi = QRUP_INFO[r.qrup];
 
-      const tonDiv = ce('div');
-      tonDiv.style.cssText = 'background:rgba(255,255,255,.05);border-radius:8px;padding:10px;font-size:12px;line-height:1.7;color:#aaa';
-      var komps = { mavi:'Narıncı', yasil:'Qırmızı', benovseyi:'Sarı', lime:'Qırmızı' };
-      if (r.qrup === 1) {
-        tonDiv.innerHTML = '<b style="color:#fff">✅ Qara ilə tonlama:</b><br>100q bazaya '+r.az.toLowerCase()+' 5-10 damcı + Qara 1-3 damcı<br>Qara artdıqca: parlaq → natural → tünd<br><br><b style="color:#fff">✅ Qəhvəyi ilə tonlama (daha yumşaq):</b><br>'+r.az+' 7-8 damcı + Qəhvəyi 1-2 damcı';
-      } else if (r.qrup === 2) {
-        tonDiv.innerHTML = '<b style="color:#fff">🟡 Qara ilə sadəcə tündləşir:</b><br>Hue dəyişmir, sadəcə darker shade olur.<br>100q bazaya '+r.az.toLowerCase()+' 5-8 damcı + Qara 1-2 damcı<br><br><b style="color:#fff">Tövsiyə:</b> Qəhvəyi ilə də qarışdıra bilərsiniz.';
-      } else {
-        var komp = komps[r.id] || 'Qəhvəyi';
-        tonDiv.innerHTML = '<b style="color:#e74c3c">⚠️ Qara İSTİFADƏ ETMƏ!</b><br>Qara bu rəngi tamamilə başqa rəngə çevirir.<br><br><b style="color:#fff">✅ Bunun əvəzinə:</b><br>• Qəhvəyi ilə tonlama: '+r.az+' 7 damcı + Qəhvəyi 1 damcı<br>• Komplement rəng: '+r.az+' 7 damcı + '+komp+' 1-2 damcı<br>• Ağ əlavə et (1050 setdə var) — parlaqlığı yumşaldır';
-      }
-      infoCard.appendChild(tonDiv);
-      page.appendChild(infoCard);
+    // Header card
+    const infoCard = ce('div', 'result-box');
+    const topR = ce('div'); topR.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:10px';
+    const sw = ce('div'); sw.style.cssText = 'width:48px;height:48px;border-radius:12px;background:'+r.hex+';border:2px solid rgba(255,255,255,.2);flex-shrink:0';
+    const nm = ce('div');
+    const azEl = ce('div'); azEl.style.cssText = 'font-size:16px;font-weight:700;color:#fff'; azEl.textContent = r.az;
+    const enEl = ce('div'); enEl.style.cssText = 'font-size:12px;color:#666'; enEl.textContent = r.en + ' · ' + r.set;
+    nm.appendChild(azEl); nm.appendChild(enEl);
+    topR.appendChild(sw); topR.appendChild(nm);
+    infoCard.appendChild(topR);
+
+    const qB = ce('div'); qB.style.cssText = 'font-size:11px;color:#aaa;margin-bottom:12px';
+    qB.textContent = qi.icon + ' ' + qi.label + ' — ' + qi.izah;
+    infoCard.appendChild(qB);
+    page.appendChild(infoCard);
+
+    // Combinations data per color
+    var KOMBINASIYALAR = {
+      sari: [
+        { reng:'Qara',     miqdar:'1-2 damcı', hex:'#B8860B', netice:'Xardal sarısı',    izah:'Ən klassik tonlama. Az qara = xardal, çox qara = zeytun.' },
+        { reng:'Qəhvəyi',  miqdar:'2-3 damcı', hex:'#C8960C', netice:'Isti sarı / Bej',  izah:'Qəhvəyi sarını torpaq tonuna çəkir. Daha yumşaq nəticə.' },
+        { reng:'Narıncı',  miqdar:'2-3 damcı', hex:'#FFB347', netice:'Şaftalı / Apricot',izah:'İki isti rəng birləşir. Parlaq, şirin ton.' },
+        { reng:'Qırmızı',  miqdar:'2-3 damcı', hex:'#FF8C00', netice:'Dərin narıncı',    izah:'Sarı + qırmızı = narıncı, amma daha dərin.' },
+        { reng:'Yaşıl',    miqdar:'3-4 damcı', hex:'#9ACD32', netice:'Limon-yaşıl',      izah:'Klassik sarı+yaşıl. Parlaq, canlı.' },
+        { reng:'Bənövşəyi',miqdar:'3-4 damcı', hex:'#C8A84B', netice:'Qızılı / Amber',   izah:'Gözlənilməz amma gözəl. Qızıl-əhər tonu.' },
+      ],
+      narinci: [
+        { reng:'Qara',     miqdar:'1-2 damcı', hex:'#C0622A', netice:'Terrakota',         izah:'Narıncı + az qara = klassik terrakota.' },
+        { reng:'Qəhvəyi',  miqdar:'2 damcı',   hex:'#B5651D', netice:'Mis / Copper',      izah:'Qəhvəyi narıncını "metalik" edir.' },
+        { reng:'Qırmızı',  miqdar:'3 damcı',   hex:'#E25822', netice:'Odlu narıncı',      izah:'İsti, canlı. Günbatımı rəngi.' },
+        { reng:'Sarı',     miqdar:'3 damcı',   hex:'#FFB347', netice:'Şaftalı',           izah:'Yumşaq, şirin. Uşaq sabunları üçün ideal.' },
+        { reng:'Çəhrayı',  miqdar:'3 damcı',   hex:'#FF8C69', netice:'Somon / Salmon',    izah:'Çox populyar ton. Zərif, qadın.' },
+      ],
+      qirmizi: [
+        { reng:'Qara',     miqdar:'2-3 damcı', hex:'#8B0000', netice:'Bordo / Kərpic',   izah:'Qırmızı + qara = tünd bordo.' },
+        { reng:'Qəhvəyi',  miqdar:'2 damcı',   hex:'#9B3A2A', netice:'Kərpic qırmızı',  izah:'Rustik, natural. Əl sabunları üçün gözəl.' },
+        { reng:'Bənövşəyi',miqdar:'3 damcı',   hex:'#9B111E', netice:'Tünd qırmızı',     izah:'Bənövşəyi qırmızını soyudur, dərinləşdirir.' },
+        { reng:'Narıncı',  miqdar:'2 damcı',   hex:'#FF4500', netice:'Canlı qırmızı',    izah:'Daha parlaq, odlu.' },
+        { reng:'Çəhrayı',  miqdar:'4 damcı',   hex:'#E88080', netice:'Gül qırmızı',      izah:'Yumşaq, çiçəkli ton.' },
+      ],
+      cehrayi: [
+        { reng:'Qəhvəyi',  miqdar:'1-2 damcı', hex:'#C08080', netice:'Toz çəhrayı',      izah:'Ən gözəl sakit çəhrayı. Çox populyar.' },
+        { reng:'Narıncı',  miqdar:'2 damcı',   hex:'#FF8FAB', netice:'Somon çəhrayı',    izah:'İsti, canlı çəhrayı. Zərif amma rəngli.' },
+        { reng:'Bənövşəyi',miqdar:'2 damcı',   hex:'#C71585', netice:'Fuşya / Magistr',  izah:'Çox canlı. Az istifadə et.' },
+        { reng:'Qırmızı',  miqdar:'3 damcı',   hex:'#E75480', netice:'Dərin çəhrayı',    izah:'Hot pink. Parlaq, cəsarətli.' },
+        { reng:'Ağ',       miqdar:'3 damcı',   hex:'#FFB6C1', netice:'Bebe çəhrayı',     izah:'Çox açıq, incə. Uşaq və gəlin sabunları.' },
+      ],
+      mavi: [
+        { reng:'Ağ',       miqdar:'2-3 damcı', hex:'#87CEEB', netice:'Göy mavi',         izah:'Ən təhlükəsiz üsul. Mavi yumşalır.' },
+        { reng:'Bənövşəyi',miqdar:'2 damcı',   hex:'#6495ED', netice:'Kornflower mavi',  izah:'Soyuq, zərif. Çox gözəl ton.' },
+        { reng:'Çəhrayı',  miqdar:'2 damcı',   hex:'#9896C8', netice:'Leylak / Bənövşəyi mavi', izah:'İki soyuq rəng. Gözəl pastel.' },
+        { reng:'Narıncı',  miqdar:'1 damcı',   hex:'#5B92B8', netice:'Okean mavisi',     izah:'Komplement az qatılır — dərinlik verir.' },
+        { reng:'Qara',     miqdar:'⚠️ etmə',   hex:'#4A4A5A', netice:'Tünd boz-qara',    izah:'Qara mavi ilə ƏLAQƏDAR OLMA. Rəng ölür.' },
+      ],
+      benovseyi: [
+        { reng:'Ağ',       miqdar:'2-3 damcı', hex:'#9F7FBF', netice:'Leylak',           izah:'Ən yaxşı üsul. Bənövşəyi açılır, yumşalır.' },
+        { reng:'Çəhrayı',  miqdar:'3 damcı',   hex:'#B57FBF', netice:'Mov / Mauve',      izah:'İki soyuq rəng. Zərif, qadın tonu.' },
+        { reng:'Qırmızı',  miqdar:'2 damcı',   hex:'#8B008B', netice:'Tünd magistr',     izah:'Qırmızı bənövşəyini istiləşdirir.' },
+        { reng:'Mavi',     miqdar:'2 damcı',   hex:'#7B68EE', netice:'Orta bənövşəyi',   izah:'Daha soyuq, daha dərin.' },
+        { reng:'Qara',     miqdar:'⚠️ etmə',   hex:'#3D2B3D', netice:'Qəhvəyi-boz',     izah:'Qara bənövşəyini tamam öldürür.' },
+      ],
+      yasil: [
+        { reng:'Sarı',     miqdar:'3-4 damcı', hex:'#8DB600', netice:'Limon-yaşıl',      izah:'Canlı, parlaq. Limon ətri sabunlar üçün ideal.' },
+        { reng:'Qəhvəyi',  miqdar:'2 damcı',   hex:'#7D9B76', netice:'Adaçayı / Sage',   izah:'Herbal ton. Ən populyar yaşıl sabun rəngi.' },
+        { reng:'Qırmızı',  miqdar:'1-2 damcı', hex:'#6B8E23', netice:'Zeytun',           izah:'Komplement istifadə — yaşılı sakit edir.' },
+        { reng:'Mavi',     miqdar:'2 damcı',   hex:'#2E8B57', netice:'Dəniz yaşılı',     izah:'Soyuq, dərin. Nəfəs alan ton.' },
+        { reng:'Qara',     miqdar:'⚠️ etmə',   hex:'#4A4A35', netice:'Tünd xaki-boz',    izah:'Yaşıl qara ilə çirkin xaki olur.' },
+      ],
+      lime: [
+        { reng:'Sarı',     miqdar:'4-5 damcı', hex:'#BFFF00', netice:'Canlı limon',      izah:'Daha isti limon. Sarı dominant olsun.' },
+        { reng:'Yaşıl',    miqdar:'3 damcı',   hex:'#7FFF00', netice:'Chartreuse',       izah:'Klassik chartreuse tonu.' },
+        { reng:'Qəhvəyi',  miqdar:'2 damcı',   hex:'#8DB600', netice:'Meşə yaşılı',      izah:'Lime + qəhvəyi = daha natural ton.' },
+        { reng:'Qara',     miqdar:'⚠️ etmə',   hex:'#4A4A25', netice:'Ölü xaki',         izah:'Ən pis kombinasiya. Lime tamam ölür.' },
+      ],
+      qehveyi: [
+        { reng:'Qırmızı',  miqdar:'2 damcı',   hex:'#8B4513', netice:'Kakao',             izah:'İsti, şokoladlı. Qida sabunları üçün gözəl.' },
+        { reng:'Narıncı',  miqdar:'2 damcı',   hex:'#A0522D', netice:'Darçın',            izah:'Ədviyyatlı, isti ton.' },
+        { reng:'Sarı',     miqdar:'3 damcı',   hex:'#C8A96E', netice:'Karamel',           izah:'Şirin, açıq qəhvəyi. Bal rəngi.' },
+        { reng:'Qara',     miqdar:'2 damcı',   hex:'#5C3A1E', netice:'Tünd şokolad',     izah:'Dərin, zəngin. Lüks görünüş.' },
+      ],
+      qara: [
+        { reng:'Ağ',       miqdar:'2-3 damcı', hex:'#555555', netice:'Kömür boz',        izah:'Klassik charcoal. Detoks sabunları.' },
+        { reng:'Çəhrayı',  miqdar:'2 damcı',   hex:'#4A3040', netice:'Tünd bənövşəyi-qara', izah:'Gözlənilməz dərinlik.' },
+        { reng:'Narıncı',  miqdar:'1 damcı',   hex:'#3D2A1A', netice:'İsti qara',        izah:'Soyuq deyil, isti qara. Daha canlı.' },
+      ],
+      sud_shok: [
+        { reng:'Qırmızı',  miqdar:'2 damcı',   hex:'#6B3322', netice:'Tünd şokolad',    izah:'Çox zəngin, dərin. Lüks sabun.' },
+        { reng:'Sarı',     miqdar:'3 damcı',   hex:'#967444', netice:'Açıq şokolad',    izah:'Sütlü şokolad tonu.' },
+        { reng:'Qara',     miqdar:'2 damcı',   hex:'#3D2010', netice:'Acı şokolad',     izah:'Çox tünd. Az istifadə.' },
+      ],
+      karmin: [
+        { reng:'Bənövşəyi',miqdar:'3 damcı',   hex:'#C41E3A', netice:'Tünd qırmızı',   izah:'Karmin + bənövşəyi = dərin qırmızı.' },
+        { reng:'Çəhrayı',  miqdar:'3 damcı',   hex:'#E8627A', netice:'Çiçəkli qırmızı',izah:'Yumşaq, çiçəkli.' },
+        { reng:'Qara',     miqdar:'2 damcı',   hex:'#7D0A0A', netice:'Bordo karmin',   izah:'Dərin, klassik.' },
+      ],
+      ag: [
+        { reng:'Çəhrayı',  miqdar:'2-3 damcı', hex:'#FFE4E1', netice:'Ən açıq çəhrayı', izah:'Bebe çəhrayı. Çox zərif.' },
+        { reng:'Sarı',     miqdar:'2 damcı',   hex:'#FFFACD', netice:'Krem / Vanilya',  izah:'Yumşaq, isti ağ.' },
+        { reng:'Mavi',     miqdar:'1 damcı',   hex:'#F0F8FF', netice:'Buzlu ağ',        izah:'Soyuq, parlaq ağ.' },
+      ],
+    };
+
+    var kombs = KOMBINASIYALAR[r.id] || [];
+    if (kombs.length > 0) {
+      const sec = ce('div');
+      sec.style.cssText = 'font-size:11px;font-weight:700;color:#888;letter-spacing:.8px;text-transform:uppercase;margin:14px 0 10px';
+      sec.textContent = r.az + ' ilə kombinasiyalar';
+      page.appendChild(sec);
+
+      kombs.forEach(function(k) {
+        const kard = ce('div', 'result-box');
+        kard.style.cssText = 'margin-bottom:8px;display:flex;align-items:center;gap:10px';
+
+        const swatchRow = ce('div'); swatchRow.style.cssText = 'display:flex;align-items:center;gap:6px;flex-shrink:0';
+        const sw1 = ce('div'); sw1.style.cssText = 'width:28px;height:28px;border-radius:6px;background:'+r.hex+';border:1.5px solid rgba(255,255,255,.2)';
+        const plus = ce('span'); plus.style.cssText = 'font-size:14px;color:#666'; plus.textContent = '+';
+        var reng2 = RENGLER.find(function(x){ return x.az === k.reng; });
+        var hex2 = reng2 ? reng2.hex : '#888';
+        const sw2 = ce('div'); sw2.style.cssText = 'width:28px;height:28px;border-radius:6px;background:'+hex2+';border:1.5px solid rgba(255,255,255,.2)';
+        const arr = ce('span'); arr.style.cssText = 'font-size:14px;color:#666'; arr.textContent = '→';
+        const sw3 = ce('div'); sw3.style.cssText = 'width:36px;height:36px;border-radius:8px;background:'+k.hex+';border:2px solid rgba(255,255,255,.25)';
+        swatchRow.appendChild(sw1); swatchRow.appendChild(plus); swatchRow.appendChild(sw2); swatchRow.appendChild(arr); swatchRow.appendChild(sw3);
+
+        const info = ce('div'); info.style.cssText = 'flex:1;min-width:0';
+        const netice = ce('div'); netice.style.cssText = 'font-size:13px;font-weight:700;color:#fff;margin-bottom:1px'; netice.textContent = k.netice;
+        const miq = ce('div'); miq.style.cssText = 'font-size:11px;color:#a78bfa;margin-bottom:2px'; miq.textContent = '+ ' + k.reng + ' ' + k.miqdar;
+        const iz = ce('div'); iz.style.cssText = 'font-size:10px;color:#666;line-height:1.4'; iz.textContent = k.izah;
+        info.appendChild(netice); info.appendChild(miq); info.appendChild(iz);
+
+        kard.appendChild(swatchRow); kard.appendChild(info);
+        page.appendChild(kard);
+      });
     }
   }
+  return page;
+}
+
+function mkMasterReng() {
+  const page = ce('div', 'page');
+  const hdr = ce('div', 'topbar');
+  const title = ce('span', 'topbar-title'); title.textContent = '🆘 Master Rəng';
+  const back = ce('button', 'sec-btn'); back.textContent = '← Geri';
+  back.style.cssText = 'padding:8px 14px;font-size:13px';
+  back.onclick = () => set({ rengSub: null });
+  hdr.appendChild(back); hdr.appendChild(title);
+  page.appendChild(hdr);
+
+  const intro = ce('div');
+  intro.style.cssText = 'font-size:12px;color:#888;margin-bottom:16px;line-height:1.6;padding:10px;background:rgba(255,255,255,.04);border-radius:10px';
+  intro.textContent = 'Bir neçə rəngli sabun əridildi, rənglər qarışdı — qəhvəyi və ya boz çıxdı. Bu bölmə həmin rəngi tiksindirməyəcək hala salır.';
+  page.appendChild(intro);
+
+  var XILAS_RESEPTLERI = [
+    {
+      problem: 'Ölü qəhvəyi / Palçıq rəngi',
+      hex_problem: '#7B5B3A',
+      icon: '💩',
+      izah: 'Bir neçə rəng qarışıb, qəhvəyimtıl palçıq çıxıb.',
+      yollar: [
+        { ad:'Terrakota yolu',    hex:'#C1440E', resept:'+ Narıncı 4-5 damcı + Qırmızı 2 damcı',         neticə:'Qəhvəyini terrakota-ya çevirir. Ən təhlükəsiz yol.' },
+        { ad:'Karamel yolu',      hex:'#C68642', resept:'+ Narıncı 3 + Sarı 3 damcı',                      neticə:'İsti, şirin karamel tonu.' },
+        { ad:'Şokolad yolu',      hex:'#5C3A1E', resept:'+ Qara 3-4 damcı',                               neticə:'Qəbul et — tünd şokolad et. Lüks görünüş.' },
+      ]
+    },
+    {
+      problem: 'Soyuq boz / Küllü rəng',
+      hex_problem: '#808080',
+      icon: '🌫️',
+      izah: 'Mavi, bənövşəyi, qara qarışıb soyuq boz çıxıb.',
+      yollar: [
+        { ad:'İsti boz yolu',     hex:'#9C8C7C', resept:'+ Narıncı 2 + Qəhvəyi 1 damcı',                 neticə:'Soyuq bozu isti boza çevirir. Daha qəbul edilən.' },
+        { ad:'Charcoal yolu',     hex:'#3D3D3D', resept:'+ Qara 4-5 damcı',                               neticə:'Qəbul et — charcoal et. Detoks sabunu kimi sat.' },
+        { ad:'Leylak yolu',       hex:'#9F7FBF', resept:'+ Bənövşəyi 4 + Ağ 3 damcı',                    neticə:'Boza bənövşəyi qayt — leylak tonu çıxa bilər.' },
+      ]
+    },
+    {
+      problem: 'Yaşılımtıl-boz / Xaki',
+      hex_problem: '#6B7B5A',
+      icon: '🤢',
+      izah: 'Sarı + yaşıl + qara qarışıb xaki çıxıb.',
+      yollar: [
+        { ad:'Zeytun yolu',       hex:'#6B6B2A', resept:'+ Sarı 3 + Qəhvəyi 2 damcı',                    neticə:'Xakini zeytun rənginə çevir. Herbal görünüş.' },
+        { ad:'Adaçayı yolu',      hex:'#7D9B76', resept:'+ Yaşıl 3 + Sarı 2 damcı',                      neticə:'Daha yaşıl, daha natural.' },
+        { ad:'Meşə yolu',         hex:'#3B5323', resept:'+ Qara 2 + Yaşıl 2 damcı',                      neticə:'Tünd meşə yaşılı. Kişi sabunları üçün.' },
+      ]
+    },
+    {
+      problem: 'Kirli bənövşəyi-boz',
+      hex_problem:'#6B5B6B',
+      icon: '😵',
+      izah: 'Bənövşəyi + mavi + qara qarışıb çirkin rəng çıxıb.',
+      yollar: [
+        { ad:'Magistr yolu',      hex:'#8B008B', resept:'+ Bənövşəyi 5 + Qırmızı 2 damcı',               neticə:'Daha çox bənövşəyi — rəngi geri qayt.' },
+        { ad:'Leylak yolu',       hex:'#9F7FBF', resept:'+ Bənövşəyi 4 + Ağ 4 damcı',                    neticə:'Açıq, yumşaq leylak. Bəlkə çıxdı!' },
+        { ad:'Kömür yolu',        hex:'#3D3D3D', resept:'+ Qara 5-6 damcı',                               neticə:'Qəbul et — charcoal kimi sat.' },
+      ]
+    },
+  ];
+
+  XILAS_RESEPTLERI.forEach(function(x) {
+    const sec = ce('div');
+    sec.style.cssText = 'margin-bottom:16px';
+
+    const probRow = ce('div');
+    probRow.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:8px';
+    const probSw = ce('div');
+    probSw.style.cssText = 'width:40px;height:40px;border-radius:10px;background:'+x.hex_problem+';border:2px solid rgba(255,255,255,.15);flex-shrink:0';
+    const probInfo = ce('div');
+    const probTitle = ce('div'); probTitle.style.cssText = 'font-size:14px;font-weight:700;color:#fff';
+    probTitle.textContent = x.icon + ' ' + x.problem;
+    const probIzah = ce('div'); probIzah.style.cssText = 'font-size:11px;color:#777;margin-top:2px';
+    probIzah.textContent = x.izah;
+    probInfo.appendChild(probTitle); probInfo.appendChild(probIzah);
+    probRow.appendChild(probSw); probRow.appendChild(probInfo);
+    sec.appendChild(probRow);
+
+    x.yollar.forEach(function(y) {
+      const kard = ce('div', 'result-box');
+      kard.style.cssText = 'margin-bottom:6px;display:flex;align-items:center;gap:10px';
+      const resSw = ce('div');
+      resSw.style.cssText = 'width:36px;height:36px;border-radius:8px;background:'+y.hex+';border:2px solid rgba(255,255,255,.2);flex-shrink:0';
+      const kardInfo = ce('div'); kardInfo.style.cssText = 'flex:1';
+      const adEl = ce('div'); adEl.style.cssText = 'font-size:12px;font-weight:700;color:#fff;margin-bottom:2px'; adEl.textContent = y.ad;
+      const resEl = ce('div'); resEl.style.cssText = 'font-size:11px;color:#a78bfa;margin-bottom:2px'; resEl.textContent = y.resept;
+      const netEl = ce('div'); netEl.style.cssText = 'font-size:10px;color:#666;line-height:1.4'; netEl.textContent = y.neticə;
+      kardInfo.appendChild(adEl); kardInfo.appendChild(resEl); kardInfo.appendChild(netEl);
+      kard.appendChild(resSw); kard.appendChild(kardInfo);
+      sec.appendChild(kard);
+    });
+
+    page.appendChild(sec);
+  });
+
+  const note = ce('div');
+  note.style.cssText = 'font-size:11px;color:#555;text-align:center;margin-top:8px;line-height:1.6;padding:10px;background:rgba(255,255,255,.03);border-radius:8px';
+  note.textContent = '💡 Əsas prinsip: rəngi düzəltmək çətin olsa — qəbul et və "intensional" et. Tünd şokolad, charcoal, zeytun — bunlar da gözəl sabundur.';
+  page.appendChild(note);
+
   return page;
 }
 
