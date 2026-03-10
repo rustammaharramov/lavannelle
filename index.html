@@ -1727,16 +1727,19 @@ const CP_DATA = [
 ];
 
 const CP_BLENDLER = [
-  { level:'green',  ad:'Ocean Mist / Okean Dumanı',          atirlər:'Ocean Breeze FO USA 60% + White Tea FO USA 40%',                         izah:'İki əlverişli ətir. Acceleration yox, diskolorasiya yox.',               qeyd:'Möhkəm treys-a qədər gözləyin, çox tez töküşdürməyin.' },
-  { level:'green',  ad:'Citrus Garden / Sitrus Bağçası',      atirlər:'Citrus Agave FO USA 55% + Rosemary Sage FO USA 45%',                    izah:'Hər ikisi yüngül diskolorasiya — birlikdə açıq sarımtıl nəticə.',        qeyd:'Açıq rəngli sabun istəyirsinizsə light yellow gözlənir.' },
-  { level:'green',  ad:'Matcha Citrus / Matça Sitrus',        atirlər:'Matcha and Bergamot FO USA 55% + Citrus Agave FO USA 45%',              izah:'Light tan + light yellow — birlikdə yüngül bej çıxacaq.',                qeyd:'Ağ sabun istəyirsinizsə rəng əlavə edin.' },
-  { level:'green',  ad:'Violet Black Tea / Bənövşəyi Çay',    atirlər:'Black Violet and Saffron FO USA 60% + White Tea FO USA 40%',            izah:'Birincisi light tan, ikincisi diskolorasiya yox. Yüngül bej.',           qeyd:'Vanilla yoxdur — rəngsiz saxlamaq olar.' },
-  { level:'yellow', ad:'Amber Sage / Kəhrəba Adaçayı',        atirlər:'Amber Noir FO USA 50% + Rosemary Sage FO USA 50%',                     izah:'Amber Noir tan diskolorasiyası + Rosemary yüngül sarı. Orta bej-qəhvəyi.',qeyd:'Amber Noir slight acceleration — tez tökün.' },
-  { level:'yellow', ad:'Lavender White / Lavanda Ağ',          atirlər:'Lavender FO USA 60% + White Tea FO USA 40%',                          izah:'Lavender moderate acceleration — White Tea onu bir qədər yavaşıdır.',    qeyd:'Stick blender az. Light treys-da tökün.' },
-  { level:'yellow', ad:'Green Saffron / Yaşıl Zəfəran',       atirlər:'Green Tea and Lemongrass FO USA 50% + Saffron Cedarwood FO USA 50%',   izah:'Hər ikisi slight acceleration + light tan. Moderate kimi davranın.',     qeyd:'İki slight birlikdə moderate ola bilər — hazır olun.' },
-  { level:'yellow', ad:'Elderberry Ocean / Yovşan Okean',      atirlər:'Elderberry Nectar FO USA 55% + Ocean Breeze FO USA 45%',              izah:'Elderberry moderate acceleration, Ocean Breeze sabit — balans.',         qeyd:'Ocean Breeze acceleration-u azaldır. Tez tökün.' },
-  { level:'red',    ad:'Spiced English / Ədviyyatlı İngilis',  atirlər:'English Garden FO USA 50% + Ginger And Spice FO USA 50%',             izah:'Hər ikisi vanilla + diskolorasiya. Tünd qəhvəyi-kəhrəba nəticə.',       qeyd:'Vanilla var — həmişə diskolorasiya. Tünd rəngli sabun üçün.' },
-  { level:'red',    ad:'Pink Spice / Çəhrayı Ədviyyat',        atirlər:'Pink Sugar Crystals FO USA 60% + Ginger And Spice FO USA 40%',        izah:'İki vanilla + iki diskolorasiya. Tünd tan-brown. Acceleration çox.',    qeyd:'Mütləq tünd rəng əlavə edin — şokolad, tünd qəhvəyi.' },
+  // 🟢 ƏLVERİŞLİ — vanilla yox, acceleration yox/slight, diskolorasiya minimal
+  { level:'green',  ad:'Ocean Mist / Okean Dumanı',        atirlər:'Ocean Breeze FO USA 50% + White Tea FO USA 30% + Citrus Agave FO USA 20%',           izah:'Üç əlverişli ətir. Acceleration yox, diskolorasiya minimal. Açıq, dəniz tonu.',       qeyd:'Ən təhlükəsiz blend. Möhkəm treys-a qədər gözləyin.' },
+  { level:'green',  ad:'Citrus Rosemary / Sitrus Rozmarin', atirlər:'Citrus Agave FO USA 45% + Rosemary Sage FO USA 35% + Matcha and Bergamot FO USA 20%', izah:'Üç yüngül diskolorasiyalı ətir — birlikdə açıq sarımtıl-yaşıl nəticə. Acceleration yox.',qeyd:'Açıq rəngli sabun: light yellow/tan gözlənir.' },
+  { level:'green',  ad:'Violet Ocean / Bənövşəyi Okean',   atirlər:'Black Violet and Saffron FO USA 50% + Ocean Breeze FO USA 30% + White Tea FO USA 20%', izah:'Light tan + yox + yox. Vanilla yoxdur. Açıq bej-gümüşü nəticə.',                     qeyd:'Vanilla yoxdur — rəngsiz saxlamaq olar.' },
+  { level:'green',  ad:'Matcha Citrus Sage / Matça Sitrus', atirlər:'Matcha and Bergamot FO USA 45% + Citrus Agave FO USA 35% + Rosemary Sage FO USA 20%', izah:'Üçü də light tan/yellow. Birlikdə yüngül bej. Acceleration yox.',                      qeyd:'Ağ sabun istəyirsinizsə az rəng əlavə edin.' },
+  // 🟡 DİQQƏTLİ — slight/moderate acceleration, orta diskolorasiya
+  { level:'yellow', ad:'Amber Sage Ocean / Kəhrəba Adaçayı',atirlər:'Amber Noir FO USA 40% + Rosemary Sage FO USA 35% + Ocean Breeze FO USA 25%',         izah:'Amber Noir tan + Rosemary light yellow. Ocean Breeze acceleration-u azaldır.',       qeyd:'Amber Noir slight acceleration — light treys-da tökün.' },
+  { level:'yellow', ad:'Lavender Tea Citrus / Lavanda Çay', atirlər:'Lavender FO USA 45% + White Tea FO USA 35% + Citrus Agave FO USA 20%',                izah:'Lavender moderate acceleration — White Tea + Citrus Agave yavaşıdır.',              qeyd:'Stick blender az. Light treys-da mütləq tökün.' },
+  { level:'yellow', ad:'Green Saffron Violet / Yaşıl Zəfər',atirlər:'Green Tea and Lemongrass FO USA 40% + Saffron Cedarwood FO USA 35% + Black Violet and Saffron FO USA 25%', izah:'İki slight acceleration + Black Violet stabilizasiya edir. Light tan nəticə.',   qeyd:'Üç slight acceleration birlikdə — moderate kimi hazırlanın.' },
+  { level:'yellow', ad:'Elderberry Sage / Yovşan Adaçayı',  atirlər:'Elderberry Nectar FO USA 45% + Rosemary Sage FO USA 30% + Ocean Breeze FO USA 25%',  izah:'Elderberry moderate acceleration, qalanları sabitdir. Balans yaranır.',             qeyd:'Elderberry dominant — tez tökün, layered pour məsləhət.' },
+  // 🔴 ÇƏTİN — vanilla + güclü diskolorasiya, acceleration çox
+  { level:'red',    ad:'Spiced English Garden / Ədviyyat',   atirlər:'English Garden FO USA 40% + Ginger And Spice FO USA 35% + Elderberry Nectar FO USA 25%',izah:'İki vanilla + iki diskolorasiya. Elderberry moderate acc. əlavə edir. Tünd qəhvəyi.',qeyd:'Vanilla var — mütləq diskolorasiya. Şokolad/qəhvəyi rəng əlavə edin.' },
+  { level:'red',    ad:'Pink Spice Ocean / Şəkər Ədviyyat',  atirlər:'Pink Sugar Crystals FO USA 45% + Ginger And Spice FO USA 35% + Ocean Breeze FO USA 20%',izah:'İki vanilla + dark tan + dark brown. Ocean Breeze slight acc. yavaşıdır.',          qeyd:'Tünd rəng şərtdir. Ocean Breeze slight acceleration azaldır.' },
 ];
 
 function mkCPPage() {
@@ -1751,104 +1754,163 @@ function mkCPPage() {
   page.appendChild(hdr);
 
   const desc = ce('p');
-  desc.style.cssText = 'font-size:12px;color:#777;margin-bottom:16px;line-height:1.5';
-  desc.textContent = 'CandleScience fragrances — Cold Process sabun üçün test nəticələri. Yalnız CP Test+ olanlar sabunda istifadə oluna bilər.';
+  desc.style.cssText = 'font-size:12px;color:#9aa0b0;margin-bottom:16px;line-height:1.5';
+  desc.textContent = 'CandleScience — Cold Process sabun üçün test nəticələri. CP Test+ olanlar üstdə, Vanilla- ən üstdə.';
   page.appendChild(desc);
 
   // ── CƏDVƏL ──
   const tblTitle = ce('div');
-  tblTitle.style.cssText = 'font-size:13px;font-weight:700;color:#fff;margin-bottom:8px';
+  tblTitle.style.cssText = 'font-size:13px;font-weight:700;color:#e0e0e0;margin-bottom:10px';
   tblTitle.textContent = '📊 CP Test Cədvəli';
   page.appendChild(tblTitle);
 
-  const tbl = ce('div');
-  tbl.style.cssText = 'overflow-x:auto;margin-bottom:20px';
+  // Sort: CP+ first (sorted by vanilla asc, then level), CP- last
+  const sorted = [...CP_DATA].sort((a, b) => {
+    if (a.cp !== b.cp) return a.cp ? -1 : 1;
+    if (!a.cp) return 0;
+    // CP+ group: vanilla- first
+    if (a.vanilla !== b.vanilla) return a.vanilla ? 1 : -1;
+    // within vanilla group: green→yellow→red
+    const lvl = {green:0, yellow:1, red:2, none:3};
+    return (lvl[a.level]||0) - (lvl[b.level]||0);
+  });
+
+  // Build real HTML table
+  const tblWrap = ce('div');
+  tblWrap.style.cssText = 'overflow-x:auto;margin-bottom:24px;border-radius:10px;border:1px solid rgba(255,255,255,.1)';
+
+  const tbl = document.createElement('table');
+  tbl.style.cssText = 'width:100%;border-collapse:collapse;font-size:11px';
 
   // Header
-  const hRow = ce('div');
-  hRow.style.cssText = 'display:grid;grid-template-columns:1fr 60px 60px 80px 110px 70px;gap:4px;padding:6px 8px;background:rgba(255,255,255,.08);border-radius:8px 8px 0 0;margin-bottom:2px';
-  ['Ətir','CP','Vanil','Accel.','Diskolor.','Separ.'].forEach(h => {
-    const c = ce('div');
-    c.style.cssText = 'font-size:10px;font-weight:700;color:#9aa0b0;text-align:center';
-    c.textContent = h;
-    hRow.appendChild(c);
+  const thead = document.createElement('thead');
+  const hRow = document.createElement('tr');
+  hRow.style.cssText = 'background:rgba(255,255,255,.08)';
+  ['Ətir adı','CP','Vanil','Accel.','Diskolorasiya','Separ.'].forEach((h,i) => {
+    const th = document.createElement('th');
+    th.style.cssText = 'padding:8px 6px;color:#9aa0b0;font-weight:700;text-align:' + (i===0?'left':'center') + ';white-space:nowrap';
+    th.textContent = h;
+    hRow.appendChild(th);
   });
-  tbl.appendChild(hRow);
+  thead.appendChild(hRow);
+  tbl.appendChild(thead);
 
-  CP_DATA.forEach((r, i) => {
-    const row = ce('div');
-    const bg = i%2===0 ? 'rgba(255,255,255,.02)' : 'transparent';
-    row.style.cssText = 'display:grid;grid-template-columns:1fr 60px 60px 80px 110px 70px;gap:4px;padding:6px 8px;background:'+bg+';border-radius:4px;align-items:center';
+  const tbody = document.createElement('tbody');
+  let prevCpGroup = null;
 
-    const nameEl = ce('div');
-    nameEl.style.cssText = 'font-size:11px;color:' + (r.cp ? '#fff' : '#555') + ';line-height:1.3';
-    nameEl.textContent = r.ad.replace(' FO USA','');
-    row.appendChild(nameEl);
+  sorted.forEach((r, i) => {
+    // Divider between CP+ and CP- groups
+    if (prevCpGroup !== null && prevCpGroup !== r.cp) {
+      const divRow = document.createElement('tr');
+      const divTd = document.createElement('td');
+      divTd.colSpan = 6;
+      divTd.style.cssText = 'padding:3px 8px;font-size:10px;color:#555;background:rgba(255,255,255,.04);text-align:center;letter-spacing:1px';
+      divTd.textContent = '── CP Test yoxlanılmamış ──';
+      divRow.appendChild(divTd);
+      tbody.appendChild(divRow);
+    }
+    prevCpGroup = r.cp;
 
-    const cpEl = ce('div');
-    cpEl.style.cssText = 'font-size:13px;text-align:center';
-    cpEl.textContent = r.cp ? '✅' : '❌';
-    row.appendChild(cpEl);
+    const row = document.createElement('tr');
+    row.style.cssText = 'background:' + (i%2===0?'rgba(255,255,255,.02)':'transparent') + ';border-top:1px solid rgba(255,255,255,.04)';
 
-    const cols = [r.vanilla, r.acceleration, r.discoloration, r.separation];
-    const colStyles = [
-      // vanilla
-      v => v === true ? {t:'✓ Var', c:'#e67e22'} : v === false ? {t:'Yox', c:'#27ae60'} : {t:'—', c:'#444'},
-      // acceleration
-      v => v==='-'||v===null ? {t:v||'—',c:'#27ae60'} : v==='Slight' ? {t:'Slight',c:'#f39c12'} : v==='Moderate' ? {t:'Moderate',c:'#e74c3c'} : {t:v,c:'#e74c3c'},
-      // discoloration
-      v => !v||v==='-' ? {t:'Yox',c:'#27ae60'} : v.includes('Light') ? {t:v,c:'#f39c12'} : v.includes('Dark') ? {t:v,c:'#e74c3c'} : {t:v,c:'#e67e22'},
-      // separation
-      v => !v||v==='-' ? {t:'Yox',c:'#27ae60'} : {t:v,c:'#e67e22'},
-    ];
+    // Name
+    const nameTd = document.createElement('td');
+    nameTd.style.cssText = 'padding:7px 8px;color:' + (r.cp?'#d0d0d0':'#555') + ';line-height:1.3';
+    const nameShort = r.ad.replace(' FO USA','');
+    // Level badge for CP+ rows
+    if (r.cp && r.level !== 'none') {
+      const badge = {green:'🟢',yellow:'🟡',red:'🔴'}[r.level];
+      nameTd.textContent = badge + ' ' + nameShort;
+    } else {
+      nameTd.textContent = nameShort;
+    }
+    row.appendChild(nameTd);
 
-    cols.forEach((val, ci) => {
-      const el = ce('div');
-      const st = colStyles[ci](val);
-      el.style.cssText = 'font-size:10px;text-align:center;color:'+st.c+';font-weight:600';
-      el.textContent = st.t;
-      row.appendChild(el);
-    });
+    // CP
+    const cpTd = document.createElement('td');
+    cpTd.style.cssText = 'padding:7px 6px;text-align:center;font-size:13px';
+    cpTd.textContent = r.cp ? '✅' : '❌';
+    row.appendChild(cpTd);
 
-    tbl.appendChild(row);
+    // Vanilla
+    const vanTd = document.createElement('td');
+    const vanSt = r.vanilla===true?{t:'Var',c:'#e67e22'}: r.vanilla===false?{t:'Yox',c:'#4caf50'}:{t:'—',c:'#555'};
+    vanTd.style.cssText = 'padding:7px 6px;text-align:center;color:'+vanSt.c+';font-weight:600;font-size:11px';
+    vanTd.textContent = vanSt.t;
+    row.appendChild(vanTd);
+
+    // Acceleration
+    const accTd = document.createElement('td');
+    const accSt = !r.acceleration||r.acceleration==='-'?{t:'—',c:'#4caf50'}:
+                  r.acceleration==='Slight'?{t:'Slight',c:'#f39c12'}:
+                  r.acceleration==='Moderate'?{t:'Moderate',c:'#e74c3c'}:{t:r.acceleration,c:'#e74c3c'};
+    accTd.style.cssText = 'padding:7px 6px;text-align:center;color:'+accSt.c+';font-weight:600;font-size:11px';
+    accTd.textContent = accSt.t;
+    row.appendChild(accTd);
+
+    // Discoloration
+    const disTd = document.createElement('td');
+    const disSt = !r.discoloration||r.discoloration==='-'?{t:'—',c:'#4caf50'}:
+                  r.discoloration.includes('Light')?{t:r.discoloration,c:'#f39c12'}:
+                  r.discoloration.includes('Dark')?{t:r.discoloration,c:'#e74c3c'}:{t:r.discoloration,c:'#e67e22'};
+    disTd.style.cssText = 'padding:7px 6px;text-align:center;color:'+disSt.c+';font-weight:600;font-size:10px';
+    disTd.textContent = disSt.t;
+    row.appendChild(disTd);
+
+    // Separation
+    const sepTd = document.createElement('td');
+    const sepSt = !r.separation||r.separation==='-'?{t:'—',c:'#4caf50'}:{t:r.separation,c:'#e67e22'};
+    sepTd.style.cssText = 'padding:7px 6px;text-align:center;color:'+sepSt.c+';font-weight:600;font-size:11px';
+    sepTd.textContent = sepSt.t;
+    row.appendChild(sepTd);
+
+    tbody.appendChild(row);
   });
-  page.appendChild(tbl);
+  tbl.appendChild(tbody);
+  tblWrap.appendChild(tbl);
+  page.appendChild(tblWrap);
 
   // ── BLENDLƏR ──
   const blTitle = ce('div');
-  blTitle.style.cssText = 'font-size:13px;font-weight:700;color:#fff;margin-bottom:4px;margin-top:4px';
-  blTitle.textContent = '🧴 CP Blendlər';
+  blTitle.style.cssText = 'font-size:13px;font-weight:700;color:#e0e0e0;margin-bottom:4px';
+  blTitle.textContent = '🧴 CP Blendlər (3 ətirli)';
   page.appendChild(blTitle);
 
   const blDesc = ce('div');
-  blDesc.style.cssText = 'font-size:11px;color:#666;margin-bottom:12px;line-height:1.5';
-  blDesc.textContent = 'Yalnız CP Test+ ətirlərdən. Cədvəl məlumatlarına əsasən hesablanıb.';
+  blDesc.style.cssText = 'font-size:11px;color:#666;margin-bottom:10px;line-height:1.5';
+  blDesc.textContent = 'Yalnız CP Test+ ətirlərdən, 3 ətirli. Cədvəl məlumatlarına əsasən hesablanıb.';
   page.appendChild(blDesc);
 
   // Legend
   const leg = ce('div');
-  leg.style.cssText = 'display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap';
-  [['🟢','Əlverişli','rgba(39,174,96,.15)'],['🟡','Diqqətli','rgba(243,156,18,.15)'],['🔴','Çətin','rgba(231,76,60,.15)']].forEach(([ic,lb,bg])=>{
+  leg.style.cssText = 'display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap';
+  [['🟢','Əlverişli — vanilla yox, acc. yox/slight'],['🟡','Diqqətli — moderate acc. var'],['🔴','Çətin — vanilla + güclü diskolor.']].forEach(([ic,lb])=>{
     const t = ce('div');
-    t.style.cssText = 'font-size:11px;color:#aaa;padding:3px 8px;background:'+bg+';border-radius:8px';
+    t.style.cssText = 'font-size:10px;color:#9aa0b0;line-height:1.4';
     t.textContent = ic + ' ' + lb;
     leg.appendChild(t);
   });
   page.appendChild(leg);
 
-  const levelColors = { green:'rgba(39,174,96,.12)', yellow:'rgba(243,156,18,.12)', red:'rgba(231,76,60,.12)' };
-  const levelBorder = { green:'rgba(39,174,96,.3)', yellow:'rgba(243,156,18,.3)', red:'rgba(231,76,60,.3)' };
+  const levelColors = { green:'rgba(39,174,96,.1)', yellow:'rgba(243,156,18,.1)', red:'rgba(231,76,60,.1)' };
+  const levelBorder = { green:'rgba(39,174,96,.25)', yellow:'rgba(243,156,18,.25)', red:'rgba(231,76,60,.25)' };
   const levelIcon   = { green:'🟢', yellow:'🟡', red:'🔴' };
+  const levelLabel  = { green:'Əlverişli', yellow:'Diqqətli', red:'Çətin' };
+  const levelTextC  = { green:'#4caf50', yellow:'#f39c12', red:'#e74c3c' };
 
   CP_BLENDLER.forEach(b => {
     const card = ce('div');
     card.style.cssText = 'margin-bottom:10px;padding:12px;background:'+levelColors[b.level]+';border:1px solid '+levelBorder[b.level]+';border-radius:12px';
 
     const topRow = ce('div');
-    topRow.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:6px';
+    topRow.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:8px';
     const icon = ce('span'); icon.textContent = levelIcon[b.level];
-    const name = ce('div'); name.style.cssText = 'font-size:13px;font-weight:700;color:#fff;flex:1'; name.textContent = b.ad;
-    topRow.appendChild(icon); topRow.appendChild(name);
+    const name = ce('div'); name.style.cssText = 'font-size:13px;font-weight:700;color:#e0e0e0;flex:1'; name.textContent = b.ad;
+    const lvlBadge = ce('span');
+    lvlBadge.style.cssText = 'font-size:9px;color:'+levelTextC[b.level]+';font-weight:700;border:1px solid '+levelBorder[b.level]+';border-radius:6px;padding:1px 6px';
+    lvlBadge.textContent = levelLabel[b.level];
+    topRow.appendChild(icon); topRow.appendChild(name); topRow.appendChild(lvlBadge);
     card.appendChild(topRow);
 
     // Ingredients
@@ -1856,15 +1918,15 @@ function mkCPPage() {
       const m = p.match(/^(.+?)\s+(\d+)%$/);
       if (!m) return;
       const row = ce('div');
-      row.style.cssText = 'display:flex;justify-content:space-between;margin-bottom:3px';
+      row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:4px';
       const nm = ce('span'); nm.style.cssText = 'font-size:12px;color:#9aa0b0'; nm.textContent = m[1];
-      const pct = ce('span'); pct.style.cssText = 'font-size:12px;font-weight:700;color:#fff;font-family:monospace'; pct.textContent = m[2]+'%';
+      const pct = ce('span'); pct.style.cssText = 'font-size:13px;font-weight:700;color:#e0e0e0;font-family:monospace'; pct.textContent = m[2]+'%';
       row.appendChild(nm); row.appendChild(pct);
       card.appendChild(row);
     });
 
     const iz = ce('div');
-    iz.style.cssText = 'font-size:11px;color:#aaa;margin-top:6px;border-top:1px solid rgba(255,255,255,.08);padding-top:6px;line-height:1.4';
+    iz.style.cssText = 'font-size:11px;color:#9aa0b0;margin-top:8px;border-top:1px solid rgba(255,255,255,.08);padding-top:8px;line-height:1.5';
     iz.textContent = b.izah;
     card.appendChild(iz);
 
@@ -1873,9 +1935,8 @@ function mkCPPage() {
     qeyd.textContent = '⚠ ' + b.qeyd;
     card.appendChild(qeyd);
 
-    // Use in calculator button
     const useBtn = ce('button');
-    useBtn.style.cssText = 'margin-top:8px;font-size:11px;padding:5px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:#aaa;cursor:pointer';
+    useBtn.style.cssText = 'margin-top:8px;font-size:11px;padding:5px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#9aa0b0;cursor:pointer';
     useBtn.textContent = '🧪 Hesablayıcıya köçür';
     useBtn.onclick = () => { S.aBlend = b.atirlər; set({ atirSub: 'blend' }); };
     card.appendChild(useBtn);
