@@ -340,12 +340,14 @@ const S = {
 function set(patch) {
   const wasPage = S.page;
   const wasAtirSub = S.atirSub;
+  const wasRengSub = S.rengSub;
   Object.assign(S, patch);
-  // Only push history when page or sub-page changes
   if (patch.page !== undefined && patch.page !== wasPage) {
-    history.pushState({ page: S.page, atirSub: S.atirSub }, '');
+    history.pushState({ page: S.page, atirSub: S.atirSub, rengSub: S.rengSub }, '');
   } else if (patch.atirSub !== undefined && patch.atirSub !== wasAtirSub) {
-    history.pushState({ page: S.page, atirSub: S.atirSub }, '');
+    history.pushState({ page: S.page, atirSub: S.atirSub, rengSub: S.rengSub }, '');
+  } else if (patch.rengSub !== undefined && patch.rengSub !== wasRengSub) {
+    history.pushState({ page: S.page, atirSub: S.atirSub, rengSub: S.rengSub }, '');
   }
   render();
 }
@@ -355,12 +357,14 @@ window.addEventListener('popstate', e => {
   if (e.state) {
     S.page = e.state.page || 'home';
     S.atirSub = e.state.atirSub || null;
+    S.rengSub = e.state.rengSub || null;
     S.editId = null;
     S.atirEditId = null;
     render();
   } else {
     S.page = 'home';
     S.atirSub = null;
+    S.rengSub = null;
     S.editId = null;
     S.atirEditId = null;
     render();
