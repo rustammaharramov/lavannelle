@@ -2545,90 +2545,90 @@ function mkRengMikser() {
     // Combinations data per color
     var KOMBINASIYALAR = {
       sari: [
-        { reng:'Qara',     miqdar:'1-2 damcı', hex:'#B8860B', netice:'Xardal sarısı',    izah:'Ən klassik tonlama. Az qara = xardal, çox qara = zeytun.' },
-        { reng:'Qəhvəyi',  miqdar:'2-3 damcı', hex:'#C8960C', netice:'Isti sarı / Bej',  izah:'Qəhvəyi sarını torpaq tonuna çəkir. Daha yumşaq nəticə.' },
-        { reng:'Narıncı',  miqdar:'2-3 damcı', hex:'#FFB347', netice:'Şaftalı / Apricot',izah:'İki isti rəng birləşir. Parlaq, şirin ton.' },
-        { reng:'Qırmızı',  miqdar:'2-3 damcı', hex:'#FF8C00', netice:'Dərin narıncı',    izah:'Sarı + qırmızı = narıncı, amma daha dərin.' },
-        { reng:'Yaşıl',    miqdar:'3-4 damcı', hex:'#9ACD32', netice:'Limon-yaşıl',      izah:'Klassik sarı+yaşıl. Parlaq, canlı.' },
-        { reng:'Bənövşəyi',miqdar:'3-4 damcı', hex:'#C8A84B', netice:'Qızılı / Amber',   izah:'Gözlənilməz amma gözəl. Qızıl-əhər tonu.' },
+        { reng:'Qara',      miqdar:'1-2 damcı', hex:'#EAE0BE', netice:'Xardal sarısı',     izah:'Ən klassik tonlama. Az qara = açıq xardal, çox qara = daha tünd.' },
+        { reng:'Qəhvəyi',   miqdar:'2-3 damcı', hex:'#F0E4C1', netice:'İsti sarı / Bej',   izah:'Qəhvəyi sarını torpaq tonuna çəkir. Yumşaq, natural nəticə.' },
+        { reng:'Narıncı',   miqdar:'2-3 damcı', hex:'#FDE3C3', netice:'Şaftalı / Apricot', izah:'İki isti rəng birləşir. Parlaq, şirin pastel ton.' },
+        { reng:'Qırmızı',   miqdar:'2-3 damcı', hex:'#F9DDC1', netice:'Dərin narıncı',     izah:'Sarı + qırmızı = narıncı, amma bazada daha pastel.' },
+        { reng:'Yaşıl',     miqdar:'3-4 damcı', hex:'#E5EAC4', netice:'Limon-yaşıl',       izah:'Canlı, limon pastel. Sitrus sabunlar üçün ideal.' },
+        { reng:'Bənövşəyi', miqdar:'3-4 damcı', hex:'#EEDCCD', netice:'Qızılı / Krem',     izah:'Gözlənilməz amma gözəl. Qızıl-krem pastel tonu.' },
       ],
       narinci: [
-        { reng:'Qara',     miqdar:'1-2 damcı', hex:'#C0622A', netice:'Terrakota',         izah:'Narıncı + az qara = klassik terrakota.' },
-        { reng:'Qəhvəyi',  miqdar:'2 damcı',   hex:'#B5651D', netice:'Mis / Copper',      izah:'Qəhvəyi narıncını "metalik" edir.' },
-        { reng:'Qırmızı',  miqdar:'3 damcı',   hex:'#E25822', netice:'Odlu narıncı',      izah:'İsti, canlı. Günbatımı rəngi.' },
-        { reng:'Sarı',     miqdar:'3 damcı',   hex:'#FFB347', netice:'Şaftalı',           izah:'Yumşaq, şirin. Uşaq sabunları üçün ideal.' },
-        { reng:'Çəhrayı',  miqdar:'3 damcı',   hex:'#FF8C69', netice:'Somon / Salmon',    izah:'Çox populyar ton. Zərif, qadın.' },
+        { reng:'Qara',      miqdar:'1-2 damcı', hex:'#EFD1C7', netice:'Terrakota pastel',  izah:'Narıncı + az qara = açıq terrakota. Çox populyar.' },
+        { reng:'Qəhvəyi',   miqdar:'2 damcı',   hex:'#F0D3CA', netice:'Mis / Şaftalı',     izah:'Qəhvəyi narıncını "torpaqlaşdırır". Zərif ton.' },
+        { reng:'Qırmızı',   miqdar:'3 damcı',   hex:'#FBCFC8', netice:'Somon narıncı',     izah:'İsti, canlı pastel. Günbatımı tonu.' },
+        { reng:'Sarı',      miqdar:'3 damcı',   hex:'#FDE1C4', netice:'Şaftalı krem',      izah:'Yumşaq, şirin. Uşaq sabunları üçün ideal.' },
+        { reng:'Çəhrayı',   miqdar:'3 damcı',   hex:'#FDD5D4', netice:'Somon / Salmon',    izah:'Çox populyar pastel. Zərif, qadın tonu.' },
       ],
       qirmizi: [
-        { reng:'Qara',     miqdar:'2-3 damcı', hex:'#8B0000', netice:'Bordo / Kərpic',   izah:'Qırmızı + qara = tünd bordo.' },
-        { reng:'Qəhvəyi',  miqdar:'2 damcı',   hex:'#9B3A2A', netice:'Kərpic qırmızı',  izah:'Rustik, natural. Əl sabunları üçün gözəl.' },
-        { reng:'Bənövşəyi',miqdar:'3 damcı',   hex:'#9B111E', netice:'Tünd qırmızı',     izah:'Bənövşəyi qırmızını soyudur, dərinləşdirir.' },
-        { reng:'Narıncı',  miqdar:'2 damcı',   hex:'#FF4500', netice:'Canlı qırmızı',    izah:'Daha parlaq, odlu.' },
-        { reng:'Çəhrayı',  miqdar:'4 damcı',   hex:'#E88080', netice:'Gül qırmızı',      izah:'Yumşaq, çiçəkli ton.' },
+        { reng:'Qara',      miqdar:'2-3 damcı', hex:'#E8C5C4', netice:'Bordo pastel',      izah:'Açıq bordo. Ağ bazada çox cəlbedici görünür.' },
+        { reng:'Qəhvəyi',   miqdar:'2 damcı',   hex:'#ECC9C7', netice:'Kərpic pastel',     izah:'Rustik, natural. Əl sabunları üçün gözəl.' },
+        { reng:'Bənövşəyi', miqdar:'3 damcı',   hex:'#EBC4D3', netice:'Tünd qırmızı-çəhrayı', izah:'Bənövşəyi qırmızını soyudur, dərinləşdirir.' },
+        { reng:'Narıncı',   miqdar:'2 damcı',   hex:'#FACEC8', netice:'Canlı somon',       izah:'Daha parlaq, isti pastel.' },
+        { reng:'Çəhrayı',   miqdar:'4 damcı',   hex:'#F9CDD3', netice:'Gül pastel',        izah:'Yumşaq, çiçəkli ton.' },
       ],
       cehrayi: [
-        { reng:'Qəhvəyi',  miqdar:'1-2 damcı', hex:'#C08080', netice:'Toz çəhrayı',      izah:'Ən gözəl sakit çəhrayı. Çox populyar.' },
-        { reng:'Narıncı',  miqdar:'2 damcı',   hex:'#FF8FAB', netice:'Somon çəhrayı',    izah:'İsti, canlı çəhrayı. Zərif amma rəngli.' },
-        { reng:'Bənövşəyi',miqdar:'2 damcı',   hex:'#C71585', netice:'Fuşya / Magistr',  izah:'Çox canlı. Az istifadə et.' },
-        { reng:'Qırmızı',  miqdar:'3 damcı',   hex:'#E75480', netice:'Dərin çəhrayı',    izah:'Hot pink. Parlaq, cəsarətli.' },
-        { reng:'Ağ',       miqdar:'3 damcı',   hex:'#FFB6C1', netice:'Bebe çəhrayı',     izah:'Çox açıq, incə. Uşaq və gəlin sabunları.' },
+        { reng:'Qəhvəyi',   miqdar:'1-2 damcı', hex:'#F1D1DA', netice:'Toz çəhrayı',      izah:'Ən gözəl sakit çəhrayı. Çox populyar pastel.' },
+        { reng:'Narıncı',   miqdar:'2 damcı',   hex:'#FCD4D7', netice:'Somon çəhrayı',    izah:'İsti, canlı çəhrayı pastel. Zərif amma rəngli.' },
+        { reng:'Bənövşəyi', miqdar:'2 damcı',   hex:'#EBCAE2', netice:'Leylak çəhrayı',   izah:'Soyuq çəhrayı. Gözəl tон.' },
+        { reng:'Qırmızı',   miqdar:'3 damcı',   hex:'#F9CDD4', netice:'Dərin çəhrayı',    izah:'Daha intensiv pastel çəhrayı.' },
+        { reng:'Ağ',        miqdar:'3 damcı',   hex:'#FBEDF2', netice:'Bebe çəhrayı',     izah:'Ən açıq, incə. Gəlin və uşaq sabunları.' },
       ],
       mavi: [
-        { reng:'Ağ',       miqdar:'2-3 damcı', hex:'#87CEEB', netice:'Göy mavi',         izah:'Ən təhlükəsiz üsul. Mavi yumşalır.' },
-        { reng:'Bənövşəyi',miqdar:'2 damcı',   hex:'#6495ED', netice:'Kornflower mavi',  izah:'Soyuq, zərif. Çox gözəl ton.' },
-        { reng:'Çəhrayı',  miqdar:'2 damcı',   hex:'#9896C8', netice:'Leylak / Bənövşəyi mavi', izah:'İki soyuq rəng. Gözəl pastel.' },
-        { reng:'Narıncı',  miqdar:'1 damcı',   hex:'#5B92B8', netice:'Okean mavisi',     izah:'Komplement az qatılır — dərinlik verir.' },
-        { reng:'Qara',     miqdar:'⚠️ etmə',   hex:'#4A4A5A', netice:'Tünd boz-qara',    izah:'Qara mavi ilə ƏLAQƏDAR OLMA. Rəng ölür.' },
+        { reng:'Ağ',        miqdar:'2-3 damcı', hex:'#E5F0FA', netice:'Göy mavi pastel',  izah:'Ən təhlükəsiz üsul. Açıq, zərif göy mavi.' },
+        { reng:'Bənövşəyi', miqdar:'2 damcı',   hex:'#CAD1EF', netice:'Kornflower pastel',izah:'Soyuq, zərif leylak-mavi pastel.' },
+        { reng:'Çəhrayı',   miqdar:'2 damcı',   hex:'#DAD8ED', netice:'Leylak pastel',    izah:'İki soyuq rəng. Gözəl pastel.' },
+        { reng:'Narıncı',   miqdar:'1 damcı',   hex:'#D7DAE6', netice:'Polad mavi',       izah:'Komplement az qatılır — dərinlik verir.' },
+        { reng:'Qara',      miqdar:'⚠️ etmə',   hex:'#C0D6EA', netice:'Solğun kirli mavi',izah:'Qara mavi ilə QATILMAZ. Bazada daha da betər görünür.' },
       ],
       benovseyi: [
-        { reng:'Ağ',       miqdar:'2-3 damcı', hex:'#9F7FBF', netice:'Leylak',           izah:'Ən yaxşı üsul. Bənövşəyi açılır, yumşalır.' },
-        { reng:'Çəhrayı',  miqdar:'3 damcı',   hex:'#B57FBF', netice:'Mov / Mauve',      izah:'İki soyuq rəng. Zərif, qadın tonu.' },
-        { reng:'Qırmızı',  miqdar:'2 damcı',   hex:'#8B008B', netice:'Tünd magistr',     izah:'Qırmızı bənövşəyini istiləşdirir.' },
-        { reng:'Mavi',     miqdar:'2 damcı',   hex:'#7B68EE', netice:'Orta bənövşəyi',   izah:'Daha soyuq, daha dərin.' },
-        { reng:'Qara',     miqdar:'⚠️ etmə',   hex:'#3D2B3D', netice:'Qəhvəyi-boz',     izah:'Qara bənövşəyini tamam öldürür.' },
+        { reng:'Ağ',        miqdar:'2-3 damcı', hex:'#F1E8F4', netice:'Leylak pastel',    izah:'Ən yaxşı üsul. Bənövşəyi açılır, incə leylak.' },
+        { reng:'Çəhrayı',   miqdar:'3 damcı',   hex:'#E8C8E2', netice:'Mov / Mauve',      izah:'İki soyuq rəng. Zərif, qadın pastel tonu.' },
+        { reng:'Qırmızı',   miqdar:'2 damcı',   hex:'#E6C3D8', netice:'İsti bənövşəyi',   izah:'Qırmızı bənövşəyini istiləşdirir.' },
+        { reng:'Mavi',      miqdar:'2 damcı',   hex:'#CECDED', netice:'Soyuq bənövşəyi',  izah:'Daha soyuq, daha dərin pastel.' },
+        { reng:'Qara',      miqdar:'⚠️ etmə',   hex:'#D2C0DA', netice:'Solğun boz-mov',   izah:'Qara bənövşəyi+ağ bazada çirkin boz-mov verir.' },
       ],
       yasil: [
-        { reng:'Sarı',     miqdar:'3-4 damcı', hex:'#8DB600', netice:'Limon-yaşıl',      izah:'Canlı, parlaq. Limon ətri sabunlar üçün ideal.' },
-        { reng:'Qəhvəyi',  miqdar:'2 damcı',   hex:'#7D9B76', netice:'Adaçayı / Sage',   izah:'Herbal ton. Ən populyar yaşıl sabun rəngi.' },
-        { reng:'Qırmızı',  miqdar:'1-2 damcı', hex:'#6B8E23', netice:'Zeytun',           izah:'Komplement istifadə — yaşılı sakit edir.' },
-        { reng:'Mavi',     miqdar:'2 damcı',   hex:'#2E8B57', netice:'Dəniz yaşılı',     izah:'Soyuq, dərin. Nəfəs alan ton.' },
-        { reng:'Qara',     miqdar:'⚠️ etmə',   hex:'#4A4A35', netice:'Tünd xaki-boz',    izah:'Yaşıl qara ilə çirkin xaki olur.' },
+        { reng:'Sarı',      miqdar:'3-4 damcı', hex:'#E2E9C5', netice:'Limon pastel',     izah:'Canlı, limon-yaşıl pastel. Sitrus sabunlar.' },
+        { reng:'Qəhvəyi',   miqdar:'2 damcı',   hex:'#CEDCCA', netice:'Adaçayı / Sage',   izah:'Herbal pastel. Ən populyar yaşıl sabun tonu.' },
+        { reng:'Qırmızı',   miqdar:'1-2 damcı', hex:'#DADAC9', netice:'Zeytun pastel',    izah:'Komplement — yaşılı sakit edir. Natural görünüş.' },
+        { reng:'Mavi',      miqdar:'2 damcı',   hex:'#C5E1DF', netice:'Nəfəs alan yaşıl', izah:'Soyuq, dəniz yaşılı pastel.' },
+        { reng:'Qara',      miqdar:'⚠️ etmə',   hex:'#C7DAC8', netice:'Solğun xaki',      izah:'Ağ bazada yaşıl+qara daha da pis görünür.' },
       ],
       lime: [
-        { reng:'Sarı',     miqdar:'4-5 damcı', hex:'#BFFF00', netice:'Canlı limon',      izah:'Daha isti limon. Sarı dominant olsun.' },
-        { reng:'Yaşıl',    miqdar:'3 damcı',   hex:'#7FFF00', netice:'Chartreuse',       izah:'Klassik chartreuse tonu.' },
-        { reng:'Qəhvəyi',  miqdar:'2 damcı',   hex:'#8DB600', netice:'Meşə yaşılı',      izah:'Lime + qəhvəyi = daha natural ton.' },
-        { reng:'Qara',     miqdar:'⚠️ etmə',   hex:'#4A4A25', netice:'Ölü xaki',         izah:'Ən pis kombinasiya. Lime tamam ölür.' },
+        { reng:'Sarı',      miqdar:'4-5 damcı', hex:'#F1F4BA', netice:'Canlı limon pastel',izah:'Daha isti limon. Sarı dominant olsun.' },
+        { reng:'Yaşıl',     miqdar:'3 damcı',   hex:'#D9EFC1', netice:'Yaz yaşılı',       izah:'Klassik limon-yaşıl pastel.' },
+        { reng:'Qəhvəyi',   miqdar:'2 damcı',   hex:'#E1E9BD', netice:'Meşə pastel',      izah:'Lime + qəhvəyi = daha natural, herbal ton.' },
+        { reng:'Qara',      miqdar:'⚠️ etmə',   hex:'#DDE9BA', netice:'Solğun xaki-sarı', izah:'Bazada lime+qara ən pis kombinasiya.' },
       ],
       qehveyi: [
-        { reng:'Qırmızı',  miqdar:'2 damcı',   hex:'#8B4513', netice:'Kakao',             izah:'İsti, şokoladlı. Qida sabunları üçün gözəl.' },
-        { reng:'Narıncı',  miqdar:'2 damcı',   hex:'#A0522D', netice:'Darçın',            izah:'Ədviyyatlı, isti ton.' },
-        { reng:'Sarı',     miqdar:'3 damcı',   hex:'#C8A96E', netice:'Karamel',           izah:'Şirin, açıq qəhvəyi. Bal rəngi.' },
-        { reng:'Qara',     miqdar:'2 damcı',   hex:'#5C3A1E', netice:'Tünd şokolad',     izah:'Dərin, zəngin. Lüks görünüş.' },
+        { reng:'Qırmızı',   miqdar:'2 damcı',   hex:'#E1CAC8', netice:'Kakao pastel',     izah:'İsti, şokoladlı pastel. Qida sabunları.' },
+        { reng:'Narıncı',   miqdar:'2 damcı',   hex:'#E5D0C9', netice:'Darçın pastel',    izah:'Ədviyyatlı, isti ton.' },
+        { reng:'Sarı',      miqdar:'3 damcı',   hex:'#E5DAC5', netice:'Karamel pastel',   izah:'Şirin, açıq qəhvəyi. Bal-krem tonu.' },
+        { reng:'Qara',      miqdar:'2 damcı',   hex:'#CFC9C7', netice:'Tünd şokolad',     izah:'Dərin, zəngin. Ağ bazada yenə gözəl.' },
       ],
       qara: [
-        { reng:'Ağ',       miqdar:'2-3 damcı', hex:'#555555', netice:'Kömür boz',        izah:'Klassik charcoal. Detoks sabunları.' },
-        { reng:'Çəhrayı',  miqdar:'2 damcı',   hex:'#4A3040', netice:'Tünd bənövşəyi-qara', izah:'Gözlənilməz dərinlik.' },
-        { reng:'Narıncı',  miqdar:'1 damcı',   hex:'#3D2A1A', netice:'İsti qara',        izah:'Soyuq deyil, isti qara. Daha canlı.' },
+        { reng:'Ağ',        miqdar:'2-3 damcı', hex:'#DBDBDB', netice:'Charcoal pastel',  izah:'Klassik charcoal. Detoks sabunları üçün.' },
+        { reng:'Çəhrayı',   miqdar:'2 damcı',   hex:'#D3C6CA', netice:'Tünd mov-boz',     izah:'Maraqlı dərinlik. Lüks görünüş.' },
+        { reng:'Narıncı',   miqdar:'1 damcı',   hex:'#D2C7C3', netice:'İsti charcoal',    izah:'Soyuq deyil, isti charcoal. Daha canlı.' },
       ],
       sud_shok: [
-        { reng:'Qırmızı',  miqdar:'2 damcı',   hex:'#6B3322', netice:'Tünd şokolad',    izah:'Çox zəngin, dərin. Lüks sabun.' },
-        { reng:'Sarı',     miqdar:'3 damcı',   hex:'#967444', netice:'Açıq şokolad',    izah:'Sütlü şokolad tonu.' },
-        { reng:'Qara',     miqdar:'2 damcı',   hex:'#3D2010', netice:'Acı şokolad',     izah:'Çox tünd. Az istifadə.' },
+        { reng:'Qırmızı',   miqdar:'2 damcı',   hex:'#E3CCC9', netice:'Şokolad pastel',  izah:'Zəngin, isti şokolad tonu.' },
+        { reng:'Sarı',      miqdar:'3 damcı',   hex:'#E7DBC6', netice:'Sütlü şokolad',   izah:'Açıq, şirin. Çox gözəl pastel.' },
+        { reng:'Qara',      miqdar:'2 damcı',   hex:'#D1CAC8', netice:'Acı şokolad',     izah:'Tünd, dərin. Lüks sabun.' },
       ],
       karmin: [
-        { reng:'Bənövşəyi',miqdar:'3 damcı',   hex:'#C41E3A', netice:'Tünd qırmızı',   izah:'Karmin + bənövşəyi = dərin qırmızı.' },
-        { reng:'Çəhrayı',  miqdar:'3 damcı',   hex:'#E8627A', netice:'Çiçəkli qırmızı',izah:'Yumşaq, çiçəkli.' },
-        { reng:'Qara',     miqdar:'2 damcı',   hex:'#7D0A0A', netice:'Bordo karmin',   izah:'Dərin, klassik.' },
+        { reng:'Bənövşəyi', miqdar:'3 damcı',   hex:'#E3BFCF', netice:'Tünd çəhrayı-qırmızı', izah:'Karmin + bənövşəyi = dərin, zərif.' },
+        { reng:'Çəhrayı',   miqdar:'3 damcı',   hex:'#F1C8CE', netice:'Çiçəkli çəhrayı', izah:'Yumşaq, çiçəkli pastel.' },
+        { reng:'Qara',      miqdar:'2 damcı',   hex:'#DFBFBF', netice:'Bordo pastel',    izah:'Dərin, klassik bordo pastel.' },
       ],
       ag: [
-        { reng:'Çəhrayı',  miqdar:'2-3 damcı', hex:'#FFE4E1', netice:'Ən açıq çəhrayı', izah:'Bebe çəhrayı. Çox zərif.' },
-        { reng:'Sarı',     miqdar:'2 damcı',   hex:'#FFFACD', netice:'Krem / Vanilya',  izah:'Yumşaq, isti ağ.' },
-        { reng:'Mavi',     miqdar:'1 damcı',   hex:'#F0F8FF', netice:'Buzlu ağ',        izah:'Soyuq, parlaq ağ.' },
+        { reng:'Çəhrayı',   miqdar:'2-3 damcı', hex:'#FBDDE7', netice:'Ən açıq çəhrayı', izah:'Bebe çəhrayı. Çox zərif pastel.' },
+        { reng:'Sarı',      miqdar:'2 damcı',   hex:'#FCF2CD', netice:'Krem / Vanilya',  izah:'Yumşaq, isti ağ. Vanilya sabunlar.' },
+        { reng:'Mavi',      miqdar:'1 damcı',   hex:'#CCE3F8', netice:'Buzlu ağ-mavi',   izah:'Soyuq, parlaq. Aysberq effekti.' },
       ],
     };
-
-    var kombs = KOMBINASIYALAR[r.id] || [];
+    
+        var kombs = KOMBINASIYALAR[r.id] || [];
     if (kombs.length > 0) {
       const sec = ce('div');
       sec.style.cssText = 'font-size:11px;font-weight:700;color:#888;letter-spacing:.8px;text-transform:uppercase;margin:14px 0 10px';
@@ -2681,46 +2681,46 @@ function mkMasterReng() {
   var XILAS_RESEPTLERI = [
     {
       problem: 'Ölü qəhvəyi / Palçıq rəngi',
-      hex_problem: '#7B5B3A',
+      hex_problem: '#C4AD98',
       icon: '💩',
       izah: 'Bir neçə rəng qarışıb, qəhvəyimtıl palçıq çıxıb.',
       yollar: [
-        { ad:'Terrakota yolu',    hex:'#C1440E', resept:'+ Narıncı 4-5 damcı + Qırmızı 2 damcı',         neticə:'Qəhvəyini terrakota-ya çevirir. Ən təhlükəsiz yol.' },
-        { ad:'Karamel yolu',      hex:'#C68642', resept:'+ Narıncı 3 + Sarı 3 damcı',                      neticə:'İsti, şirin karamel tonu.' },
-        { ad:'Şokolad yolu',      hex:'#5C3A1E', resept:'+ Qara 3-4 damcı',                               neticə:'Qəbul et — tünd şokolad et. Lüks görünüş.' },
+        { ad:'Terrakota yolu',  hex:'#EDCCC4', resept:'+ Narıncı 4-5 damcı + Qırmızı 2 damcı', neticə:'Qəhvəyini terrakota pastelə çevirir. Ən təhlükəsiz yol.' },
+        { ad:'Karamel yolu',    hex:'#EED9BF', resept:'+ Narıncı 3 + Sarı 3 damcı',             neticə:'İsti, şirin karamel pastel.' },
+        { ad:'Şokolad yolu',    hex:'#CFC5BF', resept:'+ Qara 4-5 damcı',                       neticə:'Qəbul et — tünd şokolad pastel et. Lüks görünüş.' },
       ]
     },
     {
       problem: 'Soyuq boz / Küllü rəng',
-      hex_problem: '#808080',
+      hex_problem: '#C8C8C8',
       icon: '🌫️',
       izah: 'Mavi, bənövşəyi, qara qarışıb soyuq boz çıxıb.',
       yollar: [
-        { ad:'İsti boz yolu',     hex:'#9C8C7C', resept:'+ Narıncı 2 + Qəhvəyi 1 damcı',                 neticə:'Soyuq bozu isti boza çevirir. Daha qəbul edilən.' },
-        { ad:'Charcoal yolu',     hex:'#3D3D3D', resept:'+ Qara 4-5 damcı',                               neticə:'Qəbul et — charcoal et. Detoks sabunu kimi sat.' },
-        { ad:'Leylak yolu',       hex:'#9F7FBF', resept:'+ Bənövşəyi 4 + Ağ 3 damcı',                    neticə:'Boza bənövşəyi qayt — leylak tonu çıxa bilər.' },
+        { ad:'İsti boz yolu',   hex:'#DAD4CF', resept:'+ Narıncı 2 + Qəhvəyi 1 damcı',         neticə:'Soyuq bozu isti boza çevirir. Daha qəbul edilən.' },
+        { ad:'Charcoal yolu',   hex:'#BEBEBE', resept:'+ Qara 4-5 damcı',                       neticə:'Qəbul et — charcoal pastel et. Detoks sabunu.' },
+        { ad:'Leylak yolu',     hex:'#E0D5E8', resept:'+ Bənövşəyi 4 + Ağ 3 damcı',            neticə:'Boza bənövşəyi qayt — leylak pastel çıxa bilər.' },
       ]
     },
     {
       problem: 'Yaşılımtıl-boz / Xaki',
-      hex_problem: '#6B7B5A',
+      hex_problem: '#C4CCBA',
       icon: '🤢',
       izah: 'Sarı + yaşıl + qara qarışıb xaki çıxıb.',
       yollar: [
-        { ad:'Zeytun yolu',       hex:'#6B6B2A', resept:'+ Sarı 3 + Qəhvəyi 2 damcı',                    neticə:'Xakini zeytun rənginə çevir. Herbal görünüş.' },
-        { ad:'Adaçayı yolu',      hex:'#7D9B76', resept:'+ Yaşıl 3 + Sarı 2 damcı',                      neticə:'Daha yaşıl, daha natural.' },
-        { ad:'Meşə yolu',         hex:'#3B5323', resept:'+ Qara 2 + Yaşıl 2 damcı',                      neticə:'Tünd meşə yaşılı. Kişi sabunları üçün.' },
+        { ad:'Zeytun yolu',     hex:'#DDDDB8', resept:'+ Sarı 3 + Qəhvəyi 2 damcı',            neticə:'Xakini zeytun pastelə çevir. Herbal görünüş.' },
+        { ad:'Adaçayı yolu',    hex:'#CCDCC8', resept:'+ Yaşıl 3 + Sarı 2 damcı',              neticə:'Daha yaşıl, daha natural pastel.' },
+        { ad:'Meşə yolu',       hex:'#C4CCC0', resept:'+ Qara 2 + Yaşıl 2 damcı',              neticə:'Tünd meşə yaşılı pastel. Kişi sabunları.' },
       ]
     },
     {
       problem: 'Kirli bənövşəyi-boz',
-      hex_problem:'#6B5B6B',
+      hex_problem: '#C4BBC4',
       icon: '😵',
       izah: 'Bənövşəyi + mavi + qara qarışıb çirkin rəng çıxıb.',
       yollar: [
-        { ad:'Magistr yolu',      hex:'#8B008B', resept:'+ Bənövşəyi 5 + Qırmızı 2 damcı',               neticə:'Daha çox bənövşəyi — rəngi geri qayt.' },
-        { ad:'Leylak yolu',       hex:'#9F7FBF', resept:'+ Bənövşəyi 4 + Ağ 4 damcı',                    neticə:'Açıq, yumşaq leylak. Bəlkə çıxdı!' },
-        { ad:'Kömür yolu',        hex:'#3D3D3D', resept:'+ Qara 5-6 damcı',                               neticə:'Qəbul et — charcoal kimi sat.' },
+        { ad:'Magistr yolu',    hex:'#DCC0DC', resept:'+ Bənövşəyi 5 + Qırmızı 2 damcı',       neticə:'Daha çox bənövşəyi — rəngi geri qayt.' },
+        { ad:'Leylak yolu',     hex:'#E8DEF0', resept:'+ Bənövşəyi 4 + Ağ 4 damcı',            neticə:'Açıq, yumşaq leylak pastel. Bəlkə çıxdı!' },
+        { ad:'Kömür yolu',      hex:'#BEBEBE', resept:'+ Qara 5-6 damcı',                       neticə:'Qəbul et — charcoal pastel kimi sat.' },
       ]
     },
   ];
@@ -2734,9 +2734,9 @@ function mkMasterReng() {
     const probSw = ce('div');
     probSw.style.cssText = 'width:40px;height:40px;border-radius:10px;background:'+x.hex_problem+';border:2px solid rgba(255,255,255,.15);flex-shrink:0';
     const probInfo = ce('div');
-    const probTitle = ce('div'); probTitle.style.cssText = 'font-size:14px;font-weight:700;color:#fff';
+    const probTitle = ce('div'); probTitle.style.cssText = 'font-size:14px;font-weight:700;color:#222';
     probTitle.textContent = x.icon + ' ' + x.problem;
-    const probIzah = ce('div'); probIzah.style.cssText = 'font-size:11px;color:#777;margin-top:2px';
+    const probIzah = ce('div'); probIzah.style.cssText = 'font-size:11px;color:#555;margin-top:2px';
     probIzah.textContent = x.izah;
     probInfo.appendChild(probTitle); probInfo.appendChild(probIzah);
     probRow.appendChild(probSw); probRow.appendChild(probInfo);
@@ -2748,9 +2748,9 @@ function mkMasterReng() {
       const resSw = ce('div');
       resSw.style.cssText = 'width:36px;height:36px;border-radius:8px;background:'+y.hex+';border:2px solid rgba(255,255,255,.2);flex-shrink:0';
       const kardInfo = ce('div'); kardInfo.style.cssText = 'flex:1';
-      const adEl = ce('div'); adEl.style.cssText = 'font-size:12px;font-weight:700;color:#fff;margin-bottom:2px'; adEl.textContent = y.ad;
-      const resEl = ce('div'); resEl.style.cssText = 'font-size:11px;color:#a78bfa;margin-bottom:2px'; resEl.textContent = y.resept;
-      const netEl = ce('div'); netEl.style.cssText = 'font-size:10px;color:#666;line-height:1.4'; netEl.textContent = y.neticə;
+      const adEl = ce('div'); adEl.style.cssText = 'font-size:12px;font-weight:700;color:#222;margin-bottom:2px'; adEl.textContent = y.ad;
+      const resEl = ce('div'); resEl.style.cssText = 'font-size:11px;color:#6d4c9e;font-weight:600;margin-bottom:2px'; resEl.textContent = y.resept;
+      const netEl = ce('div'); netEl.style.cssText = 'font-size:10px;color:#555;line-height:1.4'; netEl.textContent = y.neticə;
       kardInfo.appendChild(adEl); kardInfo.appendChild(resEl); kardInfo.appendChild(netEl);
       kard.appendChild(resSw); kard.appendChild(kardInfo);
       sec.appendChild(kard);
@@ -2760,7 +2760,7 @@ function mkMasterReng() {
   });
 
   const note = ce('div');
-  note.style.cssText = 'font-size:11px;color:#555;text-align:center;margin-top:8px;line-height:1.6;padding:10px;background:rgba(255,255,255,.03);border-radius:8px';
+  note.style.cssText = 'font-size:11px;color:#444;text-align:center;margin-top:8px;line-height:1.6;padding:10px;background:rgba(0,0,0,.04);border-radius:8px';
   note.textContent = '💡 Əsas prinsip: rəngi düzəltmək çətin olsa — qəbul et və "intensional" et. Tünd şokolad, charcoal, zeytun — bunlar da gözəl sabundur.';
   page.appendChild(note);
 
