@@ -332,6 +332,7 @@ const S = {
   atirSub: null,
   bfInput: '', bfResult: null, bfLoading: false, bfMode: '', bfMehsul: 'Ümumi', bfCins: 'Qadın',
   mbMehsul: 'Sabun', mbXarakter: '', mbEffekt: 'Universal saxla', mbResult: null, mbLoading: false,
+  rengSub: null, rengSeçim: null, rengAI: '', rengAIResult: null, rengAILoading: false,
   hbKat: 'Hamısı', hbCins: 'Hamısı', hbSearch: '', hbHideZero: false,
   atirAnbar: [], atirSearch: '', atirEditId: null, atirEditBuf: {}, atirSyncSt: ''
 };
@@ -572,6 +573,7 @@ function render() {
   if (S.page === 'anbar') root.appendChild(mkAnbar());
   if (S.page === 'kalkulyator') root.appendChild(mkKalkulyator());
   if (S.page === 'atirdunyasi') root.appendChild(mkAtirDunyasi());
+  if (S.page === 'rengdunyasi') root.appendChild(mkRengDunyasi());
 }
 
 function mkHome() {
@@ -600,10 +602,15 @@ function mkHome() {
   c3.innerHTML = '<div class="hc-icon">🌸</div><div class="hc-body"><div class="hc-title">Ətir Dünyası</div><div class="hc-desc">Blend hesablama, arxiv və tövsiyələr</div></div><div class="hc-arrow">→</div>';
   c3.onclick = () => set({ page: 'atirdunyasi', atirSub: null });
 
+  const c4 = ce('button', 'home-card');
+  c4.innerHTML = '<div class="hc-icon">🎨</div><div class="hc-body"><div class="hc-title">Rəng Dünyası</div><div class="hc-desc">M&P ağ baza üçün rəng tövsiyələri</div></div><div class="hc-arrow">→</div>';
+  c4.onclick = () => set({ page: 'rengdunyasi', rengSub: null });
+
   d.appendChild(logo);
   d.appendChild(h1);
   d.appendChild(sub);
   d.appendChild(c3);
+  d.appendChild(c4);
   d.appendChild(c2);
   d.appendChild(c1);
   return d;
@@ -2318,6 +2325,319 @@ function mkMasterBlendResult() {
 
   wrap.appendChild(res);
   return wrap;
+}
+
+
+// ── RƏNG DÜNYASI ─────────────────────────────────────────────────────────────
+
+const RENGLER = [
+  { id:'sari',      az:'Sarı',          en:'Yellow',          hex:'#F5C518', set:'hər ikisi', qrup:1 },
+  { id:'narinci',   az:'Narıncı',       en:'Orange',          hex:'#FF7043', set:'930',       qrup:1 },
+  { id:'qirmizi',   az:'Qırmızı',       en:'Red',             hex:'#E53935', set:'hər ikisi', qrup:1 },
+  { id:'lime',      az:'Limon-yaşıl',   en:'Lime',            hex:'#AEEA00', set:'930',       qrup:3 },
+  { id:'cehrayi',   az:'Çəhrayı',       en:'Pink',            hex:'#F06292', set:'hər ikisi', qrup:1 },
+  { id:'benovseyi', az:'Bənövşəyi',     en:'Violet',          hex:'#7B1FA2', set:'hər ikisi', qrup:3 },
+  { id:'mavi',      az:'Mavi',          en:'Blue',            hex:'#1E88E5', set:'hər ikisi', qrup:3 },
+  { id:'sud_shok',  az:'Süd şokoladı',  en:'Milk Chocolate',  hex:'#795548', set:'930',       qrup:2 },
+  { id:'qara',      az:'Qara',          en:'Black',           hex:'#212121', set:'hər ikisi', qrup:2 },
+  { id:'qehveyi',   az:'Qəhvəyi',       en:'Brown',           hex:'#6D4C41', set:'1050',      qrup:2 },
+  { id:'yasil',     az:'Yaşıl',         en:'Green',           hex:'#43A047', set:'1050',      qrup:3 },
+  { id:'karmin',    az:'Karmin',        en:'Carmine',         hex:'#B71C1C', set:'1050',      qrup:1 },
+  { id:'ag',        az:'Ağ',            en:'White',           hex:'#F5F5F5', set:'1050',      qrup:2 },
+];
+
+const QRUP_INFO = {
+  1: { icon:'🟢', label:'Tonlanır',   izah:'Qara və ya qəhvəyi ilə gözəl muted ton verir' },
+  2: { icon:'🟡', label:'Tündləşir',  izah:'Qara ilə sadəcə shade yaranır, hue dəyişmir' },
+  3: { icon:'🔴', label:'Problemli',  izah:'Qara ilə tam başqa rəngə dönür — qəhvəyi və ya komplement istifadə et' },
+};
+
+const MUTED_TONLAR = [
+  { ad:'Mustard Yellow', az:'Xardal Sarısı',   hex:'#C8960C', damci:'Sarı 8 damcı + Qara 1 damcı',                              resept:'Sarı + çox az Qara\nvə ya Sarı + az Qəhvəyi' },
+  { ad:'Terracotta',     az:'Terrakota',        hex:'#C0622A', damci:'Narıncı 8 damcı + Qara 1 damcı',                           resept:'Narıncı + çox az Qara\nvə ya Narıncı + az Qəhvəyi' },
+  { ad:'Brick Red',      az:'Kərpic Qırmızı',  hex:'#9B3A2A', damci:'Qırmızı 7 damcı + Qara 2 damcı',                           resept:'Qırmızı + az Qara\nvə ya Qırmızı + Qəhvəyi' },
+  { ad:'Dusty Rose',     az:'Dusty Rose',       hex:'#C08080', damci:'Çəhrayı 8 damcı + Qəhvəyi 1 damcı',                       resept:'Çəhrayı + çox az Qəhvəyi\nvə ya Çəhrayı + az Boz' },
+  { ad:'Sage Green',     az:'Ada çayı yaşılı', hex:'#8FAF8F', damci:'Yaşıl 7 damcı + Qırmızı 2 damcı',                         resept:'Yaşıl + az Qəhvəyi\nvə ya Yaşıl + az Qırmızı' },
+  { ad:'Olive Green',    az:'Zeytun yaşılı',   hex:'#808000', damci:'Sarı 5 damcı + Yaşıl 3 damcı + Qəhvəyi 1 damcı',          resept:'Sarı + Yaşıl + az Qəhvəyi' },
+  { ad:'Slate Blue',     az:'Tünd göy',        hex:'#6A7FA8', damci:'Mavi 8 damcı + Ağ 2 damcı',                               resept:'Mavi + az Ağ (Qara istifadə etmə!)' },
+  { ad:'Dusty Lavender', az:'Tünd lavanda',    hex:'#9980A8', damci:'Bənövşəyi 7 damcı + Ağ 2 damcı',                          resept:'Bənövşəyi + az Ağ' },
+  { ad:'Cocoa Brown',    az:'Kakao qəhvəyi',   hex:'#6B3D2E', damci:'Qəhvəyi 8 damcı + Qırmızı 1 damcı',                      resept:'Qəhvəyi + az Qırmızı' },
+  { ad:'Sand Beige',     az:'Qum bej',         hex:'#C8B89A', damci:'Sarı 7 damcı + Qəhvəyi 2 damcı',                          resept:'Sarı + az Qəhvəyi' },
+  { ad:'Clay Pink',      az:'Gil çəhrayı',     hex:'#C49080', damci:'Çəhrayı 6 damcı + Narıncı 2 damcı + Qəhvəyi 1 damcı',    resept:'Çəhrayı + az Narıncı + az Qəhvəyi' },
+  { ad:'Charcoal',       az:'Kömür',           hex:'#3D3D3D', damci:'Qara 8 damcı + Ağ 1 damcı',                              resept:'Qara + çox az Ağ' },
+];
+
+function mkRengDunyasi() {
+  const page = ce('div', 'page');
+  if (S.rengSub === 'katalog') return mkRengKatalog();
+  if (S.rengSub === 'muted')   return mkMutedTonlar();
+  if (S.rengSub === 'mikser')  return mkRengMikser();
+  if (S.rengSub === 'ai')      return mkRengAIPage();
+
+  const hdr = ce('div', 'topbar');
+  const title = ce('span', 'topbar-title'); title.textContent = '🎨 Rəng Dünyası';
+  const back = ce('button', 'sec-btn'); back.textContent = '← Geri';
+  back.style.cssText = 'padding:8px 14px;font-size:13px';
+  back.onclick = () => set({ page: 'home' });
+  hdr.appendChild(back); hdr.appendChild(title);
+  page.appendChild(hdr);
+
+  const desc = ce('p');
+  desc.style.cssText = 'font-size:12px;color:#777;margin-bottom:16px;line-height:1.5';
+  desc.textContent = 'M&P ağ sabun bazası üçün rəng bələdçisi. Parlaqlıq, tonlama, qarışdırma.';
+  page.appendChild(desc);
+
+  [
+    { icon:'🎨', title:'Rəng Kataloqu',    desc:'13 rəng — davranış, set məlumatı',  sub:'katalog' },
+    { icon:'🌿', title:'Muted Tonlar',      desc:'12 hazır natural ton resepti',       sub:'muted'   },
+    { icon:'🔀', title:'Rəng Mikseri',      desc:'Rəng seç, tonlama üsulunu öyrən',   sub:'mikser'  },
+    { icon:'🤖', title:'AI Rəng Məsləhəti', desc:'"Limon sarısı istəyirəm" → resept', sub:'ai'      },
+  ].forEach(c => {
+    const card = ce('button', 'home-card');
+    card.style.marginBottom = '10px';
+    card.innerHTML = '<div class="hc-icon">'+c.icon+'</div><div class="hc-body"><div class="hc-title">'+c.title+'</div><div class="hc-desc">'+c.desc+'</div></div><div class="hc-arrow">→</div>';
+    card.onclick = () => set({ rengSub: c.sub });
+    page.appendChild(card);
+  });
+  return page;
+}
+
+function mkRengKatalog() {
+  const page = ce('div', 'page');
+  const hdr = ce('div', 'topbar');
+  const title = ce('span', 'topbar-title'); title.textContent = '🎨 Rəng Kataloqu';
+  const back = ce('button', 'sec-btn'); back.textContent = '← Geri';
+  back.style.cssText = 'padding:8px 14px;font-size:13px';
+  back.onclick = () => set({ rengSub: null });
+  hdr.appendChild(back); hdr.appendChild(title);
+  page.appendChild(hdr);
+
+  const leg = ce('div');
+  leg.style.cssText = 'display:flex;flex-direction:column;gap:4px;margin-bottom:14px;padding:10px;background:rgba(255,255,255,.04);border-radius:10px';
+  Object.values(QRUP_INFO).forEach(function(q) {
+    const r = ce('div'); r.style.cssText = 'font-size:11px;color:#888';
+    r.textContent = q.icon + ' ' + q.label + ' — ' + q.izah;
+    leg.appendChild(r);
+  });
+  page.appendChild(leg);
+
+  RENGLER.forEach(function(r) {
+    const card = ce('div', 'result-box');
+    card.style.cssText = 'margin-bottom:8px;display:flex;align-items:center;gap:12px';
+    const swatch = ce('div');
+    swatch.style.cssText = 'width:44px;height:44px;border-radius:10px;background:'+r.hex+';flex-shrink:0;border:2px solid rgba(255,255,255,.15)';
+    const info = ce('div'); info.style.cssText = 'flex:1';
+    const adRow = ce('div'); adRow.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:2px';
+    const az = ce('span'); az.style.cssText = 'font-size:14px;font-weight:700;color:#fff'; az.textContent = r.az;
+    const en = ce('span'); en.style.cssText = 'font-size:11px;color:#666'; en.textContent = r.en;
+    adRow.appendChild(az); adRow.appendChild(en);
+    const metaRow = ce('div'); metaRow.style.cssText = 'display:flex;gap:6px;align-items:center';
+    const setBadge = ce('span');
+    setBadge.style.cssText = 'font-size:10px;padding:2px 6px;border-radius:8px;background:rgba(255,255,255,.08);color:#999';
+    setBadge.textContent = r.set === 'hər ikisi' ? '930 + 1050' : r.set;
+    const qi = QRUP_INFO[r.qrup];
+    const qBadge = ce('span'); qBadge.style.cssText = 'font-size:10px;color:#888';
+    qBadge.textContent = qi.icon + ' ' + qi.label;
+    metaRow.appendChild(setBadge); metaRow.appendChild(qBadge);
+    info.appendChild(adRow); info.appendChild(metaRow);
+    card.appendChild(swatch); card.appendChild(info);
+    page.appendChild(card);
+  });
+  return page;
+}
+
+function mkMutedTonlar() {
+  const page = ce('div', 'page');
+  const hdr = ce('div', 'topbar');
+  const title = ce('span', 'topbar-title'); title.textContent = '🌿 Muted Tonlar';
+  const back = ce('button', 'sec-btn'); back.textContent = '← Geri';
+  back.style.cssText = 'padding:8px 14px;font-size:13px';
+  back.onclick = () => set({ rengSub: null });
+  hdr.appendChild(back); hdr.appendChild(title);
+  page.appendChild(hdr);
+
+  const note = ce('div');
+  note.style.cssText = 'font-size:11px;color:#777;margin-bottom:14px;line-height:1.5;padding:8px 10px;background:rgba(255,255,255,.04);border-radius:8px';
+  note.textContent = '100q ağ M&P bazası üçün damcı sayları. 930 set daha güclüdür — az damcı istifadə edin.';
+  page.appendChild(note);
+
+  MUTED_TONLAR.forEach(function(t) {
+    const card = ce('div', 'result-box');
+    card.style.marginBottom = '10px';
+    const topRow = ce('div'); topRow.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:8px';
+    const swatch = ce('div');
+    swatch.style.cssText = 'width:36px;height:36px;border-radius:8px;background:'+t.hex+';flex-shrink:0;border:2px solid rgba(255,255,255,.15)';
+    const nameEl = ce('div');
+    const en = ce('div'); en.style.cssText = 'font-size:14px;font-weight:700;color:#fff'; en.textContent = t.ad;
+    const az = ce('div'); az.style.cssText = 'font-size:11px;color:#666'; az.textContent = t.az;
+    nameEl.appendChild(en); nameEl.appendChild(az);
+    topRow.appendChild(swatch); topRow.appendChild(nameEl);
+    card.appendChild(topRow);
+    const damci = ce('div');
+    damci.style.cssText = 'font-size:12px;color:#a78bfa;font-weight:600;margin-bottom:4px';
+    damci.textContent = '💧 ' + t.damci;
+    card.appendChild(damci);
+    const resept = ce('div');
+    resept.style.cssText = 'font-size:11px;color:#6c7a99;line-height:1.5;white-space:pre-line';
+    resept.textContent = t.resept;
+    card.appendChild(resept);
+    page.appendChild(card);
+  });
+  return page;
+}
+
+function mkRengMikser() {
+  const page = ce('div', 'page');
+  const hdr = ce('div', 'topbar');
+  const title = ce('span', 'topbar-title'); title.textContent = '🔀 Rəng Mikseri';
+  const back = ce('button', 'sec-btn'); back.textContent = '← Geri';
+  back.style.cssText = 'padding:8px 14px;font-size:13px';
+  back.onclick = () => set({ rengSub: null, rengSecim: null });
+  hdr.appendChild(back); hdr.appendChild(title);
+  page.appendChild(hdr);
+
+  const lbl = ce('div', 'form-label'); lbl.style.marginBottom = '10px'; lbl.textContent = 'Rənginizi seçin:';
+  page.appendChild(lbl);
+
+  const grid = ce('div');
+  grid.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px';
+  RENGLER.forEach(function(r) {
+    const btn = ce('button');
+    const sel = S.rengSecim === r.id;
+    btn.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border-radius:10px;border:2px solid '+(sel?'#a78bfa':'transparent')+';background:rgba(255,255,255,.04);cursor:pointer';
+    const sw = ce('div');
+    sw.style.cssText = 'width:32px;height:32px;border-radius:8px;background:'+r.hex+';border:1.5px solid rgba(255,255,255,.15)';
+    const nm = ce('span'); nm.style.cssText = 'font-size:9px;color:#999;text-align:center;line-height:1.2'; nm.textContent = r.az;
+    btn.appendChild(sw); btn.appendChild(nm);
+    btn.onclick = function() { S.rengSecim = sel ? null : r.id; render(); };
+    grid.appendChild(btn);
+  });
+  page.appendChild(grid);
+
+  if (S.rengSecim) {
+    const r = RENGLER.find(function(x) { return x.id === S.rengSecim; });
+    if (r) {
+      const qi = QRUP_INFO[r.qrup];
+      const infoCard = ce('div', 'result-box');
+      const topR = ce('div'); topR.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:12px';
+      const sw = ce('div'); sw.style.cssText = 'width:48px;height:48px;border-radius:12px;background:'+r.hex+';border:2px solid rgba(255,255,255,.2)';
+      const nm = ce('div');
+      const azEl = ce('div'); azEl.style.cssText = 'font-size:16px;font-weight:700;color:#fff'; azEl.textContent = r.az;
+      const enEl = ce('div'); enEl.style.cssText = 'font-size:12px;color:#666'; enEl.textContent = r.en + ' · ' + r.set;
+      nm.appendChild(azEl); nm.appendChild(enEl);
+      topR.appendChild(sw); topR.appendChild(nm);
+      infoCard.appendChild(topR);
+
+      const qBadge = ce('div');
+      qBadge.style.cssText = 'font-size:12px;font-weight:600;margin-bottom:10px;color:#ccc';
+      qBadge.textContent = qi.icon + ' ' + qi.label + ' — ' + qi.izah;
+      infoCard.appendChild(qBadge);
+
+      const tonDiv = ce('div');
+      tonDiv.style.cssText = 'background:rgba(255,255,255,.05);border-radius:8px;padding:10px;font-size:12px;line-height:1.7;color:#aaa';
+      var komps = { mavi:'Narıncı', yasil:'Qırmızı', benovseyi:'Sarı', lime:'Qırmızı' };
+      if (r.qrup === 1) {
+        tonDiv.innerHTML = '<b style="color:#fff">✅ Qara ilə tonlama:</b><br>100q bazaya '+r.az.toLowerCase()+' 5-10 damcı + Qara 1-3 damcı<br>Qara artdıqca: parlaq → natural → tünd<br><br><b style="color:#fff">✅ Qəhvəyi ilə tonlama (daha yumşaq):</b><br>'+r.az+' 7-8 damcı + Qəhvəyi 1-2 damcı';
+      } else if (r.qrup === 2) {
+        tonDiv.innerHTML = '<b style="color:#fff">🟡 Qara ilə sadəcə tündləşir:</b><br>Hue dəyişmir, sadəcə darker shade olur.<br>100q bazaya '+r.az.toLowerCase()+' 5-8 damcı + Qara 1-2 damcı<br><br><b style="color:#fff">Tövsiyə:</b> Qəhvəyi ilə də qarışdıra bilərsiniz.';
+      } else {
+        var komp = komps[r.id] || 'Qəhvəyi';
+        tonDiv.innerHTML = '<b style="color:#e74c3c">⚠️ Qara İSTİFADƏ ETMƏ!</b><br>Qara bu rəngi tamamilə başqa rəngə çevirir.<br><br><b style="color:#fff">✅ Bunun əvəzinə:</b><br>• Qəhvəyi ilə tonlama: '+r.az+' 7 damcı + Qəhvəyi 1 damcı<br>• Komplement rəng: '+r.az+' 7 damcı + '+komp+' 1-2 damcı<br>• Ağ əlavə et (1050 setdə var) — parlaqlığı yumşaldır';
+      }
+      infoCard.appendChild(tonDiv);
+      page.appendChild(infoCard);
+    }
+  }
+  return page;
+}
+
+function mkRengAIPage() {
+  const page = ce('div', 'page');
+  const hdr = ce('div', 'topbar');
+  const title = ce('span', 'topbar-title'); title.textContent = '🤖 AI Rəng Məsləhəti';
+  const back = ce('button', 'sec-btn'); back.textContent = '← Geri';
+  back.style.cssText = 'padding:8px 14px;font-size:13px';
+  back.onclick = () => set({ rengSub: null, rengAIResult: null });
+  hdr.appendChild(back); hdr.appendChild(title);
+  page.appendChild(hdr);
+
+  const card = ce('div', 'kal-card');
+  const body = ce('div', 'kal-body');
+  const lbl = ce('div', 'form-label'); lbl.style.marginBottom = '8px';
+  lbl.textContent = 'Hansı rəngi/tonu almaq istəyirsiniz?';
+  body.appendChild(lbl);
+
+  const inp = ce('input', 'form-inp');
+  inp.type = 'text';
+  inp.placeholder = 'Məs: limon sarısı, dusty rose, dəniz mavisi...';
+  inp.style.marginBottom = '8px';
+  inp.value = S.rengAI || '';
+  inp.oninput = function(e) { S.rengAI = e.target.value; };
+
+  const hint = ce('div');
+  hint.style.cssText = 'font-size:11px;color:#555;margin-bottom:14px;line-height:1.5';
+  hint.textContent = 'Əlinizdəki rənglər: Sarı, Narıncı, Qırmızı, Limon-yaşıl, Çəhrayı, Bənövşəyi, Mavi, Süd şokoladı, Qara, Qəhvəyi, Yaşıl, Karmin, Ağ';
+
+  const btn = ce('button', 'pri-btn');
+  btn.style.cssText = 'width:100%;padding:14px;font-size:15px';
+  btn.textContent = S.rengAILoading ? '⏳ Hesablanır...' : '🎨 Resept Al';
+  btn.disabled = !!S.rengAILoading;
+  btn.onclick = runRengAI;
+
+  body.appendChild(inp); body.appendChild(hint); body.appendChild(btn);
+  card.appendChild(body);
+  page.appendChild(card);
+
+  if (S.rengAILoading) {
+    const load = ce('div');
+    load.style.cssText = 'text-align:center;padding:24px;color:#aaa;font-size:13px';
+    load.innerHTML = '<div class="spinner" style="margin:0 auto 10px"></div>AI rəng resepti hazırlayır...';
+    page.appendChild(load);
+  }
+
+  if (S.rengAIResult) {
+    var r = S.rengAIResult;
+    const res = ce('div', 'result-box'); res.style.marginTop = '12px';
+    const nm = ce('div', 'res-name'); nm.textContent = r.ad || ''; res.appendChild(nm);
+    const sub2 = ce('div', 'res-sub'); sub2.textContent = r.ad_en || ''; res.appendChild(sub2);
+    if (r.damci) {
+      const dc = ce('div'); dc.style.cssText = 'font-size:13px;color:#a78bfa;font-weight:600;margin:10px 0 4px';
+      dc.textContent = '💧 ' + r.damci; res.appendChild(dc);
+    }
+    if (r.addim) {
+      const ad = ce('div'); ad.style.cssText = 'font-size:12px;color:#9aa0b0;white-space:pre-line;line-height:1.6;margin-bottom:8px';
+      ad.textContent = r.addim; res.appendChild(ad);
+    }
+    if (r.xeberdarliq) {
+      const xb = ce('div'); xb.style.cssText = 'font-size:11px;color:#e67e22;background:rgba(230,126,34,.1);border-radius:6px;padding:7px 9px;line-height:1.5';
+      xb.textContent = '⚠️ ' + r.xeberdarliq; res.appendChild(xb);
+    }
+    if (r.izah) {
+      const iz = ce('div'); iz.style.cssText = 'font-size:11px;color:#6c7a99;margin-top:8px;border-top:1px solid rgba(255,255,255,.08);padding-top:8px;line-height:1.5';
+      iz.textContent = r.izah; res.appendChild(iz);
+    }
+    page.appendChild(res);
+  }
+  return page;
+}
+
+async function runRengAI() {
+  if (!S.rengAI || !S.rengAI.trim()) { showToast('Rəng adı yazın'); return; }
+  set({ rengAILoading: true, rengAIResult: null });
+
+  var prompt = 'Sən M&P sabun boyakarlığı üzrə mütəxəssisən. İstifadəçi ağ M&P sabun bazasında xüsusi bir rəng almaq istəyir.\n\nİstədiyi rəng: "' + S.rengAI + '"\n\nƏlindəki rənglər (mayə piqment):\n930 seti (30ml, daha güclü/tünd): Sarı, Narıncı, Qırmızı, Limon-yaşıl, Çəhrayı, Bənövşəyi, Mavi, Süd şokoladı, Qara\n1050 seti (50ml, yüngül): Qəhvəyi, Qara, Bənövşəyi, Çəhrayı, Yaşıl, Karmin, Mavi, Qırmızı, Sarı, Ağ\n\nVACİB QAYDALAR:\n- Ağ baza rəngləri parlaq və pastel edir\n- Parlaqlığı azaltmaq üçün: Qara (isti rənglər üçün) və ya Qəhvəyi (daha təhlükəsiz)\n- Mavi, Yaşıl, Bənövşəyi, Limon-yaşılına QARA QATMA — tamam başqa rəngə çevrilir\n- Bu rənglər üçün: Qəhvəyi və ya komplement rəng istifadə et\n- 930 set güclüdür — az damcı lazımdır\n- 100q baza üçün ümumi 5-10 damcı rəng\n\nYALNIZ JSON ver:\n{"ad":"Azərbaycanca rəng adı","ad_en":"English color name","damci":"100q baza üçün damcı sayı — məs: Sarı 7 damcı + Qəhvəyi 2 damcı","addim":"Addım-addım qaydalar","xeberdarliq":"Varsa xəbərdarlıq, yoxdursa boş string","izah":"Bu rəngin ağ bazada davranışı"}';
+
+  try {
+    var resp = await fetch(GS_URL, { method: 'POST', body: JSON.stringify({ action: 'ai_blend', prompt: prompt }) });
+    var data = await resp.json();
+    if (data.error) { set({ rengAILoading: false }); showToast('API xətası: ' + (data.error.message||'')); return; }
+    var text = data.content.map(function(i){ return i.text||''; }).join('');
+    var parsed = JSON.parse(text.replace(/```json|```/g,'').trim());
+    set({ rengAIResult: parsed, rengAILoading: false });
+  } catch(e) {
+    set({ rengAILoading: false });
+    showToast('Xəta: ' + (e && e.message ? e.message : String(e)));
+  }
 }
 
 function showRatingConfirm(card, rKey, val) {
