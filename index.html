@@ -1495,8 +1495,10 @@ async function runBlendAI(mode) {
     : `Sən peşəkar parfümer və kosmetik formulyatorsən.\n\n${mehsulQayda[mehsul] || ''}\nCİNSİYYƏT: ${cins} üçün uyğun qoxu profili seç.\n\n${gucQayda}\n\nMüştərinin tələbi: "${input}" ətirini mərkəzə alaraq ${mehsul} üçün blend yarat.\n\nAnbar siyahısı:\n${atirList}\n\nQAYDALAR:\n- "${input}" ətiri dominant olsun (30-50%), zəifdirsə faizini artır\n- Tamamlayıcı ətirləri anbardan seç, yoxdursa anbar: false\n- 3-5 ətirdən ibarət 2-3 variant, hər birinin faizləri cəmi dəqiq 100%\n- Hər variantın adı gözəl, mənalı olsun\n- YALNIZ JSON ver:\n{"əsas_ətir":"${input}","mehsul":"${mehsul}","variantlar":[{"ad_az":"Azərbaycanca ad","ad_en":"English name","izah":"1-2 cümlə","atirlər":[{"ad":"Ətir adı","faiz":45,"anbar":true,"qeyd":"rolu"}]}]}`;
 
   try {
-    const aiUrl = GS_URL + '?action=ai_blend&prompt=' + encodeURIComponent(prompt);
-    const response = await fetch(aiUrl);
+    const response = await fetch(GS_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'ai_blend', prompt: prompt })
+    });
 
     const data = await response.json();
     if (data.error) {
@@ -2267,8 +2269,10 @@ YALNIZ JSON ver:
 {"ad_az":"Azərbaycanca ad","ad_en":"English name","xarakter":"${xarakter}","effekt":"${effekt}","mehsul":"${mehsul}","izah":"2-3 cümlə — niyə bu blend bu məhsula uyğundur","atirlər":[{"ad":"Ətir adı","faiz":40,"anbar":true,"rol":"niyə bu ətir seçildi"}]}`;
 
   try {
-    const aiUrl = GS_URL + '?action=ai_blend&prompt=' + encodeURIComponent(prompt);
-    const resp = await fetch(aiUrl);
+    const resp = await fetch(GS_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'ai_blend', prompt: prompt })
+    });
     const data = await resp.json();
     const text = data.content.map(i => i.text || '').join('');
     const parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
@@ -2875,7 +2879,7 @@ async function runRengAI() {
   var prompt = 'Sən M&P sabun boyakarlığı üzrə mütəxəssisən. İstifadəçi ağ M&P sabun bazasında xüsusi bir rəng almaq istəyir.\n\nİstədiyi rəng: "' + S.rengAI + '"\n\nƏlindəki rənglər (mayə piqment):\n930 seti (30ml, daha güclü/tünd): Sarı, Narıncı, Qırmızı, Limon-yaşıl, Çəhrayı, Bənövşəyi, Mavi, Süd şokoladı, Qara\n1050 seti (50ml, yüngül): Qəhvəyi, Qara, Bənövşəyi, Çəhrayı, Yaşıl, Karmin, Mavi, Qırmızı, Sarı, Ağ\n\nVACİB QAYDALAR:\n- Ağ baza rəngləri parlaq və pastel edir\n- Parlaqlığı azaltmaq üçün: Qara (isti rənglər üçün) və ya Qəhvəyi (daha təhlükəsiz)\n- Mavi, Yaşıl, Bənövşəyi, Limon-yaşılına QARA QATMA — tamam başqa rəngə çevrilir\n- Bu rənglər üçün: Qəhvəyi və ya komplement rəng istifadə et\n- 930 set güclüdür — az damcı lazımdır\n- 100q baza üçün ümumi 5-10 damcı rəng\n\nYALNIZ JSON ver:\n{"ad":"Azərbaycanca rəng adı","ad_en":"English color name","damci":"100q baza üçün damcı sayı — məs: Sarı 7 damcı + Qəhvəyi 2 damcı","addim":"Addım-addım qaydalar","xeberdarliq":"Varsa xəbərdarlıq, yoxdursa boş string","izah":"Bu rəngin ağ bazada davranışı"}';
 
   try {
-    var aiUrl = GS_URL + '?action=ai_blend&prompt=' + encodeURIComponent(prompt); var resp = await fetch(aiUrl);
+    var resp = await fetch(GS_URL, { method: 'POST', body: JSON.stringify({ action: 'ai_blend', prompt: prompt }) });
     var data = await resp.json();
     if (data.error) { set({ rengAILoading: false }); showToast('API xətası: ' + (data.error.message||'')); return; }
     var text = data.content.map(function(i){ return i.text||''; }).join('');
