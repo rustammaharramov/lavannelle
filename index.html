@@ -2413,17 +2413,13 @@ function mkHazirBlendlerPage() {
       };
       starRow.appendChild(delBtn);
     }
-    // Remove from saved button for AI blends
-    if (b.aiSaved) {
+    // AI blends: aşağıya atmaq ✕ ilə eyni mexanizm (reyting = 0, təsdiq lazım)
+    if (b.aiSaved && !hasRating) {
       const rmBtn = ce('button');
-      rmBtn.style.cssText = 'font-size:11px;background:none;border:1px solid #c0392b;border-radius:6px;cursor:pointer;padding:1px 7px;color:#c0392b;margin-left:4px';
-      rmBtn.textContent = '🗑 Sil';
-      rmBtn.onclick = ev => {
-        ev.stopPropagation();
-        S.savedBlends = S.savedBlends.filter(x => x.ad !== b.ad);
-        saveBlendToStorage();
-        render();
-      };
+      rmBtn.style.cssText = 'font-size:13px;background:none;border:none;cursor:pointer;padding:1px 5px;color:#555;margin-left:4px';
+      rmBtn.textContent = '✕';
+      rmBtn.title = 'Aşağıya at';
+      rmBtn.onclick = ev => { ev.stopPropagation(); showRatingConfirm(card, rKey, 0); };
       starRow.appendChild(rmBtn);
     }
 
