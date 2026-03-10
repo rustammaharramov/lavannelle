@@ -1484,19 +1484,9 @@ async function runBlendAI(mode) {
     : `Sən peşəkar parfümer və kosmetik formulyatorsən.\n\n${mehsulQayda[mehsul] || ''}\nCİNSİYYƏT: ${cins} üçün uyğun qoxu profili seç.\n\n${gucQayda}\n\nMüştərinin tələbi: "${input}" ətirini mərkəzə alaraq ${mehsul} üçün blend yarat.\n\nAnbar siyahısı:\n${atirList}\n\nQAYDALAR:\n- "${input}" ətiri dominant olsun (30-50%), zəifdirsə faizini artır\n- Tamamlayıcı ətirləri anbardan seç, yoxdursa anbar: false\n- 3-5 ətirdən ibarət 2-3 variant, hər birinin faizləri cəmi dəqiq 100%\n- Hər variantın adı gözəl, mənalı olsun\n- YALNIZ JSON ver:\n{"əsas_ətir":"${input}","mehsul":"${mehsul}","variantlar":[{"ad_az":"Azərbaycanca ad","ad_en":"English name","izah":"1-2 cümlə","atirlər":[{"ad":"Ətir adı","faiz":45,"anbar":true,"qeyd":"rolu"}]}]}`;
 
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await fetch(GS_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": ANTHROPIC_KEY,
-        "anthropic-version": "2023-06-01",
-        "anthropic-dangerous-direct-browser-access": "true"
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        messages: [{ role: "user", content: prompt }]
-      })
+      body: JSON.stringify({ action: 'ai_blend', prompt: prompt })
     });
 
     const data = await response.json();
@@ -2268,19 +2258,9 @@ YALNIZ JSON ver:
 {"ad_az":"Azərbaycanca ad","ad_en":"English name","xarakter":"${xarakter}","effekt":"${effekt}","mehsul":"${mehsul}","izah":"2-3 cümlə — niyə bu blend bu məhsula uyğundur","atirlər":[{"ad":"Ətir adı","faiz":40,"anbar":true,"rol":"niyə bu ətir seçildi"}]}`;
 
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    const resp = await fetch(GS_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 800,
-        messages: [{ role: 'user', content: prompt }]
-      })
+      body: JSON.stringify({ action: 'ai_blend', prompt: prompt })
     });
     const data = await resp.json();
     const text = data.content.map(i => i.text || '').join('');
@@ -2339,9 +2319,6 @@ function mkMasterBlendResult() {
   wrap.appendChild(res);
   return wrap;
 }
-
-// API KEY — buraya öz açarınızı yazın
-const ANTHROPIC_KEY = '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';
 
 function showRatingConfirm(card, rKey, val) {
   // Remove any existing confirm panel
