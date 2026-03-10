@@ -1913,6 +1913,57 @@ function mkCPPage() {
     topRow.appendChild(icon); topRow.appendChild(name); topRow.appendChild(lvlBadge);
     card.appendChild(topRow);
 
+    // ── STAR RATING ──
+    const rKey = 'blendRating_cp_' + b.ad.replace(/\s+/g,'_');
+    let curRating = 0;
+    try { curRating = parseInt(localStorage.getItem(rKey) || '0') || 0; } catch(e) {}
+    const hasRating = localStorage.getItem(rKey) !== null;
+    const isZero = hasRating && curRating === 0;
+
+    const starRow = ce('div');
+    starRow.style.cssText = 'display:flex;align-items:center;gap:4px;margin-bottom:8px;flex-wrap:wrap';
+
+    const zeroBtn = ce('button');
+    zeroBtn.style.cssText = `font-size:12px;background:none;border:1.5px solid ${isZero?'#e74c3c':'#444'};border-radius:6px;cursor:pointer;padding:1px 7px;color:${isZero?'#e74c3c':'#666'}`;
+    zeroBtn.textContent = '✕';
+    zeroBtn.onclick = ev => { ev.stopPropagation(); showRatingConfirm(card, rKey, 0); };
+    starRow.appendChild(zeroBtn);
+
+    const sep = ce('span'); sep.style.cssText = 'color:#444;font-size:10px;margin:0 2px'; sep.textContent = '|';
+    starRow.appendChild(sep);
+
+    for (let st = 1; st <= 5; st++) {
+      const star = ce('button');
+      const filled = st <= curRating;
+      star.style.cssText = `font-size:20px;background:none;border:none;cursor:pointer;padding:0 1px;line-height:1;color:${filled?'#f5c518':'#555'}`;
+      star.textContent = filled ? '\u2605' : '\u2606';
+      const stVal = st;
+      star.onclick = ev => { ev.stopPropagation(); showRatingConfirm(card, rKey, stVal); };
+      starRow.appendChild(star);
+    }
+
+    const rl = ce('span');
+    if (curRating > 0 && hasRating) {
+      rl.style.cssText = 'font-size:11px;color:#f5c518;margin-left:4px;font-weight:600';
+      rl.textContent = curRating + '/5';
+    } else if (isZero) {
+      rl.style.cssText = 'font-size:11px;color:#e74c3c;margin-left:4px';
+      rl.textContent = 'İstifadə edilmir';
+    } else {
+      rl.style.cssText = 'font-size:11px;color:#7a8499;margin-left:4px';
+      rl.textContent = 'Sınaqdan keçməyib';
+    }
+    starRow.appendChild(rl);
+
+    if (hasRating) {
+      const delBtn = ce('button');
+      delBtn.style.cssText = 'font-size:11px;background:none;border:1px solid #444;border-radius:6px;cursor:pointer;padding:1px 7px;color:#9fa9bf;margin-left:4px';
+      delBtn.textContent = '🗑';
+      delBtn.onclick = ev => { ev.stopPropagation(); showRatingConfirm(card, rKey, 'del'); };
+      starRow.appendChild(delBtn);
+    }
+    card.appendChild(starRow);
+
     // Ingredients
     b.atirlər.split('+').map(p=>p.trim()).forEach(p => {
       const m = p.match(/^(.+?)\s+(\d+)%$/);
