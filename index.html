@@ -1498,13 +1498,18 @@ async function runBlendAI(mode) {
     });
 
     const data = await response.json();
+    if (data.error) {
+      set({ bfLoading: false });
+      showToast('API xətası: ' + (data.error.message || JSON.stringify(data.error)));
+      return;
+    }
     const text = data.content.map(i => i.text || '').join('');
     const clean = text.replace(/```json|```/g, '').trim();
     const parsed = JSON.parse(clean);
     set({ bfResult: parsed, bfLoading: false, bfMode: mode });
   } catch(e) {
     set({ bfLoading: false });
-    showToast('Xəta baş verdi, yenidən cəhd edin');
+    showToast('Xəta: ' + (e && e.message ? e.message : String(e)));
   }
 }
 
