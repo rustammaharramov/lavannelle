@@ -1760,7 +1760,7 @@ function mkCPPage() {
 
   // ── CƏDVƏL ──
   const tblTitle = ce('div');
-  tblTitle.style.cssText = 'font-size:13px;font-weight:700;color:#f0f0f0;margin-bottom:10px';
+  tblTitle.style.cssText = 'font-size:13px;font-weight:700;color:#5dcc8a;margin-bottom:10px;background:#1a1e2e;padding:10px 12px;border-radius:10px 10px 0 0;margin-bottom:0';
   tblTitle.textContent = '📊 CP Test Cədvəli';
   page.appendChild(tblTitle);
 
@@ -1777,7 +1777,7 @@ function mkCPPage() {
 
   // Build real HTML table
   const tblWrap = ce('div');
-  tblWrap.style.cssText = 'overflow-x:auto;margin-bottom:24px;border-radius:10px;border:1px solid rgba(255,255,255,.1)';
+  tblWrap.style.cssText = 'overflow-x:auto;margin-bottom:24px;border-radius:0 0 10px 10px;border:1px solid rgba(255,255,255,.1);background:#1a1e2e';
 
   const tbl = document.createElement('table');
   tbl.style.cssText = 'width:100%;border-collapse:collapse;font-size:11px';
@@ -1785,7 +1785,7 @@ function mkCPPage() {
   // Header
   const thead = document.createElement('thead');
   const hRow = document.createElement('tr');
-  hRow.style.cssText = 'background:rgba(255,255,255,.08)';
+  hRow.style.cssText = 'background:#252a3e';
   ['Ətir adı','CP','Vanil','Accel.','Diskolorasiya','Separ.'].forEach((h,i) => {
     const th = document.createElement('th');
     th.style.cssText = 'padding:8px 6px;color:#9aa0b0;font-weight:700;text-align:' + (i===0?'left':'center') + ';white-space:nowrap';
@@ -1812,11 +1812,11 @@ function mkCPPage() {
     prevCpGroup = r.cp;
 
     const row = document.createElement('tr');
-    row.style.cssText = 'background:' + (i%2===0?'rgba(255,255,255,.02)':'transparent') + ';border-top:1px solid rgba(255,255,255,.04)';
+    row.style.cssText = 'background:' + (i%2===0?'rgba(255,255,255,.04)':'transparent') + ';border-top:1px solid rgba(255,255,255,.06)';
 
     // Name
     const nameTd = document.createElement('td');
-    nameTd.style.cssText = 'padding:7px 8px;color:' + (r.cp?'#f0f0f0':'#6a7080') + ';line-height:1.3';
+    nameTd.style.cssText = 'padding:7px 8px;color:' + (r.cp?'#5dcc8a':'#6a7080') + ';line-height:1.3';
     const nameShort = r.ad.replace(' FO USA','');
     // Level badge for CP+ rows
     if (r.cp && r.level !== 'none') {
@@ -1873,7 +1873,7 @@ function mkCPPage() {
 
   // ── BLENDLƏR ──
   const blTitle = ce('div');
-  blTitle.style.cssText = 'font-size:13px;font-weight:700;color:#f0f0f0;margin-bottom:4px';
+  blTitle.style.cssText = 'font-size:13px;font-weight:700;color:#5dcc8a;margin-bottom:4px';
   blTitle.textContent = '🧴 CP Blendlər (3 ətirli)';
   page.appendChild(blTitle);
 
