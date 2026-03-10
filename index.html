@@ -624,10 +624,10 @@ function mkNav() {
   brand.onclick = () => set({ page: 'home', atirSub: null });
 
   const tabs = ce('div', 'nav-tabs');
-  [['anbar', '📦 Anbar'], ['kalkulyator', '🧪 Kalkul.'], ['atirdunyasi', '🌸 Ətir']].forEach(([k, l]) => {
+  [['anbar', '📦 Anbar'], ['kalkulyator', '🧪 Kalkul.'], ['atirdunyasi', '🌸 Ətir'], ['rengdunyasi', '🎨 Rəng']].forEach(([k, l]) => {
     const b = ce('button', 'nav-tab' + (S.page === k ? ' active' : ''));
     b.textContent = l;
-    b.onclick = () => set({ page: k, atirSub: null });
+    b.onclick = () => set({ page: k, atirSub: null, rengSub: null });
     tabs.appendChild(b);
   });
 
@@ -2343,16 +2343,16 @@ const RENGLER = [
 ];
 
 const QRUP_INFO = {
-  1: { icon:'🟢', label:'Tonlanır',   izah:'Qara və ya qəhvəyi ilə gözəl sakit ton verir' },
-  2: { icon:'🟡', label:'Tündləşir',  izah:'Qara ilə sadəcə shade yaranır, hue dəyişmir' },
-  3: { icon:'🔴', label:'Problemli',  izah:'Qara ilə tam başqa rəngə çevrilir — qəhvəyi və ya komplement istifadə et' },
+  1: { icon:'🟢', label:'Tonlanır',    izah:'Qara və ya qəhvəyi ilə gözəl sakit ton verir' },
+  2: { icon:'🟡', label:'Tündləşir',   izah:'Qara ilə sadəcə shade yaranır, hue dəyişmir' },
+  3: { icon:'🟠', label:'Ehtiyatlı',   izah:'Qara ilə fərqli rəngə keçir — pis deyil, amma gözlənilməz ola bilər' },
 };
 
 const QARA_NETICE = {
-  mavi:      { hex:'#4A4A5A', ad:'Tünd boz-qara',      izah:'Mavi tamam itir, "kirli" boz qalır' },
-  yasil:     { hex:'#4A4A35', ad:'Tünd xaki-boz',       izah:'Yaşıl itir, zeytun deyil, pis boz-xaki çıxır' },
-  benovseyi: { hex:'#3D2B3D', ad:'Tünd qəhvəyi-boz',   izah:'Bənövşəyi tamam itir, çirkin boz-qəhvəyi qalır' },
-  lime:      { hex:'#4A4A25', ad:'Sarımtıl-xaki',       izah:'Ən pis nəticə — sarı-yaşıl tamam ölür' },
+  mavi:      { hex:'#C0D6EA', ad:'Dəniz mavisi pastel',  izah:'Ağ bazada mavi+qara dərin, soyuq dəniz tonu verir' },
+  yasil:     { hex:'#C7DAC8', ad:'Zeytun pastel',         izah:'Ağ bazada yaşıl+qara gözəl zeytun pastel verir — hər zaman pis deyil!' },
+  benovseyi: { hex:'#D2C0DA', ad:'Baklajan pastel',       izah:'Ağ bazada bənövşəyi+qara tünd mov-baklajan tonu verir' },
+  lime:      { hex:'#DDE9BA', ad:'Xaki-yaşıl pastel',    izah:'Ağ bazada lime+qara xaki-zeytun verir — herbal kimi keçə bilər' },
 };
 
 const MUTED_TONLAR = [
@@ -2578,21 +2578,21 @@ function mkRengMikser() {
         { reng:'Bənövşəyi', miqdar:'2 damcı',   hex:'#CAD1EF', netice:'Kornflower pastel',izah:'Soyuq, zərif leylak-mavi pastel.' },
         { reng:'Çəhrayı',   miqdar:'2 damcı',   hex:'#DAD8ED', netice:'Leylak pastel',    izah:'İki soyuq rəng. Gözəl pastel.' },
         { reng:'Narıncı',   miqdar:'1 damcı',   hex:'#D7DAE6', netice:'Polad mavi',       izah:'Komplement az qatılır — dərinlik verir.' },
-        { reng:'Qara',      miqdar:'⚠️ etmə',   hex:'#C0D6EA', netice:'Solğun kirli mavi',izah:'Qara mavi ilə QATILMAZ. Bazada daha da betər görünür.' },
+        { reng:'Qara',      miqdar:'2-3 damcı', hex:'#C0D6EA', netice:'Dəniz mavisi pastel', izah:'Ehtiyatlı — mavi+qara bazada dərin dəniz tonu verir. Gözlənilməz amma maraqlı.' },
       ],
       benovseyi: [
         { reng:'Ağ',        miqdar:'2-3 damcı', hex:'#F1E8F4', netice:'Leylak pastel',    izah:'Ən yaxşı üsul. Bənövşəyi açılır, incə leylak.' },
         { reng:'Çəhrayı',   miqdar:'3 damcı',   hex:'#E8C8E2', netice:'Mov / Mauve',      izah:'İki soyuq rəng. Zərif, qadın pastel tonu.' },
         { reng:'Qırmızı',   miqdar:'2 damcı',   hex:'#E6C3D8', netice:'İsti bənövşəyi',   izah:'Qırmızı bənövşəyini istiləşdirir.' },
         { reng:'Mavi',      miqdar:'2 damcı',   hex:'#CECDED', netice:'Soyuq bənövşəyi',  izah:'Daha soyuq, daha dərin pastel.' },
-        { reng:'Qara',      miqdar:'⚠️ etmə',   hex:'#D2C0DA', netice:'Solğun boz-mov',   izah:'Qara bənövşəyi+ağ bazada çirkin boz-mov verir.' },
+        { reng:'Qara',      miqdar:'2-3 damcı', hex:'#D2C0DA', netice:'Baklajan pastel',   izah:'Ehtiyatlı — bənövşəyi+qara bazada tünd mov-baklajan tonu. Maraqlı nəticə.' },
       ],
       yasil: [
         { reng:'Sarı',      miqdar:'3-4 damcı', hex:'#E2E9C5', netice:'Limon pastel',     izah:'Canlı, limon-yaşıl pastel. Sitrus sabunlar.' },
         { reng:'Qəhvəyi',   miqdar:'2 damcı',   hex:'#CEDCCA', netice:'Adaçayı / Sage',   izah:'Herbal pastel. Ən populyar yaşıl sabun tonu.' },
         { reng:'Qırmızı',   miqdar:'1-2 damcı', hex:'#DADAC9', netice:'Zeytun pastel',    izah:'Komplement — yaşılı sakit edir. Natural görünüş.' },
         { reng:'Mavi',      miqdar:'2 damcı',   hex:'#C5E1DF', netice:'Nəfəs alan yaşıl', izah:'Soyuq, dəniz yaşılı pastel.' },
-        { reng:'Qara',      miqdar:'⚠️ etmə',   hex:'#C7DAC8', netice:'Solğun xaki',      izah:'Ağ bazada yaşıl+qara daha da pis görünür.' },
+        { reng:'Qara',      miqdar:'2-3 damcı', hex:'#C7DAC8', netice:'Zeytun pastel',     izah:'Bazada yaşıl+qara gözəl zeytun/olive pastel verir. Herbal sabunlar üçün ideal!' },
       ],
       lime: [
         { reng:'Sarı',      miqdar:'4-5 damcı', hex:'#F1F4BA', netice:'Canlı limon pastel',izah:'Daha isti limon. Sarı dominant olsun.' },
