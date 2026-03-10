@@ -1493,6 +1493,7 @@ async function runBlendAI(mode) {
   try {
     const response = await fetch(GS_URL, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: 'ai_blend', prompt: prompt })
     });
 
@@ -2267,6 +2268,7 @@ YALNIZ JSON ver:
   try {
     const resp = await fetch(GS_URL, {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'ai_blend', prompt: prompt })
     });
     const data = await resp.json();
@@ -2628,7 +2630,7 @@ async function runRengAI() {
   var prompt = 'Sən M&P sabun boyakarlığı üzrə mütəxəssisən. İstifadəçi ağ M&P sabun bazasında xüsusi bir rəng almaq istəyir.\n\nİstədiyi rəng: "' + S.rengAI + '"\n\nƏlindəki rənglər (mayə piqment):\n930 seti (30ml, daha güclü/tünd): Sarı, Narıncı, Qırmızı, Limon-yaşıl, Çəhrayı, Bənövşəyi, Mavi, Süd şokoladı, Qara\n1050 seti (50ml, yüngül): Qəhvəyi, Qara, Bənövşəyi, Çəhrayı, Yaşıl, Karmin, Mavi, Qırmızı, Sarı, Ağ\n\nVACİB QAYDALAR:\n- Ağ baza rəngləri parlaq və pastel edir\n- Parlaqlığı azaltmaq üçün: Qara (isti rənglər üçün) və ya Qəhvəyi (daha təhlükəsiz)\n- Mavi, Yaşıl, Bənövşəyi, Limon-yaşılına QARA QATMA — tamam başqa rəngə çevrilir\n- Bu rənglər üçün: Qəhvəyi və ya komplement rəng istifadə et\n- 930 set güclüdür — az damcı lazımdır\n- 100q baza üçün ümumi 5-10 damcı rəng\n\nYALNIZ JSON ver:\n{"ad":"Azərbaycanca rəng adı","ad_en":"English color name","damci":"100q baza üçün damcı sayı — məs: Sarı 7 damcı + Qəhvəyi 2 damcı","addim":"Addım-addım qaydalar","xeberdarliq":"Varsa xəbərdarlıq, yoxdursa boş string","izah":"Bu rəngin ağ bazada davranışı"}';
 
   try {
-    var resp = await fetch(GS_URL, { method: 'POST', body: JSON.stringify({ action: 'ai_blend', prompt: prompt }) });
+    var resp = await fetch(GS_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'ai_blend', prompt: prompt }) });
     var data = await resp.json();
     if (data.error) { set({ rengAILoading: false }); showToast('API xətası: ' + (data.error.message||'')); return; }
     var text = data.content.map(function(i){ return i.text||''; }).join('');
