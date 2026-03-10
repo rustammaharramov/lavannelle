@@ -352,7 +352,7 @@ const S = {
   aBlend: '', aMiqdar: '', aFaiz: '',
   atirSub: null,
   bfInput: '', bfResult: null, bfLoading: false, bfMode: '', bfMehsul: 'Ümumi', bfCins: 'Qadın',
-  mbMehsul: 'Sabun', mbXarakter: '', mbEffekt: 'Universal saxla', mbResult: null, mbLoading: false,
+  mbMehsul: 'Sabun', mbXarakter: '', mbEffekt: 'Universal saxla', mbIntensiv: 'Orta', mbProblem: 'Sadəcə yaxşılaşdır', mbResult: null, mbLoading: false,
   rengSub: null, rengSeçim: null, rengAI: '', rengAIResult: null, rengAILoading: false,
   hbKat: 'Hamısı', hbCins: 'Hamısı', hbSearch: '', hbHideZero: false,
   savedBlends: [],
@@ -2586,40 +2586,55 @@ const MASTER_BLENDLER = [
     icon: '⭐',
     ad: 'Universal Master Blend',
     xarakter: 'Hər şeylə uyğun',
-    sabun: 'Towatap Vanilla EO 40% + Phatoil White Musk FO 30% + Palo Santo & Sandalwood FO 20% + Lavender FO 10%',
-    mum:   'Towatap Vanilla EO 40% + Phatoil White Musk FO 30% + Palo Santo & Sandalwood FO 20% + Lavender FO 10%',
-    izah: 'Ən universal seçim. Mövcud ətri pozmadan yumşaqlıq, şirinlik və dərinlik əlavə edir. Meyvəli, çiçəkli, oduncaq — hər qoxu ilə konflikt yaratmır.',
+    sabun: 'Phatoil White Musk FO 35% + Towatap Vanilla EO 30% + Palo Santo and Sandalwood FO 20% + Lavender (Lavanda) FO 15%',
+    mum:   'Phatoil White Musk FO 30% + Towatap Vanilla EO 35% + Palo Santo and Sandalwood FO 20% + Lavender (Lavanda) FO 15%',
+    tablet:'Phatoil White Musk FO 35% + Towatap Vanilla EO 30% + Palo Santo and Sandalwood FO 20% + Lavender (Lavanda) FO 15%',
+    izah: 'Ən universal seçim. Ağ müşk hər qoxunu tamamlayır, vanil yumşaldır, sandal dərinlik verir, lavanda balanslaşdırır. Çiçəkli, meyvəli, sitrus, şirin — hamısı ilə uyğundur.',
     uygun: ['Çiçəkli','Meyvəli','Sitrus','Şirin','Dəniz','Bilmirəm']
   },
   {
     id: 'wellness',
     icon: '🌿',
-    ad: 'Natural / Wellness',
-    xarakter: 'Meşə · Spa · Wellness',
-    sabun: 'Lavender FO 25% + Towatap Eucalyptus EO 20% + Towatap Chamomile EO 15% + Botavikos Cedar EO 15% + Botavikos Patchouli EO 15% + Phatoil White Musk FO 10%',
-    mum:   'Lavender FO 25% + Towatap Eucalyptus EO 20% + Towatap Chamomile EO 15% + Botavikos Cedar EO 15% + Botavikos Patchouli EO 15% + Phatoil White Musk FO 10%',
-    izah: 'Təmiz, təbii, spa atmosferi. Kişi və qadın üçün universal. Bütün ətirləri anbarda mövcuddur. White Musk universal balans verir.',
-    uygun: ['Çiçəkli','Oduncaq','Dəniz','Bilmirəm']
+    ad: 'Herbal / Wellness',
+    xarakter: 'Spa · Herbal · Nəfəs',
+    sabun: 'Lavender FO 30% + Rosemary Sage FO 25% + Towatap Eucalyptus EO 25% + Phatoil White Musk FO 20%',
+    mum:   'Lavender FO 25% + Rosemary Sage FO 20% + Towatap Eucalyptus EO 20% + Green Tea and Lemongrass FO 20% + Phatoil White Musk FO 15%',
+    tablet:'Lavender FO 30% + Rosemary Sage FO 25% + Towatap Eucalyptus EO 25% + Phatoil White Musk FO 20%',
+    izah: 'Arındırıcı, nəfəs açan, spa atmosferi. CandleScience Lavender + Rosemary Sage — güclü, sabit. Evkalipt serinlik qatır, müşk bağlayır. Oduncaq, dəniz, herbal bazalı məhsullar üçün ideal.',
+    uygun: ['Oduncaq','Dəniz','Herbal','Bilmirəm']
   },
   {
     id: 'floral',
     icon: '🌸',
     ad: 'Floral / Oriental',
-    xarakter: 'Çiçək · Şərq · Lüks',
-    sabun: 'Sandalwood Sanctuary FO 25% + Lavender FO 20% + Botavikos Patchouli EO 20% + Hllozzi Ylang-Ylang EO 15% + Hllozzi Chamomile EO 15% + Amber FO 5%',
-    mum:   'Sandalwood Sanctuary FO 25% + Lavender FO 20% + Botavikos Patchouli EO 20% + Hllozzi Ylang-Ylang EO 15% + Hllozzi Chamomile EO 15% + Amber FO 5%',
-    izah: 'Oriental, lüks, qadın yönümlü. Ylang-Ylang 15%-ə endirildi — Lavender balanslaşdırır. Çiçəkli və şərq bazalı qoxuları dərinləşdirir.',
+    xarakter: 'Çiçək · Şərq · Romantik',
+    sabun: 'Phatoil Sandalwood Sanctuary FO 30% + Hllozzi Ylang-Ylang EO 25% + Amber FO 20% + Phatoil White Musk FO 15% + Hllozzi Chamomile EO 10%',
+    mum:   'Phatoil Sandalwood Sanctuary FO 25% + Hllozzi Ylang-Ylang EO 20% + Amber FO 20% + Towatap Vanilla EO 20% + Phatoil White Musk FO 15%',
+    tablet:'Phatoil Sandalwood Sanctuary FO 30% + Hllozzi Ylang-Ylang EO 25% + Amber FO 20% + Phatoil White Musk FO 15% + Hllozzi Chamomile EO 10%',
+    izah: 'Şərq, lüks, qadın yönümlü. Sandalwood Sanctuary baza yaradır, ylang-ylang ekzotik çiçək verir, kəhrəba istilik qatır. Çiçəkli və şərq bazalı məhsulları dərinləşdirir.',
     uygun: ['Çiçəkli','Şirin','Bilmirəm']
   },
   {
     id: 'woody',
     icon: '🪵',
     ad: 'Woody / Masculine',
-    xarakter: 'Oduncaq · Rustik · Kişi',
-    sabun: 'EUQEE Cedarwood FO 30% + EUQEE Forest Pine FO 25% + EUQEE Warm Rustic Wood FO 20% + EUQEE Sweet Tobacco FO 15% + Patchouli FO 10%',
-    mum:   'EUQEE Cedarwood FO 30% + EUQEE Forest Pine FO 25% + EUQEE Warm Rustic Wood FO 20% + EUQEE Sweet Tobacco FO 15% + Patchouli FO 10%',
-    izah: 'Maskulin, rustik, cozy. Oduncaq və torpaq bazalı qoxuları tamamlayır. Kişi auditoriyası üçün ideal.',
-    uygun: ['Oduncaq','Dəniz','Bilmirəm']
+    xarakter: 'Oduncaq · Tüstü · Kişi',
+    sabun: 'Palo Santo and Sandalwood FO 30% + EUQEE Cedarwood FO 25% + Patchouli FO 25% + Cypress and Bayberry FO 20%',
+    mum:   'EUQEE Warm Rustic Wood FO 25% + EUQEE Cedarwood FO 25% + Patchouli FO 20% + EUQEE Forest Pine FO 20% + Smoke and Amber FO 10%',
+    tablet:'Palo Santo and Sandalwood FO 30% + EUQEE Cedarwood FO 25% + Patchouli FO 25% + Cypress and Bayberry FO 20%',
+    izah: 'Maskulin, rustik, dərin. Sabun üçün: USA güclü ətirlər — palo santo, sidr, patchouli, şam. Mum üçün: EUQEE oduncaq seriyası + tüstülü Smoke & Amber.',
+    uygun: ['Oduncaq','Dəniz','Herbal','Bilmirəm']
+  },
+  {
+    id: 'fresh',
+    icon: '🌊',
+    ad: 'Fresh / Aqua',
+    xarakter: 'Dəniz · Sitrus · Sərgin',
+    sabun: 'Ocean Breeze FO 35% + Citrus Agave FO 25% + White Tea FO 20% + Phatoil White Musk FO 20%',
+    mum:   'Ocean Breeze FO 30% + Citrus Agave FO 25% + Matcha and Bergamot FO 25% + Phatoil White Musk FO 20%',
+    tablet:'Ocean Breeze FO 35% + Citrus Agave FO 25% + White Tea FO 20% + Phatoil White Musk FO 20%',
+    izah: 'Sərgin, açıq, dəniz havası. Ocean Breeze + Citrus Agave güclü CandleScience duet — uzun ömürlü. White Tea minerallik qatır, müşk bağlayır. Dəniz, sitrus, herbal bazalı məhsullara ideal.',
+    uygun: ['Dəniz','Sitrus','Herbal','Bilmirəm']
   },
 ];
 
@@ -2645,14 +2660,14 @@ function mkMasterBlendPage() {
   sec1.textContent = 'Hazır Master Blendlər';
   page.appendChild(sec1);
 
-  // Məhsul seçimi — sabun vs mum (blendlər fərqlidir)
+  // Məhsul seçimi — sabun / mum / tablet
   const mehsulRow = ce('div');
-  mehsulRow.style.cssText = 'display:flex;gap:8px;margin-bottom:12px';
-  ['Sabun','Mum'].forEach(m => {
+  mehsulRow.style.cssText = 'display:flex;gap:6px;margin-bottom:12px';
+  [['Sabun','🧼'],['Əriyən Mum','🕯️'],['Ətirli Tablet','🎀']].forEach(([m, ico]) => {
     const btn = ce('button');
     const sel = (S.mbMehsul || 'Sabun') === m;
-    btn.style.cssText = `flex:1;padding:8px;border-radius:10px;border:1.5px solid ${sel?'#a78bfa':'#333'};background:${sel?'rgba(167,139,250,.12)':'transparent'};color:${sel?'#a78bfa':'#888'};font-size:13px;cursor:pointer;font-weight:${sel?'700':'400'}`;
-    btn.textContent = m === 'Sabun' ? '🧼 Sabun' : '🕯️ Mum';
+    btn.style.cssText = `flex:1;padding:8px 4px;border-radius:10px;border:1.5px solid ${sel?'#a78bfa':'#333'};background:${sel?'rgba(167,139,250,.12)':'transparent'};color:${sel?'#a78bfa':'#888'};font-size:11px;cursor:pointer;font-weight:${sel?'700':'400'};text-align:center`;
+    btn.textContent = ico + ' ' + m;
     btn.onclick = () => { S.mbMehsul = m; render(); };
     mehsulRow.appendChild(btn);
   });
@@ -2673,7 +2688,7 @@ function mkMasterBlendPage() {
     topRow.appendChild(ico); topRow.appendChild(nameEl);
     card.appendChild(topRow);
 
-    const blendStr = (S.mbMehsul === 'Mum') ? mb.mum : mb.sabun;
+    const blendStr = S.mbMehsul === 'Əriyən Mum' ? mb.mum : (S.mbMehsul === 'Ətirli Tablet' ? (mb.tablet || mb.sabun) : mb.sabun);
     const parts = blendStr.split('+').map(p => p.trim());
     const ingWrap = ce('div'); ingWrap.style.cssText = 'margin:8px 0 6px';
     parts.forEach(p => {
@@ -2711,15 +2726,25 @@ function mkMasterBlendPage() {
   const aiCard = ce('div', 'kal-card');
   const aiBody = ce('div', 'kal-body');
 
-  // Mövcud qoxu xarakteri
-  const xLbl = ce('div', 'form-label');
-  xLbl.style.cssText = 'margin-bottom:8px';
-  xLbl.textContent = 'Mövcud məhsulun qoxu xarakteri';
-  aiBody.appendChild(xLbl);
+  // Məhsul tipi
+  const mLbl = ce('div', 'form-label'); mLbl.style.cssText = 'margin-bottom:8px'; mLbl.textContent = 'Məhsul tipi';
+  aiBody.appendChild(mLbl);
+  const mChips = ce('div'); mChips.style.cssText = 'display:flex;gap:6px;margin-bottom:14px';
+  ['Sabun','Əriyən Mum','Ətirli Tablet'].forEach(m => {
+    const chip = ce('button');
+    const sel = (S.mbMehsul||'Sabun') === m;
+    chip.style.cssText = `padding:6px 13px;border-radius:14px;border:1.5px solid ${sel?'#a78bfa':'#333'};background:${sel?'rgba(167,139,250,.15)':'transparent'};color:${sel?'#a78bfa':'#888'};font-size:12px;cursor:pointer`;
+    chip.textContent = m;
+    chip.onclick = () => { S.mbMehsul = m; render(); };
+    mChips.appendChild(chip);
+  });
+  aiBody.appendChild(mChips);
 
-  const xarChips = ce('div');
-  xarChips.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px';
-  ['🌸 Çiçəkli','🍓 Meyvəli','🌲 Oduncaq','🍋 Sitrus','🍬 Şirin','🌊 Dəniz','❓ Bilmirəm'].forEach(x => {
+  // Mövcud qoxu xarakteri
+  const xLbl = ce('div', 'form-label'); xLbl.style.cssText = 'margin-bottom:8px'; xLbl.textContent = 'Mövcud məhsulun qoxu xarakteri';
+  aiBody.appendChild(xLbl);
+  const xarChips = ce('div'); xarChips.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px';
+  ['🌸 Çiçəkli','🍓 Meyvəli','🌲 Oduncaq','🍋 Sitrus','🍬 Şirin','🌊 Dəniz','🌿 Herbal','❓ Bilmirəm'].forEach(x => {
     const chip = ce('button');
     const sel = S.mbXarakter === x;
     chip.style.cssText = `padding:6px 11px;border-radius:14px;border:1.5px solid ${sel?'#a78bfa':'#333'};background:${sel?'rgba(167,139,250,.15)':'transparent'};color:${sel?'#a78bfa':'#888'};font-size:12px;cursor:pointer`;
@@ -2729,23 +2754,33 @@ function mkMasterBlendPage() {
   });
   aiBody.appendChild(xarChips);
 
-  // İstədiyi effekt
-  const eLbl = ce('div', 'form-label');
-  eLbl.style.cssText = 'margin-bottom:8px';
-  eLbl.textContent = 'Nə istəyirsiniz?';
-  aiBody.appendChild(eLbl);
-
-  const effektChips = ce('div');
-  effektChips.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px';
-  ['Dərinlik ver','Yumşalt','Gücləndir','Universal saxla'].forEach(ef => {
+  // Qoxu intensivliyi
+  const iLbl = ce('div', 'form-label'); iLbl.style.cssText = 'margin-bottom:8px'; iLbl.textContent = 'Qoxu intensivliyi';
+  aiBody.appendChild(iLbl);
+  const iChips = ce('div'); iChips.style.cssText = 'display:flex;gap:6px;margin-bottom:14px';
+  ['Yüngül','Orta','Güclü'].forEach(iv => {
     const chip = ce('button');
-    const sel = (S.mbEffekt || 'Universal saxla') === ef;
+    const sel = (S.mbIntensiv||'Orta') === iv;
+    chip.style.cssText = `padding:6px 13px;border-radius:14px;border:1.5px solid ${sel?'#a78bfa':'#333'};background:${sel?'rgba(167,139,250,.15)':'transparent'};color:${sel?'#a78bfa':'#888'};font-size:12px;cursor:pointer`;
+    chip.textContent = iv;
+    chip.onclick = () => { S.mbIntensiv = iv; render(); };
+    iChips.appendChild(chip);
+  });
+  aiBody.appendChild(iChips);
+
+  // Problem / hədəf
+  const pLbl = ce('div', 'form-label'); pLbl.style.cssText = 'margin-bottom:8px'; pLbl.textContent = 'Nə etmək istəyirsiniz?';
+  aiBody.appendChild(pLbl);
+  const pChips = ce('div'); pChips.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px';
+  ['Dərinlik ver','Yumşalt','Gücləndir','Uzunömürlü et','Balanslı saxla','Sadəcə yaxşılaşdır'].forEach(ef => {
+    const chip = ce('button');
+    const sel = (S.mbProblem||'Sadəcə yaxşılaşdır') === ef;
     chip.style.cssText = `padding:6px 11px;border-radius:14px;border:1.5px solid ${sel?'#a78bfa':'#333'};background:${sel?'rgba(167,139,250,.15)':'transparent'};color:${sel?'#a78bfa':'#888'};font-size:12px;cursor:pointer`;
     chip.textContent = ef;
-    chip.onclick = () => { S.mbEffekt = ef; render(); };
-    effektChips.appendChild(chip);
+    chip.onclick = () => { S.mbProblem = ef; render(); };
+    pChips.appendChild(chip);
   });
-  aiBody.appendChild(effektChips);
+  aiBody.appendChild(pChips);
 
   const aiBtn = ce('button', 'pri-btn');
   aiBtn.style.cssText = 'width:100%;padding:14px;font-size:15px';
@@ -2777,28 +2812,54 @@ async function runMasterBlendAI() {
 
   const atirList = S.atirAnbar.map(a => `${a.name} | ${a.guc||'?'}` ).join('\n');
 
-  const xarakter = S.mbXarakter || '❓ Bilmirəm';
-  const effekt = S.mbEffekt || 'Universal saxla';
-  const mehsul = S.mbMehsul === 'Mum' ? 'Əriyən Mum' : 'Sabun';
+  const xarakter  = S.mbXarakter  || '❓ Bilmirəm';
+  const problem   = S.mbProblem   || 'Sadəcə yaxşılaşdır';
+  const intensiv  = S.mbIntensiv  || 'Orta';
+  const mehsul    = S.mbMehsul    || 'Sabun';
 
-  const prompt = `Sən peşəkar parfümer və kosmetik formulyatorsən. Müştərinin mövcud hazır məhsulu var — artıq yenidən əridilən və ya yenilənəcək ${mehsul}. Hansı ətirlər olduğunu tam bilmir.
+  // Məhsula görə qayda
+  const mehsulQayda = {
+    'Sabun':         'Ümumi faiz: 1-3%. Yüngül, dəri dostu universal ətirlər. Ağır dominant qoxulardan çəkin.',
+    'Əriyən Mum':    'Ümumi faiz: 8-12%. Otağa yayılan, sabit, dərin bazalar. Flash point 65C+ üstün tut.',
+    'Ətirli Tablet': 'Ümumi faiz: 5-8%. Passiv yayılır, gərginlik yox — sabit müşk, amber, odunsu notlar.'
+  };
 
-Mövcud qoxunun xarakteri: ${xarakter}
-İstədiyi effekt: ${effekt}
-Məhsul: ${mehsul}
+  // İntensivliyə görə güc balansı
+  const intensivQayda = {
+    'Yüngül': 'Yüngül intensivlik: Güclü ətirlər 10-15%, Yaxşı 20-30%, Zəif 35-45%. Az damcı — incə, zərif nəticə.',
+    'Orta':   'Orta intensivlik: Güclü 15-25%, Yaxşı 25-35%, Zəif 40-55%.',
+    'Güclü':  'Güclü intensivlik: Güclü ətirlər 20-35%, Yaxşı 30-40%, Zəif 45-60%. Maksimum doza.'
+  };
 
-MASTER BLEND MƏNTİQİ:
-- Master blend mövcud ətri POZMAMALIDIR — ona yumşaqlıq, dərinlik, sabitlik əlavə etməlidir
-- Universal ətirlər seç: Vanilla, White Musk, Sandalwood, Lavender — hər qoxu ilə uyğundur
-- Konfliktli ətirlər seçmə: Coffee, Chocolate, Apple Cinnamon, Ginger — bunlar çox dominantdır
-- Ümumi faiz: ${mehsul === 'Sabun' ? '1-3%' : '8-12%'} (master blend məhsula əlavə olunacaq)
-- Faizlər cəmi dəqiq 100% olsun
-- 3-4 ətirdən ibarət olsun
+  // Problemə görə strategiya
+  const problemQayda = {
+    'Dərinlik ver':      'HƏDƏF: Baza notlar əlavə et. Ağ müşk, patchouli, sandal, amber. Uçucu notlara yer yox.',
+    'Yumşalt':           'HƏDƏF: Kəskin qoxuları yumşalt. Ağ müşk, vanil, hindistan cevizi kremli notlar. Sürüşkən, yuvarlaq.',
+    'Gücləndir':         'HƏDƏF: Dominant notun faizini artır. Mövcud xarakteri gücləndirən eyni ailədən ətir seç.',
+    'Uzunömürlü et':     'HƏDƏF: Fixative ətirlər seç: ağ müşk, ambrette, sandal, patchouli. Qoxunu uzun saxlar.',
+    'Balanslı saxla':    'HƏDƏF: Əksik nota əlavə et — çiçəkliyə baza, bazaya çiçəkli, sitrusla meyvəlini bağla.',
+    'Sadəcə yaxşılaşdır':'HƏDƏF: Universal yaxşılaşdırma. Ağ müşk + sandalwood + lavanda — hər qoxuya uyğun trio.'
+  };
+
+  const prompt = `Məhsul: ${mehsul}
+Mövcud qoxu xarakteri: ${xarakter}
+İstənilən intensivlik: ${intensiv}
+Hədəf: ${problem}
+
+${mehsulQayda[mehsul] || ''}
+${intensivQayda[intensiv] || ''}
+${problemQayda[problem] || ''}
+
+MASTER BLEND QAYDALARI:
+- Mövcud qoxunu POZMAMAQ — tamamlamaq, gücləndirmək, sabitləşdirmək
+- YALNIZ ANBARDAKİ ətirlər (anbar: true). Anbarda yoxdursa anbar: false yaz
+- 2-4 ətirdən ibarət, faizlər cəmi 100%
+- Hər ətirin rolu aydın izah edilsin
 
 YALNIZ JSON ver:
-{"ad_az":"Azərbaycanca ad","ad_en":"English name","xarakter":"${xarakter}","effekt":"${effekt}","mehsul":"${mehsul}","izah":"2-3 cümlə — niyə bu blend bu məhsula uyğundur","atirlər":[{"ad":"Ətir adı","faiz":40,"anbar":true,"rol":"niyə bu ətir seçildi"}]}`;
+{"ad_az":"Azərbaycanca ad","ad_en":"English name","mehsul":"${mehsul}","xarakter":"${xarakter}","problem":"${problem}","intensiv":"${intensiv}","izah":"2-3 cümlə — bu blendin niyə bu məhsula uyğun olduğunu izah et","atirlər":[{"ad":"Ətir adı","faiz":40,"anbar":true,"rol":"bu ətirin rolunu 3-5 sözlə izah et"}]}`;
 
-  const systemPromptMB = `Sən peşəkar parfümer və kosmetik formulyatorsən. Yalnız JSON cavab ver.\n\nAnbar siyahısı:\n${atirList}`;
+  const systemPromptMB = `Sən peşəkar parfümer və kosmetik formulyatorsən. Yalnız JSON cavab ver, heç bir əlavə mətn yoxdur.\n\nAnbar siyahısı (YALNIZ bu ətirlər mövcuddur):\n${atirList}`;
 
   try {
     const resp = await fetch(GS_URL, {
@@ -2806,6 +2867,7 @@ YALNIZ JSON ver:
       body: JSON.stringify({ action: 'ai_blend', prompt: prompt, systemPrompt: systemPromptMB })
     });
     const data = await resp.json();
+    if (data.error) { set({ mbLoading: false }); showToast('API xətası: ' + (data.error.message||'')); return; }
     const text = data.content.map(i => i.text || '').join('');
     const parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
     set({ mbResult: parsed, mbLoading: false });
@@ -2823,7 +2885,7 @@ function mkMasterBlendResult() {
   res.style.marginTop = '12px';
 
   const nm = ce('div', 'res-name'); nm.textContent = r.ad_az || r.ad || '';
-  const sub = ce('div', 'res-sub'); sub.textContent = (r.ad_en || '') + ' · ' + (r.mehsul || '');
+  const sub = ce('div', 'res-sub'); sub.textContent = (r.ad_en || '') + ' · ' + (r.mehsul || '') + (r.intensiv ? ' · ' + r.intensiv : '') + (r.problem ? ' · ' + r.problem : '');
   const lbl = ce('div', 'res-label'); lbl.textContent = 'Master Blend';
   res.appendChild(nm); res.appendChild(sub); res.appendChild(lbl);
 
@@ -2889,52 +2951,52 @@ const QRUP_INFO = {
 };
 
 const QARA_NETICE = {
-  mavi:      { hex:'#C0D6EA', ad:'Dəniz mavisi pastel',  izah:'Ağ bazada mavi+qara dərin, soyuq dəniz tonu verir' },
-  yasil:     { hex:'#C7DAC8', ad:'Zeytun pastel',         izah:'Ağ bazada yaşıl+qara gözəl zeytun pastel verir — hər zaman pis deyil!' },
-  benovseyi: { hex:'#D2C0DA', ad:'Baklajan pastel',       izah:'Ağ bazada bənövşəyi+qara tünd mov-baklajan tonu verir' },
-  lime:      { hex:'#DDE9BA', ad:'Xaki-yaşıl pastel',    izah:'Ağ bazada lime+qara xaki-zeytun verir — herbal kimi keçə bilər' },
+  mavi:      { hex:'#88A8C8', ad:'Dəniz mavisi pastel',  izah:'Ağ bazada mavi+qara dərin, soyuq dəniz tonu verir' },
+  yasil:     { hex:'#98B090', ad:'Zeytun pastel',         izah:'Ağ bazada yaşıl+qara gözəl zeytun pastel verir — hər zaman pis deyil!' },
+  benovseyi: { hex:'#B898C0', ad:'Baklajan pastel',       izah:'Ağ bazada bənövşəyi+qara tünd mov-baklajan tonu verir' },
+  lime:      { hex:'#B8C888', ad:'Xaki-yaşıl pastel',    izah:'Ağ bazada lime+qara xaki-zeytun verir — herbal kimi keçə bilər' },
 };
 
 const MUTED_TONLAR = [
   // Sarı ailəsi
-  { az:'Krem',         en:'Cream',          hex:'#FCF8E9', damci:'Sarı 4 + Ağ 2 damcı',                       resept:'Sarı+ağ, az miqdar. Klassik sabun kremi tonu.' },
-  { az:'Şampan',       en:'Champagne',      hex:'#FBF3D8', damci:'Sarı 8 + Ağ 4 damcı',                       resept:'Sarı+ağ. Zərif, açıq şampan rəngi.' },
-  { az:'Qum bej',      en:'Sand Beige',     hex:'#E9D8A7', damci:'Sarı 10 + Qəhvəyi 5 damcı',                 resept:'Sarı+qəhvəyi. Yumşaq, isti bej tonu.' },
-  { az:'Xardal',       en:'Mustard',        hex:'#E4D59E', damci:'Sarı 12 + Qara 3 damcı',                    resept:'Sarı+qara. Klassik xardal.' },
+  { az:'Krem',         en:'Cream',          hex:'#F2EDD4', damci:'Sarı 4 + Ağ 2 damcı',                       resept:'Sarı+ağ, az miqdar. Klassik sabun kremi tonu.' },
+  { az:'Şampan',       en:'Champagne',      hex:'#EFE5C0', damci:'Sarı 8 + Ağ 4 damcı',                       resept:'Sarı+ağ. Zərif, açıq şampan rəngi.' },
+  { az:'Qum bej',      en:'Sand Beige',     hex:'#D8C070', damci:'Sarı 10 + Qəhvəyi 5 damcı',                 resept:'Sarı+qəhvəyi. Yumşaq, isti bej tonu.' },
+  { az:'Xardal',       en:'Mustard',        hex:'#C8B858', damci:'Sarı 12 + Qara 3 damcı',                    resept:'Sarı+qara. Klassik xardal.' },
   // Narıncı ailəsi
-  { az:'Karamel',      en:'Caramel',        hex:'#F1CDAE', damci:'Narıncı 8 + Sarı 4 + Qəhvəyi 3 damcı',     resept:'Narıncı+sarı+qəhvəyi. Şirin karamel.' },
-  { az:'Zəfəran',      en:'Saffron',        hex:'#EFC8A8', damci:'Narıncı 9 + Sarı 4 + Qara 2 damcı',        resept:'Narıncı+sarı+qara. Zəngin zəfəran tonu.' },
-  { az:'Mis',          en:'Copper',         hex:'#E9BDAF', damci:'Narıncı 10 + Qəhvəyi 5 damcı',             resept:'Narıncı+qəhvəyi. Metalik mis tonu.' },
-  { az:'Terrakota',    en:'Terracotta',     hex:'#E4B9AB', damci:'Narıncı 11 + Qara 4 damcı',                 resept:'Narıncı+qara. Ən populyar sakit ton.' },
+  { az:'Karamel',      en:'Caramel',        hex:'#E8B080', damci:'Narıncı 8 + Sarı 4 + Qəhvəyi 3 damcı',     resept:'Narıncı+sarı+qəhvəyi. Şirin karamel.' },
+  { az:'Zəfəran',      en:'Saffron',        hex:'#E0A878', damci:'Narıncı 9 + Sarı 4 + Qara 2 damcı',        resept:'Narıncı+sarı+qara. Zəngin zəfəran tonu.' },
+  { az:'Mis',          en:'Copper',         hex:'#D89888', damci:'Narıncı 10 + Qəhvəyi 5 damcı',             resept:'Narıncı+qəhvəyi. Metalik mis tonu.' },
+  { az:'Terrakota',    en:'Terracotta',     hex:'#C87868', damci:'Narıncı 11 + Qara 4 damcı',                 resept:'Narıncı+qara. Ən populyar sakit ton.' },
   // Çəhrayı ailəsi
-  { az:'Al yanaq',     en:'Blush',          hex:'#FBD7E3', damci:'Çəhrayı 10 damcı',                          resept:'Tək çəhrayı. Ağ baza onu bebe çəhrayısına çevirir.' },
-  { az:'Somon',        en:'Salmon',         hex:'#FBBFC2', damci:'Çəhrayı 9 + Narıncı 6 damcı',              resept:'Çəhrayı+narıncı. İsti, canlı somon tonu.' },
-  { az:'Gil çəhrayı',  en:'Clay Pink',      hex:'#F2C0C6', damci:'Çəhrayı 9 + Narıncı 4 + Qəhvəyi 2 damcı', resept:'Çəhrayı+narıncı+qəhvəyi. Natural gil tonu.' },
-  { az:'Fuşya pastel', en:'Pastel Fuchsia', hex:'#F7B9C3', damci:'Çəhrayı 9 + Qırmızı 6 damcı',             resept:'Çəhrayı+qırmızı. Cəsarətli amma bazada yumşaq.' },
-  { az:'Toz çəhrayı',  en:'Dusty Rose',     hex:'#EDBECC', damci:'Çəhrayı 12 + Qəhvəyi 3 damcı',            resept:'Çəhrayı+qəhvəyi. Ən sevimli sakit ton.' },
+  { az:'Al yanaq',     en:'Blush',          hex:'#F0B8D0', damci:'Çəhrayı 10 damcı',                          resept:'Tək çəhrayı. Ağ baza onu bebe çəhrayısına çevirir.' },
+  { az:'Somon',        en:'Salmon',         hex:'#F0A0A8', damci:'Çəhrayı 9 + Narıncı 6 damcı',              resept:'Çəhrayı+narıncı. İsti, canlı somon tonu.' },
+  { az:'Gil çəhrayı',  en:'Clay Pink',      hex:'#E898A8', damci:'Çəhrayı 9 + Narıncı 4 + Qəhvəyi 2 damcı', resept:'Çəhrayı+narıncı+qəhvəyi. Natural gil tonu.' },
+  { az:'Fuşya pastel', en:'Pastel Fuchsia', hex:'#F090A8', damci:'Çəhrayı 9 + Qırmızı 6 damcı',             resept:'Çəhrayı+qırmızı. Cəsarətli amma bazada yumşaq.' },
+  { az:'Toz çəhrayı',  en:'Dusty Rose',     hex:'#D898B0', damci:'Çəhrayı 12 + Qəhvəyi 3 damcı',            resept:'Çəhrayı+qəhvəyi. Ən sevimli sakit ton.' },
   // Qırmızı ailəsi
-  { az:'Kərpic',       en:'Brick Red',      hex:'#E4ADAB', damci:'Qırmızı 10 + Qəhvəyi 5 damcı',            resept:'Qırmızı+qəhvəyi. Rustik, natural.' },
-  { az:'Bordo',        en:'Burgundy',       hex:'#DCABB7', damci:'Qırmızı 9 + Bənövşəyi 4 + Qara 2 damcı',  resept:'Qırmızı+bənövşəyi+qara. Klassik bordo.' },
+  { az:'Kərpic',       en:'Brick Red',      hex:'#C87878', damci:'Qırmızı 10 + Qəhvəyi 5 damcı',            resept:'Qırmızı+qəhvəyi. Rustik, natural.' },
+  { az:'Bordo',        en:'Burgundy',       hex:'#C07090', damci:'Qırmızı 9 + Bənövşəyi 4 + Qara 2 damcı',  resept:'Qırmızı+bənövşəyi+qara. Klassik bordo.' },
   // Bənövşəyi ailəsi
-  { az:'Lavanda',      en:'Lavender',       hex:'#E9D2E8', damci:'Bənövşəyi 8 + Çəhrayı 4 + Ağ 3 damcı',   resept:'Bənövşəyi+çəhrayı+ağ. Klassik lavanda çiçəyi.' },
-  { az:'Leylak',       en:'Dusty Lavender', hex:'#E6D6EC', damci:'Bənövşəyi 10 + Ağ 5 damcı',              resept:'Bənövşəyi+ağ. Açıq, yumşaq leylak.' },
-  { az:'Mov',          en:'Mauve',          hex:'#DDADD4', damci:'Bənövşəyi 9 + Çəhrayı 6 damcı',          resept:'Bənövşəyi+çəhrayı. Zərif mov tonu.' },
-  { az:'Baklajan',     en:'Eggplant',       hex:'#CDA7C4', damci:'Bənövşəyi 9 + Qırmızı 4 + Qara 2 damcı', resept:'Bənövşəyi+qırmızı+qara. Dərin, lüks ton.' },
+  { az:'Lavanda',      en:'Lavender',       hex:'#C8A0D0', damci:'Bənövşəyi 8 + Çəhrayı 4 + Ağ 3 damcı',   resept:'Bənövşəyi+çəhrayı+ağ. Klassik lavanda çiçəyi.' },
+  { az:'Leylak',       en:'Dusty Lavender', hex:'#C8A8D8', damci:'Bənövşəyi 10 + Ağ 5 damcı',              resept:'Bənövşəyi+ağ. Açıq, yumşaq leylak.' },
+  { az:'Mov',          en:'Mauve',          hex:'#B878C0', damci:'Bənövşəyi 9 + Çəhrayı 6 damcı',          resept:'Bənövşəyi+çəhrayı. Zərif mov tonu.' },
+  { az:'Baklajan',     en:'Eggplant',       hex:'#A878B0', damci:'Bənövşəyi 9 + Qırmızı 4 + Qara 2 damcı', resept:'Bənövşəyi+qırmızı+qara. Dərin, lüks ton.' },
   // Mavi ailəsi
-  { az:'Polad mavi',   en:'Steel Blue',     hex:'#CFE5F7', damci:'Mavi 10 + Ağ 5 damcı',                   resept:'Mavi+ağ. Soyuq, zərif pastel.' },
-  { az:'Dəniz mavisi', en:'Ocean Blue',     hex:'#AFBCE9', damci:'Mavi 10 + Bənövşəyi 5 damcı',            resept:'Mavi+bənövşəyi. Dərin dəniz tonu.' },
-  { az:'Antrasit',     en:'Anthracite',     hex:'#AAB5BF', damci:'Qara 11 + Mavi 4 damcı',                 resept:'Qara+mavi. Soyuq, dərin antrasit. Kişi sabunları.' },
+  { az:'Polad mavi',   en:'Steel Blue',     hex:'#88C0F0', damci:'Mavi 10 + Ağ 5 damcı',                   resept:'Mavi+ağ. Soyuq, zərif pastel.' },
+  { az:'Dəniz mavisi', en:'Ocean Blue',     hex:'#6890D8', damci:'Mavi 10 + Bənövşəyi 5 damcı',            resept:'Mavi+bənövşəyi. Dərin dəniz tonu.' },
+  { az:'Antrasit',     en:'Anthracite',     hex:'#708898', damci:'Qara 11 + Mavi 4 damcı',                 resept:'Qara+mavi. Soyuq, dərin antrasit. Kişi sabunları.' },
   // Yaşıl ailəsi
-  { az:'Fıstıq',       en:'Pistachio',      hex:'#D7E1B0', damci:'Yaşıl 9 + Sarı 6 damcı',                 resept:'Yaşıl+sarı. Açıq, fıstıq yaşılı pastel.' },
-  { az:'Adaçayı',      en:'Sage Green',     hex:'#B5CAB0', damci:'Yaşıl 10 + Qəhvəyi 5 damcı',            resept:'Yaşıl+qəhvəyi. Herbal sabunlar üçün ideal.' },
-  { az:'Dəniz yaşılı', en:'Teal',           hex:'#A9D2CD', damci:'Yaşıl 9 + Mavi 6 damcı',                resept:'Yaşıl+mavi. Soyuq, dəniz yaşılı.' },
-  { az:'Zeytun',       en:'Olive',          hex:'#ABC6AC', damci:'Yaşıl 11 + Qara 4 damcı',               resept:'Yaşıl+qara. Ağ bazada gözəl zeytun tonu.' },
+  { az:'Fıstıq',       en:'Pistachio',      hex:'#A8C878', damci:'Yaşıl 9 + Sarı 6 damcı',                 resept:'Yaşıl+sarı. Açıq, fıstıq yaşılı pastel.' },
+  { az:'Adaçayı',      en:'Sage Green',     hex:'#80A878', damci:'Yaşıl 10 + Qəhvəyi 5 damcı',            resept:'Yaşıl+qəhvəyi. Herbal sabunlar üçün ideal.' },
+  { az:'Dəniz yaşılı', en:'Teal',           hex:'#58A8A0', damci:'Yaşıl 9 + Mavi 6 damcı',                resept:'Yaşıl+mavi. Soyuq, dəniz yaşılı.' },
+  { az:'Zeytun',       en:'Olive',          hex:'#68A070', damci:'Yaşıl 11 + Qara 4 damcı',               resept:'Yaşıl+qara. Ağ bazada gözəl zeytun tonu.' },
   // Qəhvəyi ailəsi
-  { az:'Darçın',       en:'Cinnamon',       hex:'#D8B9AF', damci:'Qəhvəyi 10 + Narıncı 5 damcı',          resept:'Qəhvəyi+narıncı. İsti darçın tonu.' },
-  { az:'Kakao',        en:'Cocoa',          hex:'#D1B0AD', damci:'Qəhvəyi 11 + Qırmızı 4 damcı',          resept:'Qəhvəyi+qırmızı. İsti şokolad tonu.' },
+  { az:'Darçın',       en:'Cinnamon',       hex:'#C09080', damci:'Qəhvəyi 10 + Narıncı 5 damcı',          resept:'Qəhvəyi+narıncı. İsti darçın tonu.' },
+  { az:'Kakao',        en:'Cocoa',          hex:'#B88880', damci:'Qəhvəyi 11 + Qırmızı 4 damcı',          resept:'Qəhvəyi+qırmızı. İsti şokolad tonu.' },
   // Neytral
-  { az:'İsti boz',     en:'Warm Grey',      hex:'#C2B4AF', damci:'Qara 9 + Narıncı 4 + Qəhvəyi 2 damcı',  resept:'Qara+narıncı+qəhvəyi. Soyuq deyil, isti boz.' },
-  { az:'Kömür',        en:'Charcoal',       hex:'#C7C7C7', damci:'Qara 12 + Ağ 3 damcı',                  resept:'Qara+ağ. Klassik charcoal detoks sabun.' },
+  { az:'İsti boz',     en:'Warm Grey',      hex:'#988880', damci:'Qara 9 + Narıncı 4 + Qəhvəyi 2 damcı',  resept:'Qara+narıncı+qəhvəyi. Soyuq deyil, isti boz.' },
+  { az:'Kömür',        en:'Charcoal',       hex:'#909090', damci:'Qara 12 + Ağ 3 damcı',                  resept:'Qara+ağ. Klassik charcoal detoks sabun.' },
 ];
 
 function mkRengDunyasi() {
@@ -2959,15 +3021,19 @@ function mkRengDunyasi() {
   page.appendChild(desc);
 
   [
-    { icon:'🎨', title:'Rəng Anbarı',       desc:'13 baza rəng — davranış, set məlumatı',       sub:'katalog' },
-    { icon:'🌿', title:'Hazır Rənglər',      desc:'30 hazır sakit ton resepti',            sub:'muted'   },
-    { icon:'🔀', title:'Rəng Fabrikası',    desc:'Rəng seç, bütün kombinasiyaları gör',    sub:'mikser'  },
-    { icon:'🆘', title:'Master Rəng',       desc:'Qarışmış/ölmüş rəngi xilas et',          sub:'master'  },
-    { icon:'🤖', title:'AI Rəng Məsləhəti', desc:'"Limon sarısı istəyirəm" → resept',      sub:'ai'      },
+    { swatches:['#E53935','#1E88E5','#7B1FA2','#F5C518','#43A047'], title:'Rəng Anbarı',       desc:'13 baza rəng — davranış, set məlumatı',       sub:'katalog' },
+    { swatches:['#E898A8','#C8A0D0','#88C0F0','#A8C878','#E8B080'], title:'Hazır Rənglər',      desc:'30 hazır sakit ton resepti',            sub:'muted'   },
+    { swatches:['#FF7043','#F06292','#1E88E5','#43A047','#C8B858'], title:'Rəng Fabrikası',    desc:'Rəng seç, bütün kombinasiyaları gör',    sub:'mikser'  },
+    { swatches:['#C87868','#B878C0','#708898','#80A878','#C09080'], title:'Master Rəng',       desc:'Qarışmış/ölmüş rəngi xilas et',          sub:'master'  },
+    { swatches:['#F2EDD4','#F0B8D0','#C8A0D0','#A8C878','#708898'], title:'AI Rəng Məsləhəti', desc:'"Limon sarısı istəyirəm" → resept',      sub:'ai'      },
   ].forEach(c => {
     const card = ce('button', 'home-card');
     card.style.marginBottom = '10px';
-    card.innerHTML = '<div class="hc-icon">'+c.icon+'</div><div class="hc-body"><div class="hc-title">'+c.title+'</div><div class="hc-desc">'+c.desc+'</div></div><div class="hc-arrow">→</div>';
+    // Build swatch grid icon
+    const swatchGrid = '<div style="width:52px;height:52px;background:#f0ece4;border-radius:12px;display:flex;flex-wrap:wrap;gap:2px;padding:6px;flex-shrink:0">'
+      + c.swatches.map(hex => '<div style="width:16px;height:16px;border-radius:3px;background:'+hex+'"></div>').join('')
+      + '</div>';
+    card.innerHTML = swatchGrid+'<div class="hc-body"><div class="hc-title">'+c.title+'</div><div class="hc-desc">'+c.desc+'</div></div><div class="hc-arrow">→</div>';
     card.onclick = () => set({ rengSub: c.sub });
     page.appendChild(card);
   });
@@ -3112,54 +3178,54 @@ function mkRengMikser() {
     // Combinations data per color
     var KOMBINASIYALAR = {
       sari: [
-        { reng:'Qara',      miqdar:'1-2 damcı', hex:'#EAE0BE', netice:'Xardal sarısı',     izah:'Ən klassik tonlama. Az qara = açıq xardal, çox qara = daha tünd.' },
-        { reng:'Qəhvəyi',   miqdar:'2-3 damcı', hex:'#F0E4C1', netice:'İsti sarı / Bej',   izah:'Qəhvəyi sarını torpaq tonuna çəkir. Yumşaq, natural nəticə.' },
-        { reng:'Narıncı',   miqdar:'2-3 damcı', hex:'#FDE3C3', netice:'Şaftalı / Apricot', izah:'İki isti rəng birləşir. Parlaq, şirin pastel ton.' },
-        { reng:'Qırmızı',   miqdar:'2-3 damcı', hex:'#F9DDC1', netice:'Dərin narıncı',     izah:'Sarı + qırmızı = narıncı, amma bazada daha pastel.' },
-        { reng:'Yaşıl',     miqdar:'3-4 damcı', hex:'#E5EAC4', netice:'Limon-yaşıl',       izah:'Canlı, limon pastel. Sitrus sabunlar üçün ideal.' },
-        { reng:'Bənövşəyi', miqdar:'3-4 damcı', hex:'#EEDCCD', netice:'Qızılı / Krem',     izah:'Gözlənilməz amma gözəl. Qızıl-krem pastel tonu.' },
+        { reng:'Qara',      miqdar:'1-2 damcı', hex:'#D4C47A', netice:'Xardal sarısı',     izah:'Ən klassik tonlama. Az qara = açıq xardal, çox qara = daha tünd.' },
+        { reng:'Qəhvəyi',   miqdar:'2-3 damcı', hex:'#E8D89A', netice:'İsti sarı / Bej',   izah:'Qəhvəyi sarını torpaq tonuna çəkir. Yumşaq, natural nəticə.' },
+        { reng:'Narıncı',   miqdar:'2-3 damcı', hex:'#F5D8A0', netice:'Şaftalı / Apricot', izah:'İki isti rəng birləşir. Parlaq, şirin pastel ton.' },
+        { reng:'Qırmızı',   miqdar:'2-3 damcı', hex:'#F0C888', netice:'Dərin narıncı',     izah:'Sarı + qırmızı = narıncı, amma bazada daha pastel.' },
+        { reng:'Yaşıl',     miqdar:'3-4 damcı', hex:'#D8E8A8', netice:'Limon-yaşıl',       izah:'Canlı, limon pastel. Sitrus sabunlar üçün ideal.' },
+        { reng:'Bənövşəyi', miqdar:'3-4 damcı', hex:'#E8D8B8', netice:'Qızılı / Krem',     izah:'Gözlənilməz amma gözəl. Qızıl-krem pastel tonu.' },
       ],
       narinci: [
-        { reng:'Qara',      miqdar:'1-2 damcı', hex:'#EFD1C7', netice:'Terrakota pastel',  izah:'Narıncı + az qara = açıq terrakota. Çox populyar.' },
-        { reng:'Qəhvəyi',   miqdar:'2 damcı',   hex:'#F0D3CA', netice:'Mis / Şaftalı',     izah:'Qəhvəyi narıncını "torpaqlaşdırır". Zərif ton.' },
-        { reng:'Qırmızı',   miqdar:'3 damcı',   hex:'#FBCFC8', netice:'Somon narıncı',     izah:'İsti, canlı pastel. Günbatımı tonu.' },
-        { reng:'Sarı',      miqdar:'3 damcı',   hex:'#FDE1C4', netice:'Şaftalı krem',      izah:'Yumşaq, şirin. Uşaq sabunları üçün ideal.' },
-        { reng:'Çəhrayı',   miqdar:'3 damcı',   hex:'#FDD5D4', netice:'Somon / Salmon',    izah:'Çox populyar pastel. Zərif, qadın tonu.' },
+        { reng:'Qara',      miqdar:'1-2 damcı', hex:'#D4987A', netice:'Terrakota pastel',  izah:'Narıncı + az qara = açıq terrakota. Çox populyar.' },
+        { reng:'Qəhvəyi',   miqdar:'2 damcı',   hex:'#E8B898', netice:'Mis / Şaftalı',     izah:'Qəhvəyi narıncını "torpaqlaşdırır". Zərif ton.' },
+        { reng:'Qırmızı',   miqdar:'3 damcı',   hex:'#F0B8A8', netice:'Somon narıncı',     izah:'İsti, canlı pastel. Günbatımı tonu.' },
+        { reng:'Sarı',      miqdar:'3 damcı',   hex:'#F8D8B0', netice:'Şaftalı krem',      izah:'Yumşaq, şirin. Uşaq sabunları üçün ideal.' },
+        { reng:'Çəhrayı',   miqdar:'3 damcı',   hex:'#F8C8B8', netice:'Somon / Salmon',    izah:'Çox populyar pastel. Zərif, qadın tonu.' },
       ],
       qirmizi: [
-        { reng:'Qara',      miqdar:'2-3 damcı', hex:'#E8C5C4', netice:'Bordo pastel',      izah:'Açıq bordo. Ağ bazada çox cəlbedici görünür.' },
-        { reng:'Qəhvəyi',   miqdar:'2 damcı',   hex:'#ECC9C7', netice:'Kərpic pastel',     izah:'Rustik, natural. Əl sabunları üçün gözəl.' },
-        { reng:'Bənövşəyi', miqdar:'3 damcı',   hex:'#EBC4D3', netice:'Tünd qırmızı-çəhrayı', izah:'Bənövşəyi qırmızını soyudur, dərinləşdirir.' },
-        { reng:'Narıncı',   miqdar:'2 damcı',   hex:'#FACEC8', netice:'Canlı somon',       izah:'Daha parlaq, isti pastel.' },
-        { reng:'Çəhrayı',   miqdar:'4 damcı',   hex:'#F9CDD3', netice:'Gül pastel',        izah:'Yumşaq, çiçəkli ton.' },
+        { reng:'Qara',      miqdar:'2-3 damcı', hex:'#C88880', netice:'Bordo pastel',      izah:'Açıq bordo. Ağ bazada çox cəlbedici görünür.' },
+        { reng:'Qəhvəyi',   miqdar:'2 damcı',   hex:'#D89888', netice:'Kərpic pastel',     izah:'Rustik, natural. Əl sabunları üçün gözəl.' },
+        { reng:'Bənövşəyi', miqdar:'3 damcı',   hex:'#D890A8', netice:'Tünd qırmızı-çəhrayı', izah:'Bənövşəyi qırmızını soyudur, dərinləşdirir.' },
+        { reng:'Narıncı',   miqdar:'2 damcı',   hex:'#F0A898', netice:'Canlı somon',       izah:'Daha parlaq, isti pastel.' },
+        { reng:'Çəhrayı',   miqdar:'4 damcı',   hex:'#F0A8B0', netice:'Gül pastel',        izah:'Yumşaq, çiçəkli ton.' },
       ],
       cehrayi: [
-        { reng:'Qəhvəyi',   miqdar:'1-2 damcı', hex:'#F1D1DA', netice:'Toz çəhrayı',      izah:'Ən gözəl sakit çəhrayı. Çox populyar pastel.' },
-        { reng:'Narıncı',   miqdar:'2 damcı',   hex:'#FCD4D7', netice:'Somon çəhrayı',    izah:'İsti, canlı çəhrayı pastel. Zərif amma rəngli.' },
-        { reng:'Bənövşəyi', miqdar:'2 damcı',   hex:'#EBCAE2', netice:'Leylak çəhrayı',   izah:'Soyuq çəhrayı. Gözəl tон.' },
-        { reng:'Qırmızı',   miqdar:'3 damcı',   hex:'#F9CDD4', netice:'Dərin çəhrayı',    izah:'Daha intensiv pastel çəhrayı.' },
-        { reng:'Ağ',        miqdar:'3 damcı',   hex:'#FBEDF2', netice:'Bebe çəhrayı',     izah:'Ən açıq, incə. Gəlin və uşaq sabunları.' },
+        { reng:'Qəhvəyi',   miqdar:'1-2 damcı', hex:'#E8B8C0', netice:'Toz çəhrayı',      izah:'Ən gözəl sakit çəhrayı. Çox populyar pastel.' },
+        { reng:'Narıncı',   miqdar:'2 damcı',   hex:'#F8C0B8', netice:'Somon çəhrayı',    izah:'İsti, canlı çəhrayı pastel. Zərif amma rəngli.' },
+        { reng:'Bənövşəyi', miqdar:'2 damcı',   hex:'#D8C0D8', netice:'Leylak çəhrayı',   izah:'Soyuq çəhrayı. Gözəl tон.' },
+        { reng:'Qırmızı',   miqdar:'3 damcı',   hex:'#F0A8B8', netice:'Dərin çəhrayı',    izah:'Daha intensiv pastel çəhrayı.' },
+        { reng:'Ağ',        miqdar:'3 damcı',   hex:'#FDE8F0', netice:'Bebe çəhrayı',     izah:'Ən açıq, incə. Gəlin və uşaq sabunları.' },
       ],
       mavi: [
-        { reng:'Ağ',        miqdar:'2-3 damcı', hex:'#E5F0FA', netice:'Göy mavi pastel',  izah:'Ən təhlükəsiz üsul. Açıq, zərif göy mavi.' },
-        { reng:'Bənövşəyi', miqdar:'2 damcı',   hex:'#CAD1EF', netice:'Kornflower pastel',izah:'Soyuq, zərif leylak-mavi pastel.' },
-        { reng:'Çəhrayı',   miqdar:'2 damcı',   hex:'#DAD8ED', netice:'Leylak pastel',    izah:'İki soyuq rəng. Gözəl pastel.' },
-        { reng:'Narıncı',   miqdar:'1 damcı',   hex:'#D7DAE6', netice:'Polad mavi',       izah:'Komplement az qatılır — dərinlik verir.' },
-        { reng:'Qara',      miqdar:'2-3 damcı', hex:'#C0D6EA', netice:'Dəniz mavisi pastel', izah:'Ehtiyatlı — mavi+qara bazada dərin dəniz tonu verir. Gözlənilməz amma maraqlı.' },
+        { reng:'Ağ',        miqdar:'2-3 damcı', hex:'#C8E0F8', netice:'Göy mavi pastel',  izah:'Ən təhlükəsiz üsul. Açıq, zərif göy mavi.' },
+        { reng:'Bənövşəyi', miqdar:'2 damcı',   hex:'#A8C0E8', netice:'Kornflower pastel',izah:'Soyuq, zərif leylak-mavi pastel.' },
+        { reng:'Çəhrayı',   miqdar:'2 damcı',   hex:'#C0C8E8', netice:'Leylak pastel',    izah:'İki soyuq rəng. Gözəl pastel.' },
+        { reng:'Narıncı',   miqdar:'1 damcı',   hex:'#B0C8D8', netice:'Polad mavi',       izah:'Komplement az qatılır — dərinlik verir.' },
+        { reng:'Qara',      miqdar:'2-3 damcı', hex:'#88A8C8', netice:'Dəniz mavisi pastel', izah:'Ehtiyatlı — mavi+qara bazada dərin dəniz tonu verir. Gözlənilməz amma maraqlı.' },
       ],
       benovseyi: [
-        { reng:'Ağ',        miqdar:'2-3 damcı', hex:'#F1E8F4', netice:'Leylak pastel',    izah:'Ən yaxşı üsul. Bənövşəyi açılır, incə leylak.' },
-        { reng:'Çəhrayı',   miqdar:'3 damcı',   hex:'#E8C8E2', netice:'Mov / Mauve',      izah:'İki soyuq rəng. Zərif, qadın pastel tonu.' },
-        { reng:'Qırmızı',   miqdar:'2 damcı',   hex:'#E6C3D8', netice:'İsti bənövşəyi',   izah:'Qırmızı bənövşəyini istiləşdirir.' },
-        { reng:'Mavi',      miqdar:'2 damcı',   hex:'#CECDED', netice:'Soyuq bənövşəyi',  izah:'Daha soyuq, daha dərin pastel.' },
-        { reng:'Qara',      miqdar:'2-3 damcı', hex:'#D2C0DA', netice:'Baklajan pastel',   izah:'Ehtiyatlı — bənövşəyi+qara bazada tünd mov-baklajan tonu. Maraqlı nəticə.' },
+        { reng:'Ağ',        miqdar:'2-3 damcı', hex:'#E0C8E8', netice:'Leylak pastel',    izah:'Ən yaxşı üsul. Bənövşəyi açılır, incə leylak.' },
+        { reng:'Çəhrayı',   miqdar:'3 damcı',   hex:'#D8A8D0', netice:'Mov / Mauve',      izah:'İki soyuq rəng. Zərif, qadın pastel tonu.' },
+        { reng:'Qırmızı',   miqdar:'2 damcı',   hex:'#D0A0C0', netice:'İsti bənövşəyi',   izah:'Qırmızı bənövşəyini istiləşdirir.' },
+        { reng:'Mavi',      miqdar:'2 damcı',   hex:'#B8A8D0', netice:'Soyuq bənövşəyi',  izah:'Daha soyuq, daha dərin pastel.' },
+        { reng:'Qara',      miqdar:'2-3 damcı', hex:'#B898C0', netice:'Baklajan pastel',   izah:'Ehtiyatlı — bənövşəyi+qara bazada tünd mov-baklajan tonu. Maraqlı nəticə.' },
       ],
       yasil: [
-        { reng:'Sarı',      miqdar:'3-4 damcı', hex:'#E2E9C5', netice:'Limon pastel',     izah:'Canlı, limon-yaşıl pastel. Sitrus sabunlar.' },
-        { reng:'Qəhvəyi',   miqdar:'2 damcı',   hex:'#CEDCCA', netice:'Adaçayı / Sage',   izah:'Herbal pastel. Ən populyar yaşıl sabun tonu.' },
-        { reng:'Qırmızı',   miqdar:'1-2 damcı', hex:'#DADAC9', netice:'Zeytun pastel',    izah:'Komplement — yaşılı sakit edir. Natural görünüş.' },
-        { reng:'Mavi',      miqdar:'2 damcı',   hex:'#C5E1DF', netice:'Nəfəs alan yaşıl', izah:'Soyuq, dəniz yaşılı pastel.' },
-        { reng:'Qara',      miqdar:'2-3 damcı', hex:'#C7DAC8', netice:'Zeytun pastel',     izah:'Bazada yaşıl+qara gözəl zeytun/olive pastel verir. Herbal sabunlar üçün ideal!' },
+        { reng:'Sarı',      miqdar:'3-4 damcı', hex:'#C8D890', netice:'Limon pastel',     izah:'Canlı, limon-yaşıl pastel. Sitrus sabunlar.' },
+        { reng:'Qəhvəyi',   miqdar:'2 damcı',   hex:'#A8C098', netice:'Adaçayı / Sage',   izah:'Herbal pastel. Ən populyar yaşıl sabun tonu.' },
+        { reng:'Qırmızı',   miqdar:'1-2 damcı', hex:'#B0B890', netice:'Zeytun pastel',    izah:'Komplement — yaşılı sakit edir. Natural görünüş.' },
+        { reng:'Mavi',      miqdar:'2 damcı',   hex:'#90C0B8', netice:'Nəfəs alan yaşıl', izah:'Soyuq, dəniz yaşılı pastel.' },
+        { reng:'Qara',      miqdar:'2-3 damcı', hex:'#98B090', netice:'Zeytun pastel',     izah:'Bazada yaşıl+qara gözəl zeytun/olive pastel verir. Herbal sabunlar üçün ideal!' },
       ],
       lime: [
         { reng:'Sarı',      miqdar:'4-5 damcı', hex:'#F1F4BA', netice:'Canlı limon pastel',izah:'Daha isti limon. Sarı dominant olsun.' },
@@ -3248,46 +3314,46 @@ function mkMasterReng() {
   var XILAS_RESEPTLERI = [
     {
       problem: 'Ölü qəhvəyi / Palçıq rəngi',
-      hex_problem: '#C4AD98',
+      hex_problem: '#A07858',
       icon: '💩',
       izah: 'Bir neçə rəng qarışıb, qəhvəyimtıl palçıq çıxıb.',
       yollar: [
-        { ad:'Terrakota yolu',  hex:'#EDCCC4', resept:'+ Narıncı 4-5 damcı + Qırmızı 2 damcı', neticə:'Qəhvəyini terrakota pastelə çevirir. Ən təhlükəsiz yol.' },
-        { ad:'Karamel yolu',    hex:'#EED9BF', resept:'+ Narıncı 3 + Sarı 3 damcı',             neticə:'İsti, şirin karamel pastel.' },
-        { ad:'Şokolad yolu',    hex:'#CFC5BF', resept:'+ Qara 4-5 damcı',                       neticə:'Qəbul et — tünd şokolad pastel et. Lüks görünüş.' },
+        { ad:'Terrakota yolu',  hex:'#C87860', resept:'+ Narıncı 4-5 damcı + Qırmızı 2 damcı', neticə:'Qəhvəyini terrakota pastelə çevirir. Ən təhlükəsiz yol.' },
+        { ad:'Karamel yolu',    hex:'#D8A860', resept:'+ Narıncı 3 + Sarı 3 damcı',             neticə:'İsti, şirin karamel pastel.' },
+        { ad:'Şokolad yolu',    hex:'#907060', resept:'+ Qara 4-5 damcı',                       neticə:'Qəbul et — tünd şokolad pastel et. Lüks görünüş.' },
       ]
     },
     {
       problem: 'Soyuq boz / Küllü rəng',
-      hex_problem: '#C8C8C8',
+      hex_problem: '#909090',
       icon: '🌫️',
       izah: 'Mavi, bənövşəyi, qara qarışıb soyuq boz çıxıb.',
       yollar: [
-        { ad:'İsti boz yolu',   hex:'#DAD4CF', resept:'+ Narıncı 2 + Qəhvəyi 1 damcı',         neticə:'Soyuq bozu isti boza çevirir. Daha qəbul edilən.' },
-        { ad:'Charcoal yolu',   hex:'#BEBEBE', resept:'+ Qara 4-5 damcı',                       neticə:'Qəbul et — charcoal pastel et. Detoks sabunu.' },
-        { ad:'Leylak yolu',     hex:'#E0D5E8', resept:'+ Bənövşəyi 4 + Ağ 3 damcı',            neticə:'Boza bənövşəyi qayt — leylak pastel çıxa bilər.' },
+        { ad:'İsti boz yolu',   hex:'#A89890', resept:'+ Narıncı 2 + Qəhvəyi 1 damcı',         neticə:'Soyuq bozu isti boza çevirir. Daha qəbul edilən.' },
+        { ad:'Charcoal yolu',   hex:'#787878', resept:'+ Qara 4-5 damcı',                       neticə:'Qəbul et — charcoal pastel et. Detoks sabunu.' },
+        { ad:'Leylak yolu',     hex:'#C0A0D0', resept:'+ Bənövşəyi 4 + Ağ 3 damcı',            neticə:'Boza bənövşəyi qayt — leylak pastel çıxa bilər.' },
       ]
     },
     {
       problem: 'Yaşılımtıl-boz / Xaki',
-      hex_problem: '#C4CCBA',
+      hex_problem: '#889868',
       icon: '🤢',
       izah: 'Sarı + yaşıl + qara qarışıb xaki çıxıb.',
       yollar: [
-        { ad:'Zeytun yolu',     hex:'#DDDDB8', resept:'+ Sarı 3 + Qəhvəyi 2 damcı',            neticə:'Xakini zeytun pastelə çevir. Herbal görünüş.' },
-        { ad:'Adaçayı yolu',    hex:'#CCDCC8', resept:'+ Yaşıl 3 + Sarı 2 damcı',              neticə:'Daha yaşıl, daha natural pastel.' },
-        { ad:'Meşə yolu',       hex:'#C4CCC0', resept:'+ Qara 2 + Yaşıl 2 damcı',              neticə:'Tünd meşə yaşılı pastel. Kişi sabunları.' },
+        { ad:'Zeytun yolu',     hex:'#A8A860', resept:'+ Sarı 3 + Qəhvəyi 2 damcı',            neticə:'Xakini zeytun pastelə çevir. Herbal görünüş.' },
+        { ad:'Adaçayı yolu',    hex:'#88B080', resept:'+ Yaşıl 3 + Sarı 2 damcı',              neticə:'Daha yaşıl, daha natural pastel.' },
+        { ad:'Meşə yolu',       hex:'#708068', resept:'+ Qara 2 + Yaşıl 2 damcı',              neticə:'Tünd meşə yaşılı pastel. Kişi sabunları.' },
       ]
     },
     {
       problem: 'Kirli bənövşəyi-boz',
-      hex_problem: '#C4BBC4',
+      hex_problem: '#907890',
       icon: '😵',
       izah: 'Bənövşəyi + mavi + qara qarışıb çirkin rəng çıxıb.',
       yollar: [
-        { ad:'Magistr yolu',    hex:'#DCC0DC', resept:'+ Bənövşəyi 5 + Qırmızı 2 damcı',       neticə:'Daha çox bənövşəyi — rəngi geri qayt.' },
-        { ad:'Leylak yolu',     hex:'#E8DEF0', resept:'+ Bənövşəyi 4 + Ağ 4 damcı',            neticə:'Açıq, yumşaq leylak pastel. Bəlkə çıxdı!' },
-        { ad:'Kömür yolu',      hex:'#BEBEBE', resept:'+ Qara 5-6 damcı',                       neticə:'Qəbul et — charcoal pastel kimi sat.' },
+        { ad:'Magistr yolu',    hex:'#A868A8', resept:'+ Bənövşəyi 5 + Qırmızı 2 damcı',       neticə:'Daha çox bənövşəyi — rəngi geri qayt.' },
+        { ad:'Leylak yolu',     hex:'#C0A0D8', resept:'+ Bənövşəyi 4 + Ağ 4 damcı',            neticə:'Açıq, yumşaq leylak pastel. Bəlkə çıxdı!' },
+        { ad:'Kömür yolu',      hex:'#787878', resept:'+ Qara 5-6 damcı',                       neticə:'Qəbul et — charcoal pastel kimi sat.' },
       ]
     },
   ];
@@ -3408,10 +3474,12 @@ async function runRengAI() {
   if (!S.rengAI || !S.rengAI.trim()) { showToast('Rəng adı yazın'); return; }
   set({ rengAILoading: true, rengAIResult: null });
 
-  var prompt = 'Sən M&P sabun boyakarlığı üzrə mütəxəssisən. İstifadəçi ağ M&P sabun bazasında xüsusi bir rəng almaq istəyir.\n\nİstədiyi rəng: "' + S.rengAI + '"\n\nƏlindəki rənglər (mayə piqment):\n930 seti (30ml, daha güclü/tünd): Sarı, Narıncı, Qırmızı, Limon-yaşıl, Çəhrayı, Bənövşəyi, Mavi, Süd şokoladı, Qara\n1050 seti (50ml, yüngül): Qəhvəyi, Qara, Bənövşəyi, Çəhrayı, Yaşıl, Karmin, Mavi, Qırmızı, Sarı, Ağ\n\nVACİB QAYDALAR:\n- Ağ baza rəngləri parlaq və pastel edir\n- Parlaqlığı azaltmaq üçün: Qara (isti rənglər üçün) və ya Qəhvəyi (daha təhlükəsiz)\n- Mavi, Yaşıl, Bənövşəyi, Limon-yaşılına QARA QATMA — tamam başqa rəngə çevrilir\n- Bu rənglər üçün: Qəhvəyi və ya komplement rəng istifadə et\n- 930 set güclüdür — az damcı lazımdır\n- 100q baza üçün ümumi 5-10 damcı rəng\n\nYALNIZ JSON ver:\n{"ad":"Azərbaycanca rəng adı","ad_en":"English color name","damci":"100q baza üçün damcı sayı — məs: Sarı 7 damcı + Qəhvəyi 2 damcı","addim":"Addım-addım qaydalar","xeberdarliq":"Varsa xəbərdarlıq, yoxdursa boş string","izah":"Bu rəngin ağ bazada davranışı"}';
+  var prompt = 'İstifadəçi ağ M&P sabun bazasında bu rəngi istəyir: "' + S.rengAI + '"\n\nVACİB QAYDALAR:\n- Ağ baza rəngləri parlaq edir, pastel nəticə çıxır\n- Parlaqlığı azaltmaq üçün: Qara (isti rənglər) və ya Qəhvəyi (daha təhlükəsiz)\n- Mavi, Yaşıl, Bənövşəyi, Limon-yaşılına QARA QATMA — başqa rəngə çevrilir\n- 930 set güclüdür — az damcı lazımdır\n- 100q baza üçün ümumi 5-10 damcı\n\nYALNIZ JSON ver:\n{"ad":"Azərbaycanca rəng adı","ad_en":"English color name","damci":"100q baza üçün damcı sayı — məs: Sarı 7 damcı + Qəhvəyi 2 damcı","addim":"Addım-addım qaydalar","xeberdarliq":"Varsa xəbərdarlıq, yoxdursa boş string","izah":"Bu rəngin ağ bazada davranışı"}';
+
+  var systemPromptReng = 'Sən M&P sabun boyakarlığı üzrə mütəxəssisən. Yalnız JSON cavab ver.\n\nƏlindəki rənglər:\n930 seti (30ml, güclü): Sarı, Narıncı, Qırmızı, Limon-yaşıl, Çəhrayı, Bənövşəyi, Mavi, Süd şokoladı, Qara\n1050 seti (50ml, yüngül): Qəhvəyi, Qara, Bənövşəyi, Çəhrayı, Yaşıl, Karmin, Mavi, Qırmızı, Sarı, Ağ';
 
   try {
-    var resp = await fetch(GS_URL, { method: 'POST', body: JSON.stringify({ action: 'ai_blend', prompt: prompt }) });
+    var resp = await fetch(GS_URL, { method: 'POST', body: JSON.stringify({ action: 'ai_blend', prompt: prompt, systemPrompt: systemPromptReng }) });
     var data = await resp.json();
     if (data.error) { set({ rengAILoading: false }); showToast('API xətası: ' + (data.error.message||'')); return; }
     var text = data.content.map(function(i){ return i.text||''; }).join('');
