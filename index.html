@@ -114,7 +114,7 @@ button{font-family:inherit;cursor:pointer}
 <div class="toast" id="toast"></div>
 <script>
 const GS_URL = "https://script.google.com/macros/s/AKfycbxhy9DyHpzm1-xY-K-g9uGSq8AoG4U0XtB38C8w5fPALBdydsCAw1eVIElb_5X3FnLK/exec";
-const APP_VERSION = 42;
+const APP_VERSION = 43;
 const ADMIN_CODE = '1234';
 
 // ── ADMIN/GUEST ───────────────────────────────────────────────
@@ -1631,13 +1631,17 @@ async function runBlendAI(mode) {
   set({ bfLoading: true, bfResult: null });
 
   // Build fragrance list from anbar with guc
-  const atirList = S.atirAnbar.map(a => `${a.name} | ${a.guc||'?'}` ).join('\n');
-
   const mehsul = S.bfMehsul || 'M&P Sabun';
   const cins = S.bfCins || 'Qadın';
+  const isSabun = mehsul === 'M&P Sabun';
+
+  // Sabun üçün yalnız USA ətirləri göndər
+  const sabunFilter = a => (a.country||'').toLowerCase().includes('usa') || (a.name||'').toUpperCase().includes('USA');
+  const usableAtir = isSabun ? S.atirAnbar.filter(sabunFilter) : S.atirAnbar;
+  const atirList = usableAtir.map(a => `${a.name} | ${a.guc||'?'}` ).join('\n');
 
   const mehsulQayda = {
-    'M&P Sabun': 'MƏHSUL: M&P Sabun. Dəriyə birbaşa təmas var. Yumşaq, gözəl, yüngül-orta intensivlikdə qoxular seç. Ağır qoxulardan çəkin. Ümumi faiz 1-3%.',
+    'M&P Sabun': 'MƏHSUL: M&P Sabun. Dəriyə birbaşa təmas var. Yumşaq, gözəl, yüngül-orta intensivlikdə qoxular seç. Ağır qoxulardan çəkin. Ümumi faiz 1-3%.\n⚠️ SABUN QAYDASI: Yalnız "FO USA" (CandleScience) ətirlərdən istifadə et. FR (Fransa) və CN (Çin) ətirləri QADAĞANDIR.',
     'Ətirli Mum Tablet': 'MƏHSUL: Ətirli Mum Tablet — garderopda passiv yayılır. Dərin, sabit qoxular: müşk, amber, odunsu, lavanda. Baza notlara üstünlük ver. Ümumi faiz 6-10%.',
     'Ətirli Əriyən Mum': 'MƏHSUL: Ətirli Əriyən Mum — aroma lampada, istilik ilə otağa yayılır. Uçucu, canlı qoxular: çiçəkli, sitrus, meyvəli. Flash point 65C+ üstün tut. Ümumi faiz 8-12%.'
   };
@@ -2698,9 +2702,9 @@ const MASTER_BLENDLER = [
     icon: '⭐',
     ad: 'Universal Master Blend',
     xarakter: 'Hər şeylə uyğun',
-    sabun: 'Phatoil White Musk FO 35% + Towatap Vanilla EO 30% + Palo Santo and Sandalwood FO 20% + Lavender (Lavanda) FO 15%',
-    mum:   'Phatoil White Musk FO 30% + Towatap Vanilla EO 35% + Palo Santo and Sandalwood FO 20% + Lavender (Lavanda) FO 15%',
-    tablet:'Phatoil White Musk FO 35% + Towatap Vanilla EO 30% + Palo Santo and Sandalwood FO 20% + Lavender (Lavanda) FO 15%',
+    sabun: 'White Tea FO USA 35% + Palo Santo & Sandalwood FO USA 30% + Ocean Breeze FO USA 20% + Citrus Agave FO USA 15%',
+    mum:   'Phatoil White Musk FO CN 30% + Towatap Vanilla EO CN 35% + Palo Santo & Sandalwood FO USA 20% + Lavender FO FR 15%',
+    tablet:'Phatoil White Musk FO CN 35% + Towatap Vanilla EO CN 30% + Palo Santo & Sandalwood FO USA 20% + Lavender FO FR 15%',
     izah: 'Ən universal seçim. Ağ müşk hər qoxunu tamamlayır, vanil yumşaldır, sandal dərinlik verir, lavanda balanslaşdırır. Çiçəkli, meyvəli, sitrus, şirin — hamısı ilə uyğundur.',
     uygun: ['Çiçəkli','Meyvəli','Sitrus','Şirin','Dəniz','Bilmirəm']
   },
@@ -2709,9 +2713,9 @@ const MASTER_BLENDLER = [
     icon: '🌿',
     ad: 'Herbal / Wellness',
     xarakter: 'Spa · Herbal · Nəfəs',
-    sabun: 'Lavender FO 30% + Rosemary Sage FO 25% + Towatap Eucalyptus EO 25% + Phatoil White Musk FO 20%',
-    mum:   'Lavender FO 25% + Rosemary Sage FO 20% + Towatap Eucalyptus EO 20% + Green Tea and Lemongrass FO 20% + Phatoil White Musk FO 15%',
-    tablet:'Lavender FO 30% + Rosemary Sage FO 25% + Towatap Eucalyptus EO 25% + Phatoil White Musk FO 20%',
+    sabun: 'Rosemary Sage FO USA 35% + White Tea FO USA 30% + Ocean Breeze FO USA 20% + Citrus Agave FO USA 15%',
+    mum:   'Lavender FO FR 25% + Rosemary Sage FO USA 20% + Towatap Eucalyptus EO CN 20% + Green Tea and Lemongrass FO USA 20% + Phatoil White Musk FO CN 15%',
+    tablet:'Lavender FO FR 30% + Rosemary Sage FO USA 25% + Towatap Eucalyptus EO CN 25% + Phatoil White Musk FO CN 20%',
     izah: 'Arındırıcı, nəfəs açan, spa atmosferi. CandleScience Lavender + Rosemary Sage — güclü, sabit. Evkalipt serinlik qatır, müşk bağlayır. Oduncaq, dəniz, herbal bazalı məhsullar üçün ideal.',
     uygun: ['Oduncaq','Dəniz','Herbal','Bilmirəm']
   },
@@ -2720,9 +2724,9 @@ const MASTER_BLENDLER = [
     icon: '🌸',
     ad: 'Floral / Oriental',
     xarakter: 'Çiçək · Şərq · Romantik',
-    sabun: 'Phatoil Sandalwood Sanctuary FO 30% + Hllozzi Ylang-Ylang EO 25% + Amber FO 20% + Phatoil White Musk FO 15% + Hllozzi Chamomile EO 10%',
-    mum:   'Phatoil Sandalwood Sanctuary FO 25% + Hllozzi Ylang-Ylang EO 20% + Amber FO 20% + Towatap Vanilla EO 20% + Phatoil White Musk FO 15%',
-    tablet:'Phatoil Sandalwood Sanctuary FO 30% + Hllozzi Ylang-Ylang EO 25% + Amber FO 20% + Phatoil White Musk FO 15% + Hllozzi Chamomile EO 10%',
+    sabun: 'Japan Cherry Blossom FO USA 35% + Rose Petals FO USA 30% + Palo Santo & Sandalwood FO USA 20% + Citrus Agave FO USA 15%',
+    mum:   'Phatoil Sandalwood Sanctuary FO CN 25% + Hllozzi Ylang-Ylang EO CN 20% + Amber FO FR 20% + Towatap Vanilla EO CN 20% + Phatoil White Musk FO CN 15%',
+    tablet:'Phatoil Sandalwood Sanctuary FO CN 30% + Hllozzi Ylang-Ylang EO CN 25% + Amber FO FR 20% + Phatoil White Musk FO CN 15% + Hllozzi Chamomile EO CN 10%',
     izah: 'Şərq, lüks, qadın yönümlü. Sandalwood Sanctuary baza yaradır, ylang-ylang ekzotik çiçək verir, kəhrəba istilik qatır. Çiçəkli və şərq bazalı məhsulları dərinləşdirir.',
     uygun: ['Çiçəkli','Şirin','Bilmirəm']
   },
@@ -2731,9 +2735,9 @@ const MASTER_BLENDLER = [
     icon: '🪵',
     ad: 'Woody / Masculine',
     xarakter: 'Oduncaq · Tüstü · Kişi',
-    sabun: 'Palo Santo and Sandalwood FO 30% + EUQEE Cedarwood FO 25% + Patchouli FO 25% + Cypress and Bayberry FO 20%',
-    mum:   'EUQEE Warm Rustic Wood FO 25% + EUQEE Cedarwood FO 25% + Patchouli FO 20% + EUQEE Forest Pine FO 20% + Smoke and Amber FO 10%',
-    tablet:'Palo Santo and Sandalwood FO 30% + EUQEE Cedarwood FO 25% + Patchouli FO 25% + Cypress and Bayberry FO 20%',
+    sabun: 'Palo Santo & Sandalwood FO USA 35% + Patchouli FO USA 30% + Cypress & Bayberry FO USA 20% + Black Sea FO USA 15%',
+    mum:   'EUQEE Warm Rustic Wood FO CN 25% + EUQEE Cedarwood FO CN 25% + Patchouli FO USA 20% + EUQEE Forest Pine EO CN 20% + Smoke & Amber FO USA 10%',
+    tablet:'Palo Santo & Sandalwood FO USA 30% + EUQEE Cedarwood FO CN 25% + Patchouli FO USA 25% + Cypress & Bayberry FO USA 20%',
     izah: 'Maskulin, rustik, dərin. Sabun üçün: USA güclü ətirlər — palo santo, sidr, patchouli, şam. Mum üçün: EUQEE oduncaq seriyası + tüstülü Smoke & Amber.',
     uygun: ['Oduncaq','Dəniz','Herbal','Bilmirəm']
   },
@@ -2742,9 +2746,9 @@ const MASTER_BLENDLER = [
     icon: '🌊',
     ad: 'Fresh / Aqua',
     xarakter: 'Dəniz · Sitrus · Sərgin',
-    sabun: 'Ocean Breeze FO 35% + Citrus Agave FO 25% + White Tea FO 20% + Phatoil White Musk FO 20%',
-    mum:   'Ocean Breeze FO 30% + Citrus Agave FO 25% + Matcha and Bergamot FO 25% + Phatoil White Musk FO 20%',
-    tablet:'Ocean Breeze FO 35% + Citrus Agave FO 25% + White Tea FO 20% + Phatoil White Musk FO 20%',
+    sabun: 'Ocean Breeze FO USA 35% + Citrus Agave FO USA 25% + White Tea FO USA 25% + Rosemary Sage FO USA 15%',
+    mum:   'Ocean Breeze FO USA 30% + Citrus Agave FO USA 25% + Matcha & Bergamot FO USA 25% + Phatoil White Musk FO CN 20%',
+    tablet:'Ocean Breeze FO USA 35% + Citrus Agave FO USA 25% + White Tea FO USA 20% + Phatoil White Musk FO CN 20%',
     izah: 'Sərgin, açıq, dəniz havası. Ocean Breeze + Citrus Agave güclü CandleScience duet — uzun ömürlü. White Tea minerallik qatır, müşk bağlayır. Dəniz, sitrus, herbal bazalı məhsullara ideal.',
     uygun: ['Dəniz','Sitrus','Herbal','Bilmirəm']
   },
@@ -2922,7 +2926,11 @@ async function runMasterBlendAI() {
   if (!isAdmin()) { showToast('⛔ AI yalnız Admin üçündür'); return; }
   set({ mbLoading: true, mbResult: null });
 
-  const atirList = S.atirAnbar.map(a => `${a.name} | ${a.guc||'?'}` ).join('\n');
+  const isMbSabun = (S.mbMehsul || 'Sabun') === 'Sabun';
+  const mbAtirSource = isMbSabun
+    ? S.atirAnbar.filter(a => (a.country||'').toLowerCase().includes('usa') || (a.name||'').toUpperCase().includes('USA'))
+    : S.atirAnbar;
+  const atirList = mbAtirSource.map(a => `${a.name} | ${a.guc||'?'}` ).join('\n');
 
   const xarakter  = S.mbXarakter  || '❓ Bilmirəm';
   const problem   = S.mbProblem   || 'Sadəcə yaxşılaşdır';
@@ -2931,7 +2939,7 @@ async function runMasterBlendAI() {
 
   // Məhsula görə qayda
   const mehsulQayda = {
-    'Sabun':         'Ümumi faiz: 1-3%. Yüngül, dəri dostu universal ətirlər. Ağır dominant qoxulardan çəkin.',
+    'Sabun':         'Ümumi faiz: 1-3%. Yüngül, dəri dostu universal ətirlər. Ağır dominant qoxulardan çəkin.\n⚠️ SABUN QAYDASI: Yalnız FO USA (CandleScience) ətirləri istifadə et. FR (Fransa) və CN (Çin) QADAĞANDIR.',
     'Əriyən Mum':    'Ümumi faiz: 8-12%. Otağa yayılan, sabit, dərin bazalar. Flash point 65C+ üstün tut.',
     'Ətirli Tablet': 'Ümumi faiz: 5-8%. Passiv yayılır, gərginlik yox — sabit müşk, amber, odunsu notlar.'
   };
@@ -4009,7 +4017,7 @@ async function runAtirTovAI() {
     `${i+1}. [${b.tip}|${b.cins}|${b.profil}] ${b.ad} — ${b.acıqlama}`
   ).join('\n');
 
-  const systemPromptTov = `Sən Lavannelle brendinin ətir tövsiyəçisisən. İstifadəçinin hissini/atmosferini oxuyub ən uyğun hazır blendləri tövsiyə edirsən. Yalnız JSON cavab ver.\n\nHazır blendlər kataloqu:\n${blendList}`;
+  const systemPromptTov = `Sən Lavannelle brendinin ətir tövsiyəçisisən. İstifadəçinin hissini/atmosferini oxuyub ən uyğun hazır blendləri tövsiyə edirsən. Yalnız JSON cavab ver.\n\n⚠️ SABUN QAYDASI: Sabun blendlərini tövsiyə edərkən yalnız "FO USA" ətirləri olan blendlər tövsiyə et.\n\nHazır blendlər kataloqu:\n${blendList}`;
 
   const prompt = `İstifadəçi bu hissi/atmosferi təsvir etdi: "${hiss}"
 
