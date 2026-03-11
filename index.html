@@ -114,7 +114,7 @@ button{font-family:inherit;cursor:pointer}
 <div class="toast" id="toast"></div>
 <script>
 const GS_URL = "https://script.google.com/macros/s/AKfycbxhy9DyHpzm1-xY-K-g9uGSq8AoG4U0XtB38C8w5fPALBdydsCAw1eVIElb_5X3FnLK/exec";
-const APP_VERSION = 43;
+const APP_VERSION = 45;
 const ADMIN_CODE = '1234';
 
 // ── ADMIN/GUEST ───────────────────────────────────────────────
@@ -353,7 +353,7 @@ const S = {
   atirSub: null,
   bfInput: '', bfResult: null, bfLoading: false, bfMode: '', bfMehsul: 'Ümumi', bfCins: 'Qadın',
   mbMehsul: 'Sabun', mbXarakter: '', mbEffekt: 'Universal saxla', mbIntensiv: 'Orta', mbProblem: 'Sadəcə yaxşılaşdır', mbResult: null, mbLoading: false,
-  rengSub: null, rengSeçim: null, rengAI: '', rengAIResult: null, rengAILoading: false,
+  rengSub: null, rengSeçim: null, rengAI: '', rengAIResult: null, rengAILoading: false, savedRengler: [],
   atirTov: { tip:'Hamısı', cins:'Hamısı', hiss:'', profiller:[], result:null, loading:false, mode:'hiss' },
   hbKat: 'Hamısı', hbCins: 'Hamısı', hbSearch: '', hbHideZero: false,
   savedBlends: [],
@@ -2185,11 +2185,28 @@ function mkHazirBlendlerPage() {
   srch.type = 'text';
   srch.placeholder = '🔍 Blend adı və ya ətir axtar...';
   srch.style.cssText = 'margin-bottom:12px;font-size:13px';
+  srch.setAttribute('id', 'hb-search-inp');
   srch.value = S.hbSearch || '';
-  srch.oninput = e => { S.hbSearch = e.target.value; render(); };
+  srch.oninput = e => {
+    S.hbSearch = e.target.value;
+    const cont = document.getElementById('hb-list-container');
+    if (cont) buildHbList(cont);
+  };
   page.appendChild(srch);
 
+  // Results container — rebuilt on search/filter without full render()
+  const hbContainer = ce('div');
+  hbContainer.id = 'hb-list-container';
+  page.appendChild(hbContainer);
+  buildHbList(hbContainer);
+
+  return page;
+}
+
   // XLSX_BLENDLER-i HAZIR_BLENDLER formatına çevir
+function buildHbList(container) {
+  const q = (S.hbSearch||"").toLowerCase();
+  container.innerHTML = "";
   const tipToKat = {'Sabun':'M&P Sabun','Əriyən Mum':'Əriyən Mum','Tablet':'Ətirli Tablet'};
   const xlsxAsHazir = XLSX_BLENDLER.map(b => ({
     ad: b.ad, atirlər: b.atirlər, kateqoriya: tipToKat[b.tip] || b.tip,
@@ -2200,8 +2217,7 @@ function mkHazirBlendlerPage() {
   let filtered = [...(S.savedBlends || []), ...HAZIR_BLENDLER, ...xlsxAsHazir];
   if (S.hbKat && S.hbKat !== 'Hamısı') filtered = filtered.filter(b => b.kateqoriya === S.hbKat);
   if (S.hbCins && S.hbCins !== 'Hamısı') filtered = filtered.filter(b => b.cins === S.hbCins);
-  if (S.hbSearch) {
-    const q = S.hbSearch.toLowerCase();
+  if (q) {
     filtered = filtered.filter(b => b.ad.toLowerCase().includes(q) || b.atirlər.toLowerCase().includes(q) || (b.profil||'').toLowerCase().includes(q) || (b.izah||'').toLowerCase().includes(q));
   }
   // Sort: 5→1 first, unrated middle, 0 (never again) at bottom
@@ -2221,14 +2237,14 @@ function mkHazirBlendlerPage() {
   const count = ce('div');
   count.style.cssText = 'font-size:12px;color:#9fa9bf;margin-bottom:10px';
   count.textContent = filtered.length + ' blend tapıldı';
-  page.appendChild(count);
+  container.appendChild(count);
 
   if (filtered.length === 0) {
     const empty = ce('div');
     empty.style.cssText = 'text-align:center;padding:40px;color:#9fa9bf;font-size:14px';
     empty.textContent = 'Heç bir blend tapılmadı';
-    page.appendChild(empty);
-    return page;
+    container.appendChild(empty);
+    return;
   }
 
   filtered.forEach((b, bi) => {
@@ -2487,11 +2503,10 @@ function mkHazirBlendlerPage() {
     };
     card.appendChild(useBtn);
 
-    page.appendChild(card);
+    container.appendChild(card);
   });
-
-  return page;
 }
+
 
 // ── MASTER BLEND ─────────────────────────────────────────────────────────────
 const XLSX_BLENDLER = [
@@ -3079,8 +3094,8 @@ const QARA_NETICE = {
 
 const MUTED_TONLAR = [
   // Sarı ailəsi
-  { az:'Krem',         en:'Cream',          hex:'#F2EDD4', damci:'Sarı 4 + Ağ 2 damcı',                       resept:'Sarı+ağ, az miqdar. Klassik sabun kremi tonu.' },
-  { az:'Şampan',       en:'Champagne',      hex:'#EFE5C0', damci:'Sarı 8 + Ağ 4 damcı',                       resept:'Sarı+ağ. Zərif, açıq şampan rəngi.' },
+  { az:'Krem',         en:'Cream',          hex:'#F2EDD4', damci:'Sarı 4',                       resept:'Sarı+ağ, az miqdar. Klassik sabun kremi tonu.' },
+  { az:'Şampan',       en:'Champagne',      hex:'#EFE5C0', damci:'Sarı 8',                       resept:'Sarı+ağ. Zərif, açıq şampan rəngi.' },
   { az:'Qum bej',      en:'Sand Beige',     hex:'#D8C070', damci:'Sarı 10 + Qəhvəyi 5 damcı',                 resept:'Sarı+qəhvəyi. Yumşaq, isti bej tonu.' },
   { az:'Xardal',       en:'Mustard',        hex:'#C8B858', damci:'Sarı 12 + Qara 3 damcı',                    resept:'Sarı+qara. Klassik xardal.' },
   // Narıncı ailəsi
@@ -3098,12 +3113,12 @@ const MUTED_TONLAR = [
   { az:'Kərpic',       en:'Brick Red',      hex:'#C87878', damci:'Qırmızı 10 + Qəhvəyi 5 damcı',            resept:'Qırmızı+qəhvəyi. Rustik, natural.' },
   { az:'Bordo',        en:'Burgundy',       hex:'#C07090', damci:'Qırmızı 9 + Bənövşəyi 4 + Qara 2 damcı',  resept:'Qırmızı+bənövşəyi+qara. Klassik bordo.' },
   // Bənövşəyi ailəsi
-  { az:'Lavanda',      en:'Lavender',       hex:'#C8A0D0', damci:'Bənövşəyi 8 + Çəhrayı 4 + Ağ 3 damcı',   resept:'Bənövşəyi+çəhrayı+ağ. Klassik lavanda çiçəyi.' },
-  { az:'Leylak',       en:'Dusty Lavender', hex:'#C8A8D8', damci:'Bənövşəyi 10 + Ağ 5 damcı',              resept:'Bənövşəyi+ağ. Açıq, yumşaq leylak.' },
+  { az:'Lavanda',      en:'Lavender',       hex:'#C8A0D0', damci:'Bənövşəyi 8 + Çəhrayı 4',   resept:'Bənövşəyi+çəhrayı+ağ. Klassik lavanda çiçəyi.' },
+  { az:'Leylak',       en:'Dusty Lavender', hex:'#C8A8D8', damci:'Bənövşəyi 10',              resept:'Bənövşəyi+ağ. Açıq, yumşaq leylak.' },
   { az:'Mov',          en:'Mauve',          hex:'#B878C0', damci:'Bənövşəyi 9 + Çəhrayı 6 damcı',          resept:'Bənövşəyi+çəhrayı. Zərif mov tonu.' },
   { az:'Baklajan',     en:'Eggplant',       hex:'#A878B0', damci:'Bənövşəyi 9 + Qırmızı 4 + Qara 2 damcı', resept:'Bənövşəyi+qırmızı+qara. Dərin, lüks ton.' },
   // Mavi ailəsi
-  { az:'Polad mavi',   en:'Steel Blue',     hex:'#88C0F0', damci:'Mavi 10 + Ağ 5 damcı',                   resept:'Mavi+ağ. Soyuq, zərif pastel.' },
+  { az:'Polad mavi',   en:'Steel Blue',     hex:'#88C0F0', damci:'Mavi 10',                   resept:'Mavi+ağ. Soyuq, zərif pastel.' },
   { az:'Dəniz mavisi', en:'Ocean Blue',     hex:'#6890D8', damci:'Mavi 10 + Bənövşəyi 5 damcı',            resept:'Mavi+bənövşəyi. Dərin dəniz tonu.' },
   { az:'Antrasit',     en:'Anthracite',     hex:'#708898', damci:'Qara 11 + Mavi 4 damcı',                 resept:'Qara+mavi. Soyuq, dərin antrasit. Kişi sabunları.' },
   // Yaşıl ailəsi
@@ -3116,7 +3131,7 @@ const MUTED_TONLAR = [
   { az:'Kakao',        en:'Cocoa',          hex:'#B88880', damci:'Qəhvəyi 11 + Qırmızı 4 damcı',          resept:'Qəhvəyi+qırmızı. İsti şokolad tonu.' },
   // Neytral
   { az:'İsti boz',     en:'Warm Grey',      hex:'#988880', damci:'Qara 9 + Narıncı 4 + Qəhvəyi 2 damcı',  resept:'Qara+narıncı+qəhvəyi. Soyuq deyil, isti boz.' },
-  { az:'Kömür',        en:'Charcoal',       hex:'#909090', damci:'Qara 12 + Ağ 3 damcı',                  resept:'Qara+ağ. Klassik charcoal detoks sabun.' },
+  { az:'Kömür',        en:'Charcoal',       hex:'#909090', damci:'Qara 12',                  resept:'Qara+ağ. Klassik charcoal detoks sabun.' },
 ];
 
 function mkRengDunyasi() {
@@ -3218,6 +3233,38 @@ function mkMutedTonlar() {
   note.style.cssText = 'font-size:11px;color:#ababab;margin-bottom:14px;line-height:1.5;padding:8px 10px;background:rgba(255,255,255,.04);border-radius:8px';
   note.textContent = '100q ağ M&P bazası üçün damcı sayları. Cəmi ~15 damcı əsasında hesablanıb. 1050 set daha güclüdür — az damcı istifadə edin.';
   page.appendChild(note);
+
+  // AI ilə saxlanmış rənglər
+  const saved = S.savedRengler || [];
+  if (saved.length > 0) {
+    const aiSec = ce('div');
+    aiSec.style.cssText = 'font-size:11px;font-weight:700;color:#a78bfa;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px';
+    aiSec.textContent = '✨ AI ilə yaradılmış';
+    page.appendChild(aiSec);
+    saved.forEach(function(t, ti) {
+      const card = ce('div', 'result-box');
+      card.style.cssText = 'margin-bottom:10px;border-color:rgba(167,139,250,.3)';
+      const topRow = ce('div'); topRow.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:6px';
+      const swatch = ce('div');
+      swatch.style.cssText = 'width:36px;height:36px;border-radius:8px;background:'+(t.hex||'#888')+';flex-shrink:0;border:2px solid rgba(167,139,250,.4)';
+      const nameEl = ce('div'); nameEl.style.flex = '1';
+      const azEl = ce('div'); azEl.style.cssText = 'font-size:14px;font-weight:700;color:#fff'; azEl.textContent = t.az;
+      const enEl = ce('div'); enEl.style.cssText = 'font-size:11px;color:#9fa9bf'; enEl.textContent = t.en;
+      const aiBadge = ce('span'); aiBadge.style.cssText = 'font-size:9px;background:rgba(155,122,204,.3);color:#9b7acc;border-radius:5px;padding:1px 5px;font-weight:700;margin-left:4px'; aiBadge.textContent = 'AI';
+      azEl.appendChild(aiBadge);
+      nameEl.appendChild(azEl); nameEl.appendChild(enEl);
+      const delBtn = ce('button'); delBtn.style.cssText = 'background:none;border:none;color:#555;font-size:16px;cursor:pointer;padding:2px 6px'; delBtn.textContent = '✕';
+      const tiIdx = ti;
+      delBtn.onclick = function() { S.savedRengler = (S.savedRengler||[]).filter((_,i) => i !== tiIdx); render(); };
+      topRow.appendChild(swatch); topRow.appendChild(nameEl); topRow.appendChild(delBtn);
+      card.appendChild(topRow);
+      if (t.damci) { const dc = ce('div'); dc.style.cssText = 'font-size:12px;color:#a78bfa;font-weight:600;margin-bottom:4px'; dc.textContent = '💧 ' + t.damci; card.appendChild(dc); }
+      if (t.resept) { const rs = ce('div'); rs.style.cssText = 'font-size:11px;color:#6c7a99;line-height:1.5;white-space:pre-line'; rs.textContent = t.resept; card.appendChild(rs); }
+      if (t.xeberdarliq) { const xb = ce('div'); xb.style.cssText = 'font-size:11px;color:#e67e22;margin-top:4px'; xb.textContent = '⚠️ ' + t.xeberdarliq; card.appendChild(xb); }
+      page.appendChild(card);
+    });
+    const div = ce('div'); div.style.cssText = 'border-top:1px solid rgba(255,255,255,.08);margin:12px 0 14px'; page.appendChild(div);
+  }
 
   MUTED_TONLAR.forEach(function(t) {
     const card = ce('div', 'result-box');
@@ -3374,11 +3421,7 @@ function mkRengMikser() {
         { reng:'Çəhrayı',   miqdar:'3 damcı',   hex:'#F1C8CE', netice:'Çiçəkli çəhrayı', izah:'Yumşaq, çiçəkli pastel.' },
         { reng:'Qara',      miqdar:'2 damcı',   hex:'#DFBFBF', netice:'Bordo pastel',    izah:'Dərin, klassik bordo pastel.' },
       ],
-      ag: [
-        { reng:'Çəhrayı',   miqdar:'2-3 damcı', hex:'#FBDDE7', netice:'Ən açıq çəhrayı', izah:'Bebe çəhrayı. Çox zərif pastel.' },
-        { reng:'Sarı',      miqdar:'2 damcı',   hex:'#FCF2CD', netice:'Krem / Vanilya',  izah:'Yumşaq, isti ağ. Vanilya sabunlar.' },
-        { reng:'Mavi',      miqdar:'1 damcı',   hex:'#CCE3F8', netice:'Buzlu ağ-mavi',   izah:'Soyuq, parlaq. Aysberq effekti.' },
-      ],
+      ag: [], // Ağ sabun artıq ağdır — əlavə rəng mənasız
     };
     
         var kombs = KOMBINASIYALAR[r.id] || [];
@@ -3585,6 +3628,29 @@ function mkRengAIPage() {
       const iz = ce('div'); iz.style.cssText = 'font-size:11px;color:#6c7a99;margin-top:8px;border-top:1px solid rgba(255,255,255,.08);padding-top:8px;line-height:1.5';
       iz.textContent = r.izah; res.appendChild(iz);
     }
+
+    // Save to Hazır Rənglər
+    const alreadySaved = (S.savedRengler||[]).some(x => x.ad === r.ad);
+    const saveRengBtn = ce('button', 'pri-btn');
+    saveRengBtn.style.cssText = 'width:100%;margin-top:10px;font-size:13px;padding:10px';
+    saveRengBtn.textContent = alreadySaved ? '✓ Hazır Rənglərdə saxlanıb' : '💾 Hazır Rənglərə əlavə et';
+    saveRengBtn.disabled = alreadySaved;
+    saveRengBtn.onclick = () => {
+      const newReng = {
+        az: r.ad || S.rengAI,
+        en: r.ad_en || '',
+        hex: '#C8C8C8', // placeholder — AI doesn't return hex
+        damci: r.damci || '',
+        resept: r.addim || '',
+        aiSaved: true,
+        xeberdarliq: r.xeberdarliq || '',
+      };
+      S.savedRengler = [...(S.savedRengler||[]), newReng];
+      render();
+      showToast('✓ Hazır Rənglərə əlavə edildi');
+    };
+    res.appendChild(saveRengBtn);
+
     page.appendChild(res);
   }
   return page;
