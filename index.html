@@ -35,7 +35,7 @@ button{font-family:inherit;cursor:pointer}
 .search-inp{flex:2;background:#fff;border:1.5px solid #e0dbd4;border-radius:12px;padding:12px 14px;font-size:15px;font-family:inherit;min-width:0}
 .search-inp:focus{outline:none;border-color:#3b5bdb}
 .add-btn{background:#1a1a2e;color:#fff;border:none;border-radius:12px;padding:12px 16px;font-size:14px;font-weight:700;white-space:nowrap}
-.statusbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.connection-banner{display:flex;align-items:center;gap:7px;padding:9px 12px;font-size:12px;border-bottom:1px solid #e0dbd4;background:#fff;position:sticky;top:0;z-index:90}.connection-banner.online{color:#2b8a3e;background:#ebfbee}.connection-banner.offline{color:#a65b00;background:#fff3e0}.connection-banner.checking{color:#5f6b85;background:#f0ece4}.connection-dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex-shrink:0}.connection-detail{font-weight:400;opacity:.9;margin-left:2px}.statusbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .st-info{font-size:12px;color:#bbbbbb}
 .st-badge{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px}
 .st-sync{background:#ebfbee;color:#2b8a3e;border:1px solid #b2f2bb}
@@ -114,7 +114,7 @@ button{font-family:inherit;cursor:pointer}
 <div class="toast" id="toast"></div>
 <script>
 const GS_URL = "https://script.google.com/macros/s/AKfycbxhy9DyHpzm1-xY-K-g9uGSq8AoG4U0XtB38C8w5fPALBdydsCAw1eVIElb_5X3FnLK/exec";
-const APP_VERSION = 48;
+const APP_VERSION = 49;
 const ADMIN_CODE = '1234';
 
 // ── ADMIN/GUEST ───────────────────────────────────────────────
@@ -265,10 +265,14 @@ function ce(tag, cls) {
 }
 
 async function gsLoad() {
-  const r = await fetch(GS_URL + '?t=' + Date.now());
-  if (!r.ok) throw new Error('fail');
+  const r = await fetch(GS_URL + '?t=' + Date.now(), { cache: 'no-store' });
+  if (!r.ok) throw new Error('Google Sheets cavab vermədi');
   const d = await r.json();
-  return Array.isArray(d) && d.length > 0 ? d : null;
+  // Yeni API formatı boş cədvəli də uğurlu cavabdan ayırır.
+  if (d && d.ok === true && Array.isArray(d.data)) return d.data;
+  // Köhnə API ilə yalnız qeyri-boş siyahıya etibar edirik.
+  if (Array.isArray(d) && d.length > 0) return d;
+  throw new Error('Məlumatın boş olduğu təsdiqlənmədi');
 }
 
 async function gsSave(items) {
@@ -329,10 +333,14 @@ function parseRecipe(text) {
 
 // ── ATİR ANBAR GS ────────────────────────────────────────────
 async function gsLoadAtir() {
-  const r = await fetch(GS_URL + '?action=atiranbari&t=' + Date.now());
-  if (!r.ok) throw new Error('fail');
+  const r = await fetch(GS_URL + '?action=atiranbari&t=' + Date.now(), { cache: 'no-store' });
+  if (!r.ok) throw new Error('Google Sheets cavab vermədi');
   const d = await r.json();
-  return Array.isArray(d) && d.length > 0 ? d : null;
+  // Yeni API formatı: {ok:true, data:[...]}; data boş olsa belə bu etibarlı nəticədir.
+  if (d && d.ok === true && Array.isArray(d.data)) return d.data;
+  // Köhnə API formatı ilə yalnız qeyri-boş siyahı təhlükəsiz qəbul edilir.
+  if (Array.isArray(d) && d.length > 0) return d;
+  throw new Error('Ətir cədvəlinin boş olduğu təsdiqlənmədi');
 }
 
 async function gsSaveAtir(items) {
@@ -344,7 +352,7 @@ async function gsSaveAtir(items) {
 
 // ── STATE ─────────────────────────────────────────────────────
 const S = {
-  page: 'home', anbar: [], loading: true,
+  page: 'home', anbar: [], loading: true, connectionStatus: 'checking', connectionMessage: '', lastSyncAt: null,
   search: '', editId: null, editBuf: {}, syncSt: '',
   kStep: 1, kText: '', kWeight: '', kUnit: 'g', kRows: [], kName: '',
   kUmumi: false, kUmumiVal: '1',
@@ -375,6 +383,10 @@ function set(patch) {
   }
   render();
 }
+
+// Network status is a hint only; Online is confirmed by a successful Sheets response.
+window.addEventListener('offline', () => set({ connectionStatus: 'offline', connectionMessage: 'Cihaz internetə qoşulmayıb — son lokal məlumatlar göstərilir.' }));
+window.addEventListener('online', () => set({ connectionStatus: 'checking', connectionMessage: 'İnternet bərpa olundu; Google Sheets bağlantısı növbəti sorğuda təsdiqlənəcək.' }));
 
 // Android back button handler
 window.addEventListener('popstate', e => {
@@ -476,11 +488,12 @@ async function persist(items) {
   try {
     await gsSave(items);
     try { localStorage.setItem('lav', JSON.stringify(items)); } catch(e) {}
-    set({ syncSt: 'sync' });
+    S.lastSyncAt = new Date().toISOString();
+    set({ syncSt: 'sync', connectionStatus: 'online', connectionMessage: '' });
     showToast('✓ Saxlanıldı');
   } catch(e) {
     try { localStorage.setItem('lav', JSON.stringify(items)); } catch(e2) {}
-    set({ syncSt: 'local' });
+    set({ syncSt: 'local', connectionStatus: 'offline', connectionMessage: 'Google Sheets-ə yazılmadı — dəyişiklik yalnız bu cihazda saxlanıldı.' });
     showToast('⚠ Yalnız bu cihazda saxlanıldı');
   }
   setTimeout(() => set({ syncSt: '' }), 3000);
@@ -488,50 +501,46 @@ async function persist(items) {
 
 // ── INIT ──────────────────────────────────────────────────────
 async function init() {
-  // Əvvəlcə loading olmadan INIT-i göstər ki, ağ ekran olmasın
-  let data = null;
-
-  // 1. localStorage-dan oxu (sürətli)
+  // Lokal nüsxəni dərhal göstərmək olar, amma o, Sheets-in yerini tutmur.
+  let localData = null;
   try {
-    const s = localStorage.getItem('lav');
-    if (s) data = JSON.parse(s);
+    const raw = localStorage.getItem('lav');
+    if (raw) { const parsed = JSON.parse(raw); if (Array.isArray(parsed)) localData = parsed; }
   } catch(e) {}
 
-  // Əgər local data varsa dərhal göstər
-  if (data && data.length) {
-    set({ anbar: data, loading: false });
-  history.replaceState({ page: 'home', atirSub: null }, '');
+  if (localData !== null) {
+    set({ anbar: localData, loading: false });
   } else {
-    // Local yoxdur — INIT-i göstər
+    // INIT yalnız ilk ekranda müvəqqəti ehtiyatdır; lokal/remote mənbəyə yazılmır.
     set({ anbar: INIT, loading: false });
-    try { localStorage.setItem('lav', JSON.stringify(INIT)); } catch(e) {}
   }
-
-  // nextId-ni yenilə
-  nextId = Math.max(...S.anbar.map(i => parseInt(i.id)||0)) + 1;
+  history.replaceState({ page: 'home', atirSub: null }, '');
+  nextId = Math.max(0, ...S.anbar.map(i => parseInt(i.id)||0)) + 1;
   if (nextId < 100) nextId = 100;
 
-  // Ətir anbarını da yüklə
-  initAtir();
-
-  // Reytinqləri Sheets-dən yüklə
-  loadRatings();
-
-  // Sonra arxa planda Google Sheets-dən yüklə
-  try {
-    const gsData = await gsLoad();
-    if (gsData && gsData.length) {
+  // Paralel yüklə, nəticəni yalnız cavab etibarlı olanda qəbul et.
+  const inventoryTask = (async () => {
+    try {
+      const gsData = await gsLoad();
       set({ anbar: gsData });
-      nextId = Math.max(...gsData.map(i => parseInt(i.id)||0)) + 1;
+      nextId = Math.max(0, ...gsData.map(i => parseInt(i.id)||0)) + 1;
       if (nextId < 100) nextId = 100;
       try { localStorage.setItem('lav', JSON.stringify(gsData)); } catch(e) {}
-    } else if (!data || !data.length) {
-      // GS boşdur, INIT-i yaz
-      try { await gsSave(INIT); } catch(e) {}
+      try { S.lastSyncAt = new Date().toISOString(); } catch(e) {}
+      set({ connectionStatus: 'online', connectionMessage: '' });
+      return true;
+    } catch(e) {
+      set({ connectionStatus: 'offline', connectionMessage: 'Google Sheets-ə qoşulmaq olmadı — son lokal məlumat göstərilir.' });
+      return false;
     }
-  } catch(e) {
-    // GS işləmir — problem yoxdur, local ilə davam et
-  }
+  })();
+
+  const atirTask = initAtir();
+  loadRatings();
+  const results = await Promise.all([inventoryTask, atirTask]);
+  // Yalnız hər iki əsas cədvəldən cavab alınanda Online göstər.
+  if (results.every(Boolean)) set({ connectionStatus: 'online', connectionMessage: '' });
+  else set({ connectionStatus: 'offline', connectionMessage: 'Google Sheets məlumatlarından biri təsdiqlənmədi — lokal ehtiyat istifadə olunur.' });
 }
 
 // ── ATİR ANBAR PERSIST ───────────────────────────────────────
@@ -540,34 +549,43 @@ async function persistAtir(items) {
   try {
     await gsSaveAtir(items);
     try { localStorage.setItem('lavAtir', JSON.stringify(items)); } catch(e) {}
-    set({ atirSyncSt: 'sync' });
+    S.lastSyncAt = new Date().toISOString();
+    set({ atirSyncSt: 'sync', connectionStatus: 'online', connectionMessage: '' });
     showToast('✓ Saxlanıldı');
   } catch(e) {
     try { localStorage.setItem('lavAtir', JSON.stringify(items)); } catch(e2) {}
-    set({ atirSyncSt: 'local' });
+    set({ atirSyncSt: 'local', connectionStatus: 'offline', connectionMessage: 'Google Sheets-ə yazılmadı — dəyişiklik yalnız bu cihazda saxlanıldı.' });
     showToast('⚠ Yalnız bu cihazda saxlanıldı');
   }
   setTimeout(() => set({ atirSyncSt: '' }), 3000);
 }
 
 async function initAtir() {
-  let data = null;
-  try { const s = localStorage.getItem('lavAtir'); if (s) data = JSON.parse(s); } catch(e) {}
-  if (data && data.length) {
-    set({ atirAnbar: data });
+  let localData = null;
+  try {
+    const raw = localStorage.getItem('lavAtir');
+    if (raw) { const parsed = JSON.parse(raw); if (Array.isArray(parsed)) localData = parsed; }
+  } catch(e) {}
+
+  if (localData !== null) {
+    set({ atirAnbar: localData });
   } else {
+    // INIT_ATIR yalnız görünən ilkin ehtiyatdır; Sheets-ə yazılmır və
+    // sonradan gələn etibarlı Sheets cavabını heç vaxt əvəz etmir.
     set({ atirAnbar: INIT_ATIR });
-    try { localStorage.setItem('lavAtir', JSON.stringify(INIT_ATIR)); } catch(e) {}
   }
+
   try {
     const gsData = await gsLoadAtir();
-    if (gsData && gsData.length) {
-      set({ atirAnbar: gsData });
-      try { localStorage.setItem('lavAtir', JSON.stringify(gsData)); } catch(e) {}
-    } else {
-      try { await gsSaveAtir(INIT_ATIR); } catch(e) {}
-    }
-  } catch(e) {}
+    set({ atirAnbar: gsData });
+    try { localStorage.setItem('lavAtir', JSON.stringify(gsData)); } catch(e) {}
+    try { S.lastSyncAt = new Date().toISOString(); } catch(e) {}
+    set({ atirSyncSt: 'sync' });
+    return true;
+  } catch(e) {
+    set({ atirSyncSt: 'local' });
+    return false;
+  }
 }
 
 function startAtirEdit(item) {
@@ -664,6 +682,28 @@ function kReset() {
     kUmumi: false, kUmumiVal: '1', kQab: false, kQabVal: '2' });
 }
 
+// ── ONLINE / OFFLINE STATUS ────────────────────────────────────
+function mkConnectionBanner() {
+  const b = ce('div', 'connection-banner');
+  const status = S.connectionStatus || 'checking';
+  b.classList.add(status);
+  const dot = ce('span', 'connection-dot');
+  const label = ce('strong');
+  const detail = ce('span', 'connection-detail');
+  if (status === 'online') {
+    label.textContent = 'Online';
+    detail.textContent = S.lastSyncAt ? 'Google Sheets ilə sinxronlaşdırılıb · ' + new Date(S.lastSyncAt).toLocaleTimeString('az-AZ', {hour:'2-digit', minute:'2-digit'}) : 'Google Sheets ilə əlaqə aktivdir';
+  } else if (status === 'offline') {
+    label.textContent = 'Offline';
+    detail.textContent = S.connectionMessage || 'Son lokal məlumatlar göstərilir';
+  } else {
+    label.textContent = 'Sinxronizasiya...';
+    detail.textContent = 'Google Sheets-dən məlumat alınır';
+  }
+  b.append(dot, label, detail);
+  return b;
+}
+
 // ── RENDER ────────────────────────────────────────────────────
 function render() {
   const root = document.getElementById('root');
@@ -677,11 +717,13 @@ function render() {
   }
 
   if (S.page === 'home') {
+    root.appendChild(mkConnectionBanner());
     root.appendChild(mkHome());
     return;
   }
 
   root.appendChild(mkNav());
+  root.appendChild(mkConnectionBanner());
   if (S.page === 'anbar') root.appendChild(mkAnbar());
   if (S.page === 'kalkulyator') root.appendChild(mkKalkulyator());
   if (S.page === 'atirdunyasi') root.appendChild(mkAtirDunyasi());
