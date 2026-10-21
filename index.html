@@ -114,7 +114,7 @@ button{font-family:inherit;cursor:pointer}
 <div class="toast" id="toast"></div>
 <script>
 const GS_URL = "https://script.google.com/macros/s/AKfycbxhy9DyHpzm1-xY-K-g9uGSq8AoG4U0XtB38C8w5fPALBdydsCAw1eVIElb_5X3FnLK/exec";
-const APP_VERSION = 50;
+const APP_VERSION = 51;
 const ADMIN_CODE = '1234';
 
 // ── ADMIN/GUEST ───────────────────────────────────────────────
@@ -371,7 +371,7 @@ const S = {
   atirTov: { tip:'Hamısı', cins:'Hamısı', hiss:'', profiller:[], result:null, loading:false, mode:'hiss' },
   hbKat: 'Hamısı', hbCins: 'Hamısı', hbSearch: '', hbHideZero: false,
   savedBlends: [],
-  ratings: {}, ratingsLoaded: false,
+  ratings: {}, ratingUpdatedAt: {}, ratingsLoaded: false, ratingSyncSupported: false, pendingSyncMessage: '',
   atirAnbar: [], atirSearch: '', atirEditId: null, atirEditBuf: {}, atirSyncSt: ''
 };
 
@@ -449,38 +449,330 @@ async function deleteBlendFromGS(ad) {
 }
 
 // ── RATINGS (Google Sheets) ───────────────────────────────────────────────────
-async function loadRatings() {
-  if (S.ratingsLoaded) return;
+// ── LOCAL QUEUE + CONFLICT-SAFE SYNC ──────────────────────────
+function readLocalJson(key, fallback = null) {
   try {
-    const r = await fetch(GS_URL + '?action=ratings');
-    const data = await r.json();
-    S.ratings = data || {};
+    const raw = localStorage.getItem(key);
+    return raw === null ? fallback : JSON.parse(raw);
+  } catch(e) { return fallback; }
+}
+function writeLocalJson(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+  catch(e) { return false; }
+}
+function getPendingQueue(key) {
+  const q = readLocalJson(key, {});
+  return q && typeof q === 'object' && !Array.isArray(q) ? q : {};
+}
+function pendingSyncCount() {
+  const aq = readLocalJson('lav_queue_anbar', null);
+  const fq = readLocalJson('lav_queue_atir', null);
+  return (aq ? 1 : 0) + (fq ? 1 : 0) + Object.keys(getPendingQueue('lav_queue_ratings')).length;
+}
+function updatePendingMessage(message) {
+  S.pendingSyncMessage = message || '';
+  render();
+}
+function snapshotItemSignature(item, type) {
+  if (item === undefined || item === null) return '__MISSING__';
+  const fields = type === 'anbar'
+    ? [item.id, item.name, item.qty, item.unit, item.price, item.note]
+    : [item.id, item.name, item.country, item.brand, item.usage, item.note, item.guc];
+  return JSON.stringify(fields.map(v => v === undefined || v === null ? '' : String(v)));
+}
+function snapshotSignature(items, type) {
+  return JSON.stringify((items || []).map(i => [String(i.id), snapshotItemSignature(i, type)])
+    .sort((a, b) => a[0].localeCompare(b[0])));
+}
+function inventoryChangedIds(base, desired, type) {
+  const b = new Map((base || []).map(i => [String(i.id), i]));
+  const d = new Map((desired || []).map(i => [String(i.id), i]));
+  const ids = new Set([...b.keys(), ...d.keys()]);
+  return [...ids].filter(id => snapshotItemSignature(b.get(id), type) !== snapshotItemSignature(d.get(id), type));
+}
+function mergeInventoryDelta(base, desired, remote, type) {
+  const b = new Map((base || []).map(i => [String(i.id), i]));
+  const d = new Map((desired || []).map(i => [String(i.id), i]));
+  const r = new Map((remote || []).map(i => [String(i.id), i]));
+  const changedIds = inventoryChangedIds(base, desired, type);
+  const conflicts = changedIds.filter(id => {
+    const rs = snapshotItemSignature(r.get(id), type);
+    const bs = snapshotItemSignature(b.get(id), type);
+    const ds = snapshotItemSignature(d.get(id), type);
+    return rs !== bs && rs !== ds;
+  });
+  // Apply only locally changed IDs to the current remote snapshot; all unrelated
+  // remote rows are preserved. Conflicting rows are only written after confirmation.
+  const mergedMap = new Map(r);
+  changedIds.forEach(id => {
+    if (d.has(id)) mergedMap.set(id, d.get(id));
+    else mergedMap.delete(id);
+  });
+  const merged = [];
+  (remote || []).forEach(item => {
+    const id = String(item.id);
+    if (mergedMap.has(id)) { merged.push(mergedMap.get(id)); mergedMap.delete(id); }
+  });
+  (desired || []).forEach(item => {
+    const id = String(item.id);
+    if (mergedMap.has(id)) { merged.push(mergedMap.get(id)); mergedMap.delete(id); }
+  });
+  return { merged, conflicts, changedIds };
+}
+function serverSnapshotKey(type) { return type === 'anbar' ? 'lav_server_anbar' : 'lav_server_atir'; }
+function localSnapshotKey(type) { return type === 'anbar' ? 'lav' : 'lavAtir'; }
+function queueSnapshotKey(type) { return type === 'anbar' ? 'lav_queue_anbar' : 'lav_queue_atir'; }
+function cacheServerSnapshot(type, items) {
+  writeLocalJson(serverSnapshotKey(type), items);
+  writeLocalJson(localSnapshotKey(type), items);
+}
+function queueInventorySnapshot(type, items) {
+  const key = queueSnapshotKey(type);
+  const old = readLocalJson(key, null);
+  const base = old && Array.isArray(old.base) ? old.base : readLocalJson(serverSnapshotKey(type), null);
+  writeLocalJson(key, { base: Array.isArray(base) ? base : null, items, queuedAt: new Date().toISOString() });
+  writeLocalJson(localSnapshotKey(type), items);
+}
+async function gsSaveConditional(type, items, expectedItems) {
+  const action = type === 'anbar' ? 'anbar_sync_save' : 'atiranbari_sync_save';
+  const r = await fetch(GS_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action, items, expectedItems })
+  });
+  if (!r.ok) throw new Error('Google Sheets sorğusu uğursuz oldu');
+  let data;
+  try { data = await r.json(); } catch(e) { throw new Error('Apps Script-də konflikt qoruması aktiv deyil'); }
+  if (data && data.ok === true) return data;
+  if (data && data.conflict) throw new Error('SYNC_CONFLICT');
+  throw new Error((data && data.error) || 'Apps Script-də şərtli sinxronizasiya aktiv deyil');
+}
+
+async function loadRatings(force = false) {
+  if (S.ratingsLoaded && !force) return true;
+  try {
+    const r = await fetch(GS_URL + '?action=ratings_sync&t=' + Date.now(), { cache: 'no-store' });
+    const reply = await r.json();
+    if (!r.ok || !reply || reply.ok !== true || !reply.data || typeof reply.data !== 'object') throw new Error('ratings_sync not available');
+    S.ratings = {};
+    S.ratingUpdatedAt = {};
+    Object.entries(reply.data).forEach(([key, item]) => {
+      S.ratings[key] = String(item.value);
+      S.ratingUpdatedAt[key] = item.updated || '';
+    });
+    S.ratingSyncSupported = true;
+    writeLocalJson('lav_ratings_cache', S.ratings);
+    writeLocalJson('lav_rating_meta', S.ratingUpdatedAt);
     S.ratingsLoaded = true;
+    const queue = getPendingQueue('lav_queue_ratings');
+    Object.entries(queue).forEach(([key, entry]) => {
+      const currentUpdated = S.ratingUpdatedAt[key] || '';
+      const currentValue = S.ratings[key] === undefined ? null : String(S.ratings[key]);
+      if (currentValue === String(entry.value)) {
+        delete queue[key];
+      } else if (currentUpdated === (entry.baseUpdatedAt || '')) {
+        S.ratings[key] = String(entry.value);
+      } else {
+        entry.conflict = true;
+        S.pendingSyncMessage = 'Başqa cihazda reytinq dəyişib. Köhnə offline reytinq avtomatik yazılmayacaq.';
+      }
+    });
+    writeLocalJson('lav_queue_ratings', queue);
     render();
-  } catch(e) { S.ratings = {}; }
+    return true;
+  } catch(e) {
+    // Fallback supports older deployments for viewing, but not safe queued writes.
+    try {
+      const r = await fetch(GS_URL + '?action=ratings&t=' + Date.now(), { cache: 'no-store' });
+      const data = await r.json();
+      S.ratings = data && typeof data === 'object' ? data : {};
+      S.ratingUpdatedAt = {};
+      S.ratingSyncSupported = false;
+      writeLocalJson('lav_ratings_cache', S.ratings);
+      S.ratingsLoaded = true;
+    } catch(e2) {
+      S.ratings = readLocalJson('lav_ratings_cache', {});
+      S.ratingUpdatedAt = readLocalJson('lav_rating_meta', {});
+      S.ratingSyncSupported = false;
+      S.ratingsLoaded = true;
+    }
+    const queue = getPendingQueue('lav_queue_ratings');
+    Object.entries(queue).forEach(([key, entry]) => { S.ratings[key] = String(entry.value); });
+    if (Object.keys(queue).length && !navigator.onLine) {
+      S.pendingSyncMessage = 'Offline reytinqlər bu cihazda növbədə saxlanılıb.';
+    } else if (Object.keys(queue).length) {
+      S.pendingSyncMessage = 'Offline reytinq növbəsini təhlükəsiz sinxronlaşdırmaq üçün Apps Script yenilənməlidir.';
+    }
+    render();
+    return false;
+  }
+}
+
+async function submitRating(key, value, action = 'rating_save', expectedUpdatedAt = undefined) {
+  const payload = { action, key, value: String(value) };
+  if (expectedUpdatedAt !== undefined) payload.expectedUpdatedAt = expectedUpdatedAt || '';
+  const r = await fetch(GS_URL, { method: 'POST', body: JSON.stringify(payload) });
+  if (!r.ok) throw new Error('Reytinq sorğusu uğursuz oldu');
+  const data = await r.json();
+  if (!data || data.ok !== true) {
+    if (data && data.conflict) throw new Error('RATING_CONFLICT');
+    throw new Error((data && data.error) || 'Reytinq saxlanması təsdiqlənmədi');
+  }
+  return data;
 }
 
 async function saveRating(key, value) {
-  // Optimistic local update
-  S.ratings[key] = String(value);
+  value = String(value);
+  const queue = getPendingQueue('lav_queue_ratings');
+  const prior = queue[key];
+  const entry = {
+    value,
+    baseUpdatedAt: prior ? (prior.baseUpdatedAt || '') : (S.ratingUpdatedAt[key] || ''),
+    baseValue: prior ? prior.baseValue : (S.ratings[key] === undefined ? null : String(S.ratings[key])),
+    savedAt: new Date().toISOString()
+  };
+  queue[key] = entry;
+  writeLocalJson('lav_queue_ratings', queue);
+  S.ratings[key] = value;
+  writeLocalJson('lav_ratings_cache', S.ratings);
   render();
+
+  if (!navigator.onLine) {
+    S.pendingSyncMessage = 'Offline reytinq bu cihazda növbədə saxlanılıb; internet qayıdanda sinxronlaşdırılacaq.';
+    render();
+    showToast('Reytinq lokal növbədə saxlanıldı');
+    return;
+  }
   try {
-    await fetch(GS_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action: 'rating_save', key, value: String(value) })
-    });
-  } catch(e) { showToast('Reytinq saxlanmadı ⚠'); }
+    // A fresh online rating is an explicit user action, so the shared rating updates immediately.
+    await submitRating(key, value, 'rating_save');
+    const latest = getPendingQueue('lav_queue_ratings');
+    if (latest[key] && latest[key].savedAt === entry.savedAt) delete latest[key];
+    writeLocalJson('lav_queue_ratings', latest);
+    await loadRatings(true);
+    showToast('✓ Reytinq sinxronlaşdırıldı');
+  } catch(e) {
+    S.pendingSyncMessage = 'Reytinq növbədə saxlanılıb; sinxronizasiya yoxlanmalıdır.';
+    render();
+    showToast('⚠ Reytinq cihazda saxlanıldı');
+  }
 }
 
 async function deleteRating(key) {
-  delete S.ratings[key];
+  const queue = getPendingQueue('lav_queue_ratings');
+  const entry = {
+    value: 'null',
+    baseUpdatedAt: queue[key] ? (queue[key].baseUpdatedAt || '') : (S.ratingUpdatedAt[key] || ''),
+    baseValue: queue[key] ? queue[key].baseValue : (S.ratings[key] === undefined ? null : String(S.ratings[key])),
+    savedAt: new Date().toISOString()
+  };
+  queue[key] = entry;
+  writeLocalJson('lav_queue_ratings', queue);
+  S.ratings[key] = 'null';
+  writeLocalJson('lav_ratings_cache', S.ratings);
   render();
+  if (!navigator.onLine) {
+    S.pendingSyncMessage = 'Offline reytinq dəyişikliyi növbədə saxlanılıb.';
+    render();
+    showToast('Dəyişiklik lokal növbədə saxlanıldı');
+    return;
+  }
   try {
-    await fetch(GS_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action: 'rating_delete', key })
-    });
-  } catch(e) { showToast('Silmə xətası ⚠'); }
+    // Online delete is a deliberate user action; the existing endpoint removes the shared row.
+    const r = await fetch(GS_URL, { method: 'POST', body: JSON.stringify({ action: 'rating_delete', key }) });
+    if (!r.ok) throw new Error('delete failed');
+    const result = await r.json();
+    if (!result || result.ok !== true) throw new Error('delete not confirmed');
+    const latest = getPendingQueue('lav_queue_ratings');
+    if (latest[key] && latest[key].savedAt === entry.savedAt) delete latest[key];
+    writeLocalJson('lav_queue_ratings', latest);
+    await loadRatings(true);
+  } catch(e) {
+    S.pendingSyncMessage = 'Reytinq silinməsi lokal növbədə qalıb; sinxronizasiya tələb olunur.';
+    render();
+    showToast('⚠ Silmə cihazda növbəyə yazıldı');
+  }
+}
+
+async function flushPendingRatings(interactive = false) {
+  const queue = getPendingQueue('lav_queue_ratings');
+  const keys = Object.keys(queue);
+  if (!keys.length) return true;
+  if (!navigator.onLine) return false;
+  if (!S.ratingSyncSupported) {
+    S.pendingSyncMessage = 'Reytinq növbəsinin təhlükəsiz sinxronizasiyası üçün Apps Script v51 patch-i lazımdır.';
+    render();
+    return false;
+  }
+  // Get the freshest shared rating metadata immediately before comparing.
+  let reply;
+  try {
+    const r = await fetch(GS_URL + '?action=ratings_sync&t=' + Date.now(), { cache: 'no-store' });
+    reply = await r.json();
+    if (!r.ok || !reply || reply.ok !== true || !reply.data) throw new Error('metadata unavailable');
+  } catch(e) {
+    S.pendingSyncMessage = 'Reytinq növbəsi serverdən məlumat alınana qədər saxlanılıb.';
+    render();
+    return false;
+  }
+
+  S.ratings = {};
+  S.ratingUpdatedAt = {};
+  Object.entries(reply.data).forEach(([k, v]) => {
+    S.ratings[k] = String(v.value);
+    S.ratingUpdatedAt[k] = v.updated || '';
+  });
+
+  let hadConflict = false;
+  for (const key of keys) {
+    const entry = queue[key];
+    if (!entry) continue;
+    const remoteValue = S.ratings[key] === undefined ? null : String(S.ratings[key]);
+    const remoteUpdated = S.ratingUpdatedAt[key] || '';
+    if (remoteValue === String(entry.value)) {
+      delete queue[key];
+      continue;
+    }
+    if (remoteUpdated !== (entry.baseUpdatedAt || '')) {
+      hadConflict = true;
+      if (interactive) {
+        const applyLocal = confirm('Bu blendin reytinqi başqa cihazda dəyişdirilib. OK — bu cihazdakı offline qiyməti ortaq reytinq kimi yaz; Cancel — növbəni saxla.');
+        if (applyLocal) {
+          try {
+            await submitRating(key, entry.value, 'rating_save');
+            delete queue[key];
+            await loadRatings(true);
+            continue;
+          } catch(e) {}
+        } else {
+          const discard = confirm('Offline reytinqi ləğv edib Google Sheets-dəki ortaq qiyməti saxlamaq istəyirsən?');
+          if (discard) { delete queue[key]; continue; }
+        }
+      }
+      entry.conflict = true;
+      continue;
+    }
+    try {
+      const saved = await submitRating(key, entry.value, 'rating_sync_save', entry.baseUpdatedAt || '');
+      delete queue[key];
+      S.ratings[key] = String(saved.value === undefined ? entry.value : saved.value);
+      S.ratingUpdatedAt[key] = saved.updated || new Date().toISOString();
+    } catch(e) {
+      if (e.message === 'RATING_CONFLICT') {
+        entry.conflict = true;
+        hadConflict = true;
+      } else {
+        S.pendingSyncMessage = 'Reytinq növbəsi sinxronlaşdırılmadı; dəyişiklik lokal saxlanılıb.';
+      }
+    }
+  }
+  writeLocalJson('lav_queue_ratings', queue);
+  writeLocalJson('lav_ratings_cache', S.ratings);
+  writeLocalJson('lav_rating_meta', S.ratingUpdatedAt);
+  if (Object.keys(queue).length || hadConflict) {
+    S.pendingSyncMessage = 'Offline reytinq toqquşması var. Sinxronlaşdır düyməsi ilə həll et.';
+  }
+  render();
+  return Object.keys(queue).length === 0;
 }
 
 function getRating(key) {
@@ -490,50 +782,148 @@ function getRating(key) {
 
 // ── PERSIST ───────────────────────────────────────────────────
 async function persist(items) {
+  if (!isAdmin()) { showToast('⛔ Yalnız Admin edə bilər'); return; }
+  if (S.pendingSyncMessage && (readLocalJson('lav_queue_anbar', null) || readLocalJson('lav_queue_atir', null))) {
+    showToast('Əvvəl sinxronizasiya toqquşmasını həll et');
+    return;
+  }
   set({ anbar: items, syncSt: 'saving' });
+  if (!navigator.onLine || readLocalJson('lav_queue_anbar', null)) {
+    queueInventorySnapshot('anbar', items);
+    set({ syncSt: 'local', connectionStatus: navigator.onLine ? 'online' : 'offline',
+      connectionMessage: 'Anbar dəyişiklikləri lokal növbədə saxlanılıb.' });
+    showToast('Dəyişiklik sinxronizasiya növbəsində saxlanıldı');
+    if (navigator.onLine) await syncPendingInventory('anbar', null, true);
+    setTimeout(() => set({ syncSt: '' }), 3000);
+    return;
+  }
   try {
     await gsSave(items);
-    try { localStorage.setItem('lav', JSON.stringify(items)); } catch(e) {}
+    cacheServerSnapshot('anbar', items);
+    localStorage.removeItem('lav_queue_anbar');
     S.lastSyncAt = new Date().toISOString();
     set({ syncSt: 'sync', connectionStatus: 'online', connectionMessage: '' });
     showToast('✓ Saxlanıldı');
   } catch(e) {
-    try { localStorage.setItem('lav', JSON.stringify(items)); } catch(e2) {}
-    set({ syncSt: 'local', connectionStatus: 'offline', connectionMessage: 'Google Sheets-ə yazılmadı — dəyişiklik yalnız bu cihazda saxlanıldı.' });
-    showToast('⚠ Yalnız bu cihazda saxlanıldı');
+    queueInventorySnapshot('anbar', items);
+    set({ syncSt: 'local', connectionStatus: navigator.onLine ? 'online' : 'offline',
+      connectionMessage: 'Anbar dəyişiklikləri lokal növbədə saxlanılıb; Sheets yenilənməyib.' });
+    showToast('⚠ Dəyişiklik lokal növbədə saxlanıldı');
   }
   setTimeout(() => set({ syncSt: '' }), 3000);
 }
 
-// ── INIT ──────────────────────────────────────────────────────
-async function init() {
-  // Lokal nüsxəni dərhal göstərmək olar, amma o, Sheets-in yerini tutmur.
-  let localData = null;
+async function syncPendingInventory(type, remoteItems = null, interactive = false) {
+  const qKey = queueSnapshotKey(type);
+  const q = readLocalJson(qKey, null);
+  if (!q) return true;
+  if (!navigator.onLine) return false;
+  let remote = remoteItems;
   try {
-    const raw = localStorage.getItem('lav');
-    if (raw) { const parsed = JSON.parse(raw); if (Array.isArray(parsed)) localData = parsed; }
-  } catch(e) {}
-
-  if (localData !== null) {
-    set({ anbar: localData, loading: false });
-  } else {
-    // INIT yalnız ilk ekranda müvəqqəti ehtiyatdır; lokal/remote mənbəyə yazılmır.
-    set({ anbar: INIT, loading: false });
+    if (!Array.isArray(remote)) remote = type === 'anbar' ? await gsLoad() : await gsLoadAtir();
+  } catch(e) {
+    S.pendingSyncMessage = 'Offline dəyişikliklər saxlanılıb; Google Sheets-ə qoşulanda yenidən yoxlanacaq.';
+    render();
+    return false;
   }
+  cacheServerSnapshot(type, remote);
+  if (!Array.isArray(q.base)) {
+    S.pendingSyncMessage = 'Offline növbənin əsas nüsxəsi yoxdur; avtomatik yazma dayandırılıb.';
+    if (type === 'anbar') set({ anbar: q.items });
+    else set({ atirAnbar: q.items });
+    if (interactive && confirm('Növbənin əsas nüsxəsi yoxdur. OK — lokal siyahını Google Sheets-ə yazmaq (serverdəki siyahını əvəz edə bilər); Cancel — növbəni saxlamaq.')) {
+      try {
+        await gsSaveConditional(type, q.items, remote);
+        localStorage.removeItem(qKey);
+        cacheServerSnapshot(type, q.items);
+        if (type === 'anbar') set({ anbar: q.items });
+        else set({ atirAnbar: q.items });
+        S.pendingSyncMessage = '';
+        showToast('Offline dəyişikliklər sinxronlaşdırıldı');
+        return true;
+      } catch(e) {
+        S.pendingSyncMessage = 'Sinxronizasiya qoruması rədd etdi; növbə saxlanılıb.';
+        render();
+        return false;
+      }
+    }
+    render();
+    return false;
+  }
+  const merged = mergeInventoryDelta(q.base, q.items, remote, type);
+  if (merged.conflicts.length && !interactive) {
+    S.pendingSyncMessage = 'Anbarda eyni qeydə dair konflikt var; avtomatik yazma dayandırılıb.';
+    if (type === 'anbar') set({ anbar: merged.merged });
+    else set({ atirAnbar: merged.merged });
+    render();
+    return false;
+  }
+  if (merged.conflicts.length && interactive) {
+    const apply = confirm('Google Sheets-də offline dəyişdiyin eyni qeydə də dəyişiklik edilib. OK — yalnız sənin dəyişdirdiyin qeydləri lokal versiya ilə əvəz et və digər server qeydlərini saxla. Cancel — növbəni saxla.');
+    if (!apply) {
+      const discard = confirm('Offline növbəni ləğv edib Google Sheets-in son məlumatlarını qəbul etmək istəyirsən?');
+      if (discard) {
+        localStorage.removeItem(qKey);
+        if (type === 'anbar') set({ anbar: remote });
+        else set({ atirAnbar: remote });
+        writeLocalJson(localSnapshotKey(type), remote);
+        S.pendingSyncMessage = '';
+      } else {
+        S.pendingSyncMessage = 'Konflikt həll edilməyib; lokal növbə saxlanılıb.';
+      }
+      render();
+      return false;
+    }
+  }
+  const finalItems = merged.merged;
+  if (snapshotSignature(finalItems, type) === snapshotSignature(remote, type)) {
+    localStorage.removeItem(qKey);
+    cacheServerSnapshot(type, remote);
+    if (type === 'anbar') set({ anbar: remote });
+    else set({ atirAnbar: remote });
+    return true;
+  }
+  try {
+    await gsSaveConditional(type, finalItems, remote);
+    localStorage.removeItem(qKey);
+    cacheServerSnapshot(type, finalItems);
+    S.lastSyncAt = new Date().toISOString();
+    S.pendingSyncMessage = '';
+    if (type === 'anbar') set({ anbar: finalItems, syncSt: 'sync' });
+    else set({ atirAnbar: finalItems, atirSyncSt: 'sync' });
+    showToast('Offline dəyişikliklər sinxronlaşdırıldı');
+    return true;
+  } catch(e) {
+    S.pendingSyncMessage = e.message === 'SYNC_CONFLICT'
+      ? 'Google Sheets yenilənib; növbə qorunur və yenidən yoxlanmalıdır.'
+      : 'Təhlükəsiz sinxronizasiya üçün Apps Script v51 patch-i lazımdır; növbə saxlanılıb.';
+    if (type === 'anbar') set({ anbar: merged.merged });
+    else set({ atirAnbar: merged.merged });
+    render();
+    return false;
+  }
+}
+
+async function init() {
+  let localData = readLocalJson('lav', null);
+  if (!Array.isArray(localData)) localData = null;
+  set({ anbar: localData !== null ? localData : INIT, loading: false });
   history.replaceState({ page: 'home', atirSub: null }, '');
   nextId = Math.max(0, ...S.anbar.map(i => parseInt(i.id)||0)) + 1;
   if (nextId < 100) nextId = 100;
 
-  // Paralel yüklə, nəticəni yalnız cavab etibarlı olanda qəbul et.
   const inventoryTask = (async () => {
     try {
       const gsData = await gsLoad();
-      set({ anbar: gsData });
-      nextId = Math.max(0, ...gsData.map(i => parseInt(i.id)||0)) + 1;
+      cacheServerSnapshot('anbar', gsData);
+      if (readLocalJson('lav_queue_anbar', null)) {
+        await syncPendingInventory('anbar', gsData, false);
+      } else {
+        set({ anbar: gsData });
+      }
+      nextId = Math.max(0, ...S.anbar.map(i => parseInt(i.id)||0)) + 1;
       if (nextId < 100) nextId = 100;
-      try { localStorage.setItem('lav', JSON.stringify(gsData)); } catch(e) {}
-      try { S.lastSyncAt = new Date().toISOString(); } catch(e) {}
-      set({ connectionStatus: 'online', connectionMessage: '' });
+      S.lastSyncAt = new Date().toISOString();
       return true;
     } catch(e) {
       set({ connectionStatus: 'offline', connectionMessage: 'Google Sheets-ə qoşulmaq olmadı — son lokal məlumat göstərilir.' });
@@ -542,50 +932,62 @@ async function init() {
   })();
 
   const atirTask = initAtir();
-  loadRatings();
-  const results = await Promise.all([inventoryTask, atirTask]);
-  // Yalnız hər iki əsas cədvəldən cavab alınanda Online göstər.
-  if (results.every(Boolean)) set({ connectionStatus: 'online', connectionMessage: '' });
-  else set({ connectionStatus: 'offline', connectionMessage: 'Google Sheets məlumatlarından biri təsdiqlənmədi — lokal ehtiyat istifadə olunur.' });
+  const ratingsTask = loadRatings();
+  const results = await Promise.all([inventoryTask, atirTask, ratingsTask]);
+  if (results[0] && results[1]) {
+    set({ connectionStatus: 'online', connectionMessage: S.pendingSyncMessage || '' });
+    await flushPendingRatings(false);
+  } else {
+    set({ connectionStatus: 'offline', connectionMessage: 'Google Sheets məlumatlarından biri təsdiqlənmədi — lokal ehtiyat istifadə olunur.' });
+  }
 }
 
 // ── ATİR ANBAR PERSIST ───────────────────────────────────────
 async function persistAtir(items) {
+  if (!isAdmin()) { showToast('⛔ Yalnız Admin edə bilər'); return; }
+  if (S.pendingSyncMessage && (readLocalJson('lav_queue_anbar', null) || readLocalJson('lav_queue_atir', null))) {
+    showToast('Əvvəl sinxronizasiya toqquşmasını həll et');
+    return;
+  }
   set({ atirAnbar: items, atirSyncSt: 'saving' });
+  if (!navigator.onLine || readLocalJson('lav_queue_atir', null)) {
+    queueInventorySnapshot('atir', items);
+    set({ atirSyncSt: 'local', connectionStatus: navigator.onLine ? 'online' : 'offline',
+      connectionMessage: 'Ətir anbarı dəyişiklikləri lokal növbədə saxlanılıb.' });
+    showToast('Dəyişiklik sinxronizasiya növbəsində saxlanıldı');
+    if (navigator.onLine) await syncPendingInventory('atir', null, true);
+    setTimeout(() => set({ atirSyncSt: '' }), 3000);
+    return;
+  }
   try {
     await gsSaveAtir(items);
-    try { localStorage.setItem('lavAtir', JSON.stringify(items)); } catch(e) {}
+    cacheServerSnapshot('atir', items);
+    localStorage.removeItem('lav_queue_atir');
     S.lastSyncAt = new Date().toISOString();
     set({ atirSyncSt: 'sync', connectionStatus: 'online', connectionMessage: '' });
     showToast('✓ Saxlanıldı');
   } catch(e) {
-    try { localStorage.setItem('lavAtir', JSON.stringify(items)); } catch(e2) {}
-    set({ atirSyncSt: 'local', connectionStatus: 'offline', connectionMessage: 'Google Sheets-ə yazılmadı — dəyişiklik yalnız bu cihazda saxlanıldı.' });
-    showToast('⚠ Yalnız bu cihazda saxlanıldı');
+    queueInventorySnapshot('atir', items);
+    set({ atirSyncSt: 'local', connectionStatus: navigator.onLine ? 'online' : 'offline',
+      connectionMessage: 'Ətir anbarı dəyişiklikləri lokal növbədə saxlanılıb; Sheets yenilənməyib.' });
+    showToast('⚠ Dəyişiklik lokal növbədə saxlanıldı');
   }
   setTimeout(() => set({ atirSyncSt: '' }), 3000);
 }
 
 async function initAtir() {
-  let localData = null;
-  try {
-    const raw = localStorage.getItem('lavAtir');
-    if (raw) { const parsed = JSON.parse(raw); if (Array.isArray(parsed)) localData = parsed; }
-  } catch(e) {}
-
-  if (localData !== null) {
-    set({ atirAnbar: localData });
-  } else {
-    // INIT_ATIR yalnız görünən ilkin ehtiyatdır; Sheets-ə yazılmır və
-    // sonradan gələn etibarlı Sheets cavabını heç vaxt əvəz etmir.
-    set({ atirAnbar: INIT_ATIR });
-  }
-
+  let localData = readLocalJson('lavAtir', null);
+  if (!Array.isArray(localData)) localData = null;
+  set({ atirAnbar: localData !== null ? localData : INIT_ATIR });
   try {
     const gsData = await gsLoadAtir();
-    set({ atirAnbar: gsData });
-    try { localStorage.setItem('lavAtir', JSON.stringify(gsData)); } catch(e) {}
-    try { S.lastSyncAt = new Date().toISOString(); } catch(e) {}
+    cacheServerSnapshot('atir', gsData);
+    if (readLocalJson('lav_queue_atir', null)) {
+      await syncPendingInventory('atir', gsData, false);
+    } else {
+      set({ atirAnbar: gsData });
+    }
+    S.lastSyncAt = new Date().toISOString();
     set({ atirSyncSt: 'sync' });
     return true;
   } catch(e) {
@@ -696,17 +1098,26 @@ function mkConnectionBanner() {
   const dot = ce('span', 'connection-dot');
   const label = ce('strong');
   const detail = ce('span', 'connection-detail');
+  const pending = pendingSyncCount();
   if (status === 'online') {
     label.textContent = 'Online';
-    detail.textContent = S.lastSyncAt ? 'Google Sheets ilə sinxronlaşdırılıb · ' + new Date(S.lastSyncAt).toLocaleTimeString('az-AZ', {hour:'2-digit', minute:'2-digit'}) : 'Google Sheets ilə əlaqə aktivdir';
+    detail.textContent = S.pendingSyncMessage || S.connectionMessage ||
+      (S.lastSyncAt ? 'Google Sheets ilə sinxronlaşdırılıb · ' + new Date(S.lastSyncAt).toLocaleTimeString('az-AZ', {hour:'2-digit', minute:'2-digit'}) : 'Google Sheets ilə əlaqə aktivdir');
   } else if (status === 'offline') {
     label.textContent = 'Offline';
-    detail.textContent = S.connectionMessage || 'Son lokal məlumatlar göstərilir';
+    detail.textContent = S.pendingSyncMessage || S.connectionMessage || 'Son lokal məlumatlar göstərilir';
   } else {
     label.textContent = 'Sinxronizasiya...';
-    detail.textContent = 'Google Sheets-dən məlumat alınır';
+    detail.textContent = S.pendingSyncMessage || 'Google Sheets-dən məlumat alınır';
   }
   b.append(dot, label, detail);
+  if (pending > 0 && navigator.onLine) {
+    const btn = ce('button');
+    btn.textContent = 'Sinxronlaşdır';
+    btn.style.cssText = 'margin-left:auto;flex-shrink:0;border:1px solid currentColor;border-radius:8px;padding:5px 8px;background:transparent;color:inherit;font-size:11px;font-weight:700';
+    btn.onclick = () => syncPendingChanges(true);
+    b.appendChild(btn);
+  }
   return b;
 }
 
@@ -3848,6 +4259,48 @@ function showRatingConfirm(card, rKey, val) {
     card.appendChild(panel);
   }
 }
+
+async function syncPendingChanges(interactive = false) {
+  if (!navigator.onLine) {
+    S.connectionStatus = 'offline';
+    S.pendingSyncMessage = 'Offline dəyişikliklər lokal növbədə saxlanılıb.';
+    render();
+    return;
+  }
+  let failed = false;
+  if (readLocalJson('lav_queue_anbar', null)) {
+    const ok = await syncPendingInventory('anbar', null, interactive);
+    if (!ok) failed = true;
+  }
+  if (readLocalJson('lav_queue_atir', null)) {
+    const ok = await syncPendingInventory('atir', null, interactive);
+    if (!ok) failed = true;
+  }
+  if (Object.keys(getPendingQueue('lav_queue_ratings')).length) {
+    const ok = await flushPendingRatings(interactive);
+    if (!ok) failed = true;
+  }
+  if (!failed && pendingSyncCount() === 0) {
+    S.pendingSyncMessage = '';
+    S.connectionStatus = 'online';
+    S.connectionMessage = '';
+    S.lastSyncAt = new Date().toISOString();
+  } else if (pendingSyncCount() > 0 && !S.pendingSyncMessage) {
+    S.pendingSyncMessage = 'Bəzi dəyişikliklər sinxronizasiya növbəsində saxlanılıb.';
+  }
+  render();
+}
+window.addEventListener('online', () => {
+  S.connectionStatus = 'checking';
+  S.connectionMessage = '';
+  render();
+  syncPendingChanges(false);
+});
+window.addEventListener('offline', () => {
+  S.connectionStatus = 'offline';
+  S.connectionMessage = 'İnternet bağlantısı yoxdur; lokal məlumatlardan istifadə edilir.';
+  render();
+});
 
 init();
 </script>
