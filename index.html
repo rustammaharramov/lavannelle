@@ -114,7 +114,7 @@ button{font-family:inherit;cursor:pointer}
 <div class="toast" id="toast"></div>
 <script>
 const GS_URL = "https://script.google.com/macros/s/AKfycbxhy9DyHpzm1-xY-K-g9uGSq8AoG4U0XtB38C8w5fPALBdydsCAw1eVIElb_5X3FnLK/exec";
-const APP_VERSION = 49;
+const APP_VERSION = 50;
 const ADMIN_CODE = '1234';
 
 // ── ADMIN/GUEST ───────────────────────────────────────────────
@@ -276,8 +276,14 @@ async function gsLoad() {
 }
 
 async function gsSave(items) {
-  const r = await fetch(GS_URL, { method: 'POST', body: JSON.stringify(items) });
-  if (!r.ok) throw new Error('fail');
+  // Apps Script doPost expects an object payload with action and items.
+  const r = await fetch(GS_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'anbar', items })
+  });
+  if (!r.ok) throw new Error('Google Sheets saxlanma sorğusunu qəbul etmədi');
+  const result = (await r.text()).trim();
+  if (result !== 'OK') throw new Error('Google Sheets saxlanmanı təsdiqləmədi');
 }
 
 function pricePerUnit(item) {
